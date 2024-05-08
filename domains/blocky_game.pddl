@@ -1,4 +1,5 @@
 (define (domain blocky-game)
+    (:requirements :strips)
     (:predicates
         (at ?room ?place)
         (in ?person ?room)
@@ -10,10 +11,11 @@
         (has_door ?entrance ?colour)
         (owned ?thing ?person)
         (is ?key ?colour)
-        (reversed ?direction ?reverse_direction))
-        (escaped ?person)
+        (reversed ?direction ?reverse_direction)
+        (free ?place)
+        (escaped ?person))
     (:action go
-        :parameters (?person ?room1 ?room2)
+        :parameters (?person ?room1 ?room2 ?place1 ?place2 ?entrance1 ?entrance2 ?direction ?reverse_direction ?colour ?key)
         :precondition (and
             (adjacent ?place1 ?place2 ?direction)
             (at ?room1 ?place1)
@@ -28,9 +30,9 @@
             (is ?key ?colour))
         :effect (and
             (not (in ?person ?room1))
-            (in ?person ?room2))
+            (in ?person ?room2)))
     (:action take
-        :parameters (?person ?key)
+        :parameters (?person ?key ?room)
         :precondition (and
             (contains ?room ?key)
             (is_key ?key)
@@ -39,17 +41,16 @@
             (not (contains ?room ?key))
             (owned ?key ?person)))
     (:action escape
-        :parameters (?person)
+        :parameters (?person ?exit ?room)
         :precondition (and
-            (contains room exit)
-            (is_exit exit)
-            (in person room))
+            (contains ?room ?exit)
+            (is_exit ?exit)
+            (in ?person ?room))
         :effect (and
-            (escaped person)))
+            (escaped ?person)))
     (:action move
-        :parameters (?room ?place1 ?place2)
+        :parameters (?room ?place1 ?place2 ?direction)
         :precondition (and
-            (not (free ?place1))
             (free ?place2)
             (at ?room ?place1)
             (adjacent ?place1 ?place2 ?direction))
