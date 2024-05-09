@@ -12,6 +12,7 @@
         entrance41
         key_black key_yellow key_blue
         black yellow blue
+        terminal1
         exit
         person)
     (:init
@@ -29,6 +30,8 @@
         (is_key key_blue)
 
         (is_exit exit)
+
+        (is_terminal terminal1)
         
         (adjacent place11 place21 right)
         (adjacent place11 place12 down)
@@ -101,6 +104,8 @@
         (contains room4 key_blue)
 
         (contains room3 exit)
+
+        (contains room1 terminal1)
 
         (in person room1))
     (:goal

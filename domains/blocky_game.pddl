@@ -5,6 +5,7 @@
         (in ?person ?room)
         (contains ?room ?thing)
         (is_key ?thing)
+        (is_terminal ?thing)
         (is_exit ?thing)
         (adjacent ?place1 ?place2 ?direction)
         (passage ?room ?entrance ?direction)
@@ -49,14 +50,17 @@
         :effect (and
             (escaped ?person)))
     (:action move
-        :parameters (?room ?place1 ?place2 ?direction)
+        :parameters (?moved_room ?place1 ?place2 ?direction ?person ?dwelled_room ?terminal)
         :precondition (and
+            (in ?person ?dwelled_room)
+            (contains ?dwelled_room ?terminal)
+            (is_terminal ?terminal)
             (free ?place2)
-            (at ?room ?place1)
+            (at ?moved_room ?place1)
             (adjacent ?place1 ?place2 ?direction))
         :effect (and
             (free ?place1)
             (not (free ?place2))
-            (not (at ?room ?place1))
-            (at ?room ?place2)))
+            (not (at ?moved_room ?place1))
+            (at ?moved_room ?place2)))
 )
