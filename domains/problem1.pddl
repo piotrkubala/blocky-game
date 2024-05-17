@@ -1,38 +1,29 @@
 (define (problem blocky-problem1)
     (:domain blocky-game)
     (:objects
-        up right down left
-        place11 place21 place31
-        place12 place22 place32
-        place13 place23 place33
-        room1 room2 room3 room4
-        entrance11 entrance12
-        entrance21 entrance22
-        entrance31
-        entrance41
-        key_black key_yellow key_blue
-        black yellow blue
-        terminal1
-        exit
-        person)
+        place11 place21 place31 - place
+        place12 place22 place32 - place
+        place13 place23 place33 - place
+        room1 room2 room3 room4 - room
+        entrance11 entrance12 - entrance
+        entrance21 entrance22 - entrance
+        entrance31 - entrance
+        entrance41 - entrance
+        key_black key_yellow key_blue - key
+        black yellow blue - colour
+        terminal1 - terminal
+        exit - exit
+        person - person)
     (:init
+        (reversed right left)
         (reversed up down)
         (reversed down up)
         (reversed left right)
-        (reversed right left)
 
         (is key_black black)
         (is key_yellow yellow)
         (is key_blue blue)
 
-        (is_key key_black)
-        (is_key key_yellow)
-        (is_key key_blue)
-
-        (is_exit exit)
-
-        (is_terminal terminal1)
-        
         (adjacent place11 place21 right)
         (adjacent place11 place12 down)
         
@@ -110,4 +101,4 @@
         (in person room1))
     (:goal
         (escaped person))
-    )
+)
