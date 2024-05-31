@@ -1,4 +1,4 @@
-(define (problem blocky-problem1)
+(define (problem blocky-problem2)
     (:domain blocky-game)
     (:objects
         place11 place21 place31 place41 place51 - place
@@ -201,12 +201,14 @@
 
         (passage room8 entrance81 down)
 
-        (passage room9 entrance10_1 right)
+        (passage room10 entrance10_1 right)
 
         (has_door entrance11 yellow)
         (has_door entrance11 green)
 
         (has_door entrance12 green)
+
+        (has_door entrance13 white)
 
         (has_door entrance22 green)
         (has_door entrance23 green)
@@ -236,11 +238,10 @@
         (contains room4 key_black2)
         (contains room4 key_white1)
 
-        (contains room6 key_red)
-
         (contains room7 key_blue)
 
         (contains room8 key_black1)
+        (contains room8 key_red)
 
         (contains room10 key_white2)
 
@@ -248,7 +249,7 @@
         (contains room9 exit2)
 
         (contains room2 terminal1)
-        (contains room4 terminal2)
+        (contains room10 terminal2)
 
         (in person room1))
     (:goal
