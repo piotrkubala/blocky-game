@@ -1,0 +1,4 @@
+pygame>=1.9.6
+pddl>=0.4.0
+numpy>=2.0.0
+python-statemachine>=2.3.3
