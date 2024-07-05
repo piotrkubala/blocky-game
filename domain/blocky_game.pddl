@@ -1,7 +1,7 @@
 (define (domain blocky-game)
     (:requirements :strips :typing :derived-predicates)
     (:types
-        place - object
+        place - object ; names of places should conform to pattern placeXY, where X and Y have the same number of digits
         room - object
         person - object
         thing - object

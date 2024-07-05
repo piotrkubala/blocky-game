@@ -2,6 +2,8 @@ import pygame
 
 from blocky_game.config.config import PyGameConfig, BlockyGameConfig
 from blocky_game.graphics.game_renderer import GameRenderer
+from blocky_game.model.board_state import BoardState
+from blocky_game.model.board_domain import BoardDomain
 
 
 class BlockyGame:
@@ -25,7 +27,11 @@ class BlockyGame:
     def __init__(self, game_config: PyGameConfig, blocky_game_config: BlockyGameConfig):
         self.game_config = game_config
         self.blocky_game_config = blocky_game_config
-        self.renderer = GameRenderer()
+
+        self.board_domain = BoardDomain(blocky_game_config.domain_definition_path)
+        self.board_state = BoardState(self.board_domain, blocky_game_config.problem_definition_path)
+
+        self.renderer = GameRenderer(self.board_state)
 
         width = self.game_config.screen_width
         height = self.game_config.screen_height
