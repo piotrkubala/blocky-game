@@ -7,16 +7,16 @@ import cv2
 class GraphicsComponent(ABC):
     def __init__(self):
         self.transform = np.identity(3)
-        self.sprites: list[tuple[tuple[int, int, int] | None, pygame.sprite]] = []
+        self.surfaces: list[pygame.surface] = []
 
-    def add_sprite(self, sprite: pygame.sprite, colour: tuple[int, int, int] | None = None):
-        self.sprites.append((colour, sprite))
+    def add_surface(self, surface: pygame.surface):
+        self.surfaces.append(surface)
 
     def clear_transform(self):
         self.transform = np.identity(3)
 
-    def clear_sprites(self):
-        self.sprites = []
+    def clear_surfaces(self):
+        self.surfaces = []
 
     def translate(self, x: float, y: float):
         translation_matrix = np.array([
@@ -42,31 +42,34 @@ class GraphicsComponent(ABC):
         ])
         self.transform = self.transform @ scale_matrix
 
-    def get_transformed_corners(self, sprite: pygame.sprite) -> np.ndarray:
+    @staticmethod
+    def get_transformed_corners(surface: pygame.surface, accumulated_transform: np.ndarray) -> np.ndarray:
+        width, height = surface.get_size()
+
         corners = np.array([
             [0, 0, 1],
-            [sprite.rect.width, sprite.rect.height, 1]
-        ])
-        return self.transform @ corners
+            [width, height, 1],
+        ]).T
 
-    def get_transformed_image(self, sprite: pygame.sprite) -> pygame.Surface:
-        source_image = sprite.image
+        return (accumulated_transform @ corners)[:2].T
 
-        source_points = self.get_transformed_corners(sprite)
+    @staticmethod
+    def get_transformed_image(surface: pygame.surface, accumulated_transform: np.ndarray) -> pygame.Surface:
+        source_image = pygame.surfarray.pixels3d(surface)
+
+        source_points = GraphicsComponent.get_transformed_corners(surface, accumulated_transform)
         max_x, max_y = np.max(source_points, axis=0)[:2]
         min_x, min_y = np.min(source_points, axis=0)[:2]
         width, height = int(max_x - min_x), int(max_y - min_y)
 
         transformed_image = cv2.warpAffine(
-            pygame.surfarray.pixels3d(source_image),
-            self.transform,
+            source_image,
+            accumulated_transform[:2, :],
             (width, height)
         )
         return pygame.surfarray.make_surface(transformed_image)
 
-    def draw(self, screen: pygame.Surface):
-        for colour, sprite in self.sprites:
-            if colour is not None:
-                sprite.image.fill(colour)
-            transformed_image = self.get_transformed_image(sprite)
+    def draw(self, screen: pygame.Surface, accumulated_transform: np.ndarray = np.identity(3)):
+        for surface in self.surfaces:
+            transformed_image = GraphicsComponent.get_transformed_image(surface, accumulated_transform)
             screen.blit(transformed_image, (0, 0)) # TODO: Check destination position

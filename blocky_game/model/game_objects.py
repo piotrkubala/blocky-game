@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 import pygame
 
 from blocky_game.graphics.graphics_component import GraphicsComponent
@@ -13,14 +14,18 @@ class Direction(Enum):
     LEFT = (0, -1)
 
 
-class GameObject:
+class GameObject(ABC):
     def __init__(self, name: str):
         self.name = name
         self.graphics_component: GraphicsComponent = GraphicsComponent()
 
+    @abstractmethod
+    def get_children(self) -> list['GameObject']:
+        pass
+
 
 class Colour(GameObject):
-    def __init__(self, name: str):
+    def __init__(self, name: str, width: int = 10):
         super().__init__(name)
 
         colour_name_to_rgb = {
@@ -33,19 +38,30 @@ class Colour(GameObject):
         }
 
         colour_rgb = colour_name_to_rgb.get(name, tuple(randint(0, 255) for _ in range(3)))
-        pygame_rect = pygame.Rect(0, 0, 10, 10)
 
-        self.graphics_component.add_sprite(pygame_rect, colour_rgb)
+        pygame_rect_surface = pygame.Surface((width, width))
+        pygame_rect_surface.fill(colour_rgb)
+
+        self.graphics_component.add_surface(pygame_rect_surface)
+
+    def get_children(self) -> list[GameObject]:
+        return []
 
 
 class Thing(GameObject):
     def __init__(self, name: str):
         super().__init__(name)
 
+    def get_children(self) -> list[GameObject]:
+        return []
+
 
 class TakeableThing(Thing):
     def __init__(self, name: str):
         super().__init__(name)
+
+    def get_children(self) -> list[GameObject]:
+        return []
 
 
 class Key(TakeableThing):
@@ -57,15 +73,24 @@ class Key(TakeableThing):
     def set_colour(self, colour: Colour):
         self.colour = colour
 
+    def get_children(self) -> list[GameObject]:
+        return [self.colour]
+
 
 class Terminal(Thing):
     def __init__(self, name: str):
         super().__init__(name)
 
+    def get_children(self) -> list[GameObject]:
+        return []
+
 
 class MapExit(Thing):
     def __init__(self, name: str):
         super().__init__(name)
+
+    def get_children(self) -> list[GameObject]:
+        return []
 
 
 class Person(GameObject):
@@ -80,6 +105,9 @@ class Person(GameObject):
     def add_equipment(self, equipment: TakeableThing):
         self.equipment[equipment.name] = equipment
 
+    def get_children(self) -> list[GameObject]:
+        return list(self.equipment.values())
+
 
 class Entrance(GameObject):
     def __init__(self, name: str):
@@ -89,6 +117,9 @@ class Entrance(GameObject):
 
     def add_door(self, door_name: str, colour: Colour):
         self.doors[door_name] = colour
+
+    def get_children(self) -> list[GameObject]:
+        return list(self.doors.values())
 
 
 class Room(GameObject):
@@ -108,6 +139,9 @@ class Room(GameObject):
     def add_entrance(self, entrance: Entrance, direction: Direction):
         self.entrances[direction] = entrance
 
+    def get_children(self) -> list[GameObject]:
+        return list(self.people.values()) + list(self.things_contained.values()) + list(self.entrances.values())
+
 
 class Place(GameObject):
     def __init__(self, name: str):
@@ -121,9 +155,14 @@ class Place(GameObject):
     def unset_room(self):
         self.room = None
 
+    def get_children(self) -> list[GameObject]:
+        return [self.room] if self.room is not None else []
 
-class GameBoard:
+
+class GameBoard(GameObject):
     def __init__(self, rows: int, columns: int):
+        super().__init__("")
+
         self.rows: int = rows
         self.columns: int = columns
         self.board: list[list[None | Place]] = [[None for _ in range(columns)] for _ in range(rows)]
@@ -148,3 +187,6 @@ class GameBoard:
             return None
 
         return self.board[new_row][new_column]
+
+    def get_children(self) -> list[GameObject]:
+        return [place for row in self.board for place in row if place is not None]
