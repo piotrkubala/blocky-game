@@ -1,5 +1,9 @@
-import pddl
+import pygame
+
+from blocky_game.graphics.graphics_component import GraphicsComponent
+
 from enum import Enum
+from random import randint
 
 
 class Direction(Enum):
@@ -12,11 +16,26 @@ class Direction(Enum):
 class GameObject:
     def __init__(self, name: str):
         self.name = name
+        self.graphics_component: GraphicsComponent = GraphicsComponent()
 
 
 class Colour(GameObject):
     def __init__(self, name: str):
         super().__init__(name)
+
+        colour_name_to_rgb = {
+            "red": (255, 0, 0),
+            "green": (0, 255, 0),
+            "blue": (0, 0, 255),
+            "yellow": (255, 255, 0),
+            "black": (0, 0, 0),
+            "white": (255, 255, 255)
+        }
+
+        colour_rgb = colour_name_to_rgb.get(name, tuple(randint(0, 255) for _ in range(3)))
+        pygame_rect = pygame.Rect(0, 0, 10, 10)
+
+        self.graphics_component.add_sprite(pygame_rect, colour_rgb)
 
 
 class Thing(GameObject):
