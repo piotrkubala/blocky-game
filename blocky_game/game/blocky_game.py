@@ -14,6 +14,7 @@ class BlockyGame:
 
     def __init_pygame(self):
         pygame.init()
+        pygame.display.set_caption(self.game_config.screen_title)
 
     def __quit_pygame(self):
         pygame.quit()

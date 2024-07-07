@@ -6,9 +6,9 @@ from blocky_game.model.board_state import BoardState, GameObject
 
 class GameRenderer:
     def __render_game_object(self, game_object: GameObject, transformation: np.ndarray):
+        transformation = transformation @ game_object.graphics_component.transform
         game_object.graphics_component.draw(self.screen, transformation)
 
-        transformation = transformation @ game_object.graphics_component.transform
         for child in game_object.get_children():
             self.__render_game_object(child, transformation)
 
