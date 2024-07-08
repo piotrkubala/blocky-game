@@ -134,6 +134,9 @@ class BoardState:
 
                 assert_game_object_type(game_object, "place")
                 game_board[(row, column)] = game_object
+            if obj.type_tag == "colour":
+                assert_game_object_type(game_object, "colour")
+                game_board.colours.append(game_object)
 
         for relation in self.problem.init:
             match relation.name:
@@ -166,9 +169,13 @@ class BoardState:
                     assert_game_object_type(game_objects[entrance_name], "entrance")
 
                     direction = direction_name_to_direction(direction_name)
-                    game_objects[room_name].add_entrance(
-                        game_objects[entrance_name], direction
+                    room_object = game_objects[room_name]
+                    entrance_object = game_objects[entrance_name]
+
+                    room_object.add_entrance(
+                        entrance_object, direction
                     )
+                    entrance_object.set_colours(game_board.colours)
                 case "has_door":
                     entrance, colour = relation.terms
                     entrance_name, colour_name = entrance.name, colour.name

@@ -118,6 +118,7 @@ class Person(GameObject):
         sprite_surface = load_texture_with_max_size("../images/person.png", max_size)
 
         self.graphics_component.add_surface(sprite_surface)
+        self.graphics_component.start_rotate = True
 
     def __init__(self, name: str, max_size: int = 50):
         super().__init__(name)
@@ -137,16 +138,34 @@ class Person(GameObject):
 
 
 class Entrance(GameObject):
-    def __init__(self, name: str):
+    def prepare_visuals(self, width: int, height: int):
+        self.graphics_component.clear_surfaces()
+
+        outer_rect = pygame.Surface((width, height))
+        outer_rect.fill((200, 0, 0))
+        inner_rect = pygame.Surface((width - 2, height - 2))
+        inner_rect.fill((255, 255, 255))
+
+        outer_rect.blit(inner_rect, (1, 1))
+
+        self.graphics_component.add_surface(outer_rect)
+
+    def __init__(self, name: str, width: int = 80, height: int = 20):
         super().__init__(name)
 
         self.doors: dict[str, Colour] = {}
+        self.colours: list[Colour] = []  # should be a reference to the colours in the game board
+
+        self.prepare_visuals(width, height)
 
     def add_door(self, door_name: str, colour: Colour):
         self.doors[door_name] = colour
 
     def get_children(self) -> list[GameObject]:
         return list(self.doors.values())
+
+    def set_colours(self, colours: list[Colour]):
+        self.colours = colours
 
 
 class Room(GameObject):
@@ -161,6 +180,7 @@ class Room(GameObject):
         outer_rect.blit(inner_rect, (wall_width, wall_width))
 
         self.graphics_component.add_surface(outer_rect)
+        self.wall_width = wall_width
 
     def __init__(self, name: str, width: int = 100):
         super().__init__(name)
@@ -168,6 +188,9 @@ class Room(GameObject):
         self.people: dict[str, Person] = {}
         self.things_contained: dict[str, Thing] = {}
         self.entrances: dict[Direction, Entrance] = {}
+
+        self.width = width
+        self.wall_width = 6
 
         self.prepare_visuals(width)
 
@@ -177,8 +200,22 @@ class Room(GameObject):
     def add_thing(self, thing: Thing):
         self.things_contained[thing.name] = thing
 
-    def add_entrance(self, entrance: Entrance, direction: Direction):
+    def add_entrance(self, entrance: Entrance, direction: Direction, entrance_width: int = 10):
         self.entrances[direction] = entrance
+
+        entrance_height = int(self.width * 0.8)
+        entrance.prepare_visuals(entrance_width, entrance_height)
+        entrance.graphics_component.translate(self.width // 2 - entrance_width // 2 + self.wall_width // 2, 0)
+
+        match direction:
+            case Direction.UP:
+                entrance.graphics_component.rotate(-90)
+            case Direction.DOWN:
+                entrance.graphics_component.rotate(90)
+            case Direction.LEFT:
+                entrance.graphics_component.rotate(180)
+            case Direction.RIGHT:
+                pass
 
     def get_children(self) -> list[GameObject]:
         return list(self.people.values()) + list(self.things_contained.values()) + list(self.entrances.values())
@@ -221,6 +258,7 @@ class GameBoard(GameObject):
         self.rows: int = rows
         self.columns: int = columns
         self.board: list[list[None | Place]] = [[None for _ in range(columns)] for _ in range(rows)]
+        self.colours: list[Colour] = []
 
     def __getitem__(self, key: tuple[int, int]) -> Place | None:
         row, column = key
@@ -232,7 +270,7 @@ class GameBoard(GameObject):
         delta = self.place_width - 1
         value.prepare_visuals(self.place_width)
         value.graphics_component.clear_transform()
-        value.graphics_component.translate(column * delta, row * delta)
+        value.graphics_component.translate(row * delta, column * delta)
 
     def get_neighbour(self, row: int, column: int, direction: Direction) -> Place | None:
         row_offset, column_offset = direction.value
