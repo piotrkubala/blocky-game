@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import pygame
 
-from blocky_game.graphics.graphics_component import GraphicsComponent
+from blocky_game.graphics.graphics_component import GraphicsComponent, load_texture_with_max_size
 
 from enum import Enum
 from random import randint
@@ -37,10 +37,10 @@ class Colour(GameObject):
             "white": (255, 255, 255)
         }
 
-        colour_rgb = colour_name_to_rgb.get(name, tuple(randint(0, 255) for _ in range(3)))
+        self.colour_rgb = colour_name_to_rgb.get(name, tuple(randint(0, 255) for _ in range(3)))
 
         pygame_rect_surface = pygame.Surface((width, width))
-        pygame_rect_surface.fill(colour_rgb)
+        pygame_rect_surface.fill(self.colour_rgb)
 
         self.graphics_component.add_surface(pygame_rect_surface)
 
@@ -65,13 +65,31 @@ class TakeableThing(Thing):
 
 
 class Key(TakeableThing):
-    def __init__(self, name: str):
+    def prepare_visuals(self, max_size: int, colour_rgb: tuple[int, int, int] = (0, 0, 0)):
+        self.graphics_component.clear_surfaces()
+
+        sprite_surface = load_texture_with_max_size("../images/key.png", max_size)
+
+        sprite_image = pygame.surfarray.pixels3d(sprite_surface)
+        sprite_image[sprite_image[:, :, 0] < 200] = colour_rgb
+
+        sprite_transformed_surface = pygame.surfarray.make_surface(sprite_image)
+
+        self.graphics_component.add_surface(sprite_transformed_surface)
+
+    def __init__(self, name: str, max_size: int = 20):
         super().__init__(name)
 
         self.colour: Colour | None = None
+        self.max_size = max_size
+
+        self.prepare_visuals(max_size)
 
     def set_colour(self, colour: Colour):
         self.colour = colour
+
+        colour.graphics_component.hide()
+        self.prepare_visuals(self.max_size, colour.colour_rgb)
 
     def get_children(self) -> list[GameObject]:
         return [self.colour]
@@ -94,10 +112,19 @@ class MapExit(Thing):
 
 
 class Person(GameObject):
-    def __init__(self, name: str):
+    def prepare_visuals(self, max_size: int):
+        self.graphics_component.clear_surfaces()
+
+        sprite_surface = load_texture_with_max_size("../images/person.png", max_size)
+
+        self.graphics_component.add_surface(sprite_surface)
+
+    def __init__(self, name: str, max_size: int = 50):
         super().__init__(name)
         self.equipment: dict[str, TakeableThing] = {}
         self.escaped: bool = False
+
+        self.prepare_visuals(max_size)
 
     def escape(self):
         self.escaped = True
