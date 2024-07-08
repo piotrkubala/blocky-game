@@ -20,7 +20,6 @@ class GraphicsComponent(ABC):
         self.transform = np.identity(3)
         self.surfaces: list[pygame.surface] = []
         self.hidden = False
-        self.start_rotate = False
 
     def add_surface(self, surface: pygame.surface):
         self.surfaces.append(surface)
@@ -75,12 +74,12 @@ class GraphicsComponent(ABC):
         return (accumulated_transform @ corners)[:2].T
 
     @staticmethod
-    def get_min_position(transformed_corners: np.ndarray) -> np.ndarray:
-        return np.min(transformed_corners, axis=0)
+    def get_transformed_position(accumulated_transform: np.ndarray) -> np.ndarray:
+        return accumulated_transform[:2, -1]
 
     @staticmethod
     def get_transformed_image(surface: pygame.surface,
-                              accumulated_transform: np.ndarray) -> tuple[pygame.Surface, np.ndarray, np.ndarray]:
+                              accumulated_transform: np.ndarray) -> tuple[pygame.Surface, np.ndarray]:
         source_image = pygame.surfarray.pixels3d(surface)
 
         accumulated_transform_modified = accumulated_transform.copy()
@@ -118,36 +117,28 @@ class GraphicsComponent(ABC):
         width = int(round(max_x_pixel_position)) + 1
         height = int(round(max_y_pixel_position)) + 1
 
+        image_size = np.array([height, width])
+
         transformed_image = cv2.warpAffine(
             source_image,
             accumulated_transform_modified[:2],
             (width, height),
-            borderValue=(0, 0, 255)
+            borderValue=(255, 255, 255)
         )
-        # plt.title("source")
-        # plt.imshow(source_image)
-        # plt.show()
-        # plt.title(str(accumulated_transform_modified))
-        # plt.imshow(transformed_image)
-        # plt.show()
 
-        return pygame.surfarray.make_surface(transformed_image), min_pixel_position, max_pixel_position
+        return pygame.surfarray.make_surface(transformed_image), image_size
 
     def draw(self, screen: pygame.Surface, accumulated_transform: np.ndarray = np.identity(3)):
         if self.hidden:
             return
 
-        if self.start_rotate:
-            self.rotate(0.05)
-
         for surface in self.surfaces:
-            source_corner_points = GraphicsComponent.get_transformed_corners(surface, accumulated_transform)
-            transformed_image, min_pixel_position, _ = GraphicsComponent.get_transformed_image(
+            transformed_position = GraphicsComponent.get_transformed_position(accumulated_transform)
+            transformed_image, image_size = GraphicsComponent.get_transformed_image(
                 surface, accumulated_transform
             )
-            min_position = GraphicsComponent.get_min_position(source_corner_points)
 
-            new_x, new_y = min_position - min_pixel_position
+            new_x, new_y = transformed_position - image_size / 2
             casted_x, casted_y = int(new_x), int(new_y)
 
             screen.blit(transformed_image, (casted_x, casted_y))

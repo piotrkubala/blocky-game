@@ -118,7 +118,6 @@ class Person(GameObject):
         sprite_surface = load_texture_with_max_size("../images/person.png", max_size)
 
         self.graphics_component.add_surface(sprite_surface)
-        self.graphics_component.start_rotate = True
 
     def __init__(self, name: str, max_size: int = 50):
         super().__init__(name)
