@@ -75,27 +75,24 @@ class GraphicsComponent(ABC):
         return (accumulated_transform @ corners)[:2].T
 
     @staticmethod
+    def get_min_position(transformed_corners: np.ndarray) -> np.ndarray:
+        return np.min(transformed_corners, axis=0)
+
+    @staticmethod
     def get_transformed_image(surface: pygame.surface,
-                              accumulated_transform: np.ndarray,
-                              source_corner_points: np.ndarray) -> tuple[pygame.Surface, np.ndarray, np.ndarray]:
+                              accumulated_transform: np.ndarray) -> tuple[pygame.Surface, np.ndarray, np.ndarray]:
         source_image = pygame.surfarray.pixels3d(surface)
-
-        max_x, max_y = np.max(source_corner_points[:2], axis=0)
-        min_x, min_y = np.min(source_corner_points[:2], axis=0)
-
-        point_min = np.array([min_x, min_y])
-        point_max = np.array([max_x, max_y])
 
         accumulated_transform_modified = accumulated_transform.copy()
         accumulated_transform_modified[:2, -1] = 0
 
-        point_bottom_right = np.array(source_image.shape[:2][::-1] + (1,))
-        point_bottom_left = np.array([0, source_image.shape[0], 1])
-        point_top_right = np.array([source_image.shape[1], 0, 1])
+        point_bottom_right = np.array([source_image.shape[1] - 1, source_image.shape[0] - 1, 1])
+        point_bottom_left = np.array([0, source_image.shape[0] - 1, 1])
+        point_top_right = np.array([source_image.shape[1] - 1, 0, 1])
 
-        point_bottom_right_transformed = (accumulated_transform_modified @ point_bottom_right)[0:2]
-        point_bottom_left_transformed = (accumulated_transform_modified @ point_bottom_left)[0:2]
-        point_top_right_transformed = (accumulated_transform_modified @ point_top_right)[0:2]
+        point_bottom_right_transformed = (accumulated_transform_modified @ point_bottom_right)[:2]
+        point_bottom_left_transformed = (accumulated_transform_modified @ point_bottom_left)[:2]
+        point_top_right_transformed = (accumulated_transform_modified @ point_top_right)[:2]
 
         x_translate = max(0, -point_bottom_right_transformed[0], -point_top_right_transformed[0],
                           -point_bottom_left_transformed[0])
@@ -115,19 +112,17 @@ class GraphicsComponent(ABC):
         min_y_pixel_position = min(0.0, point_bottom_right_transformed[1], point_top_right_transformed[1],
                                         point_bottom_left_transformed[1]) + y_translate
 
-        internal_delta = np.array([0.0, 0.0])
+        min_pixel_position = np.array([min_x_pixel_position, min_y_pixel_position])
+        max_pixel_position = np.array([max_x_pixel_position, max_y_pixel_position])
 
-        point_min += internal_delta
-        point_max += internal_delta
-
-        width = int(max_x_pixel_position)
-        height = int(max_y_pixel_position)
+        width = int(round(max_x_pixel_position)) + 1
+        height = int(round(max_y_pixel_position)) + 1
 
         transformed_image = cv2.warpAffine(
             source_image,
             accumulated_transform_modified[:2],
             (width, height),
-            # borderMode=cv2.BORDER_TRANSPARENT
+            borderValue=(0, 0, 255)
         )
         # plt.title("source")
         # plt.imshow(source_image)
@@ -136,7 +131,7 @@ class GraphicsComponent(ABC):
         # plt.imshow(transformed_image)
         # plt.show()
 
-        return pygame.surfarray.make_surface(transformed_image), point_min, point_max
+        return pygame.surfarray.make_surface(transformed_image), min_pixel_position, max_pixel_position
 
     def draw(self, screen: pygame.Surface, accumulated_transform: np.ndarray = np.identity(3)):
         if self.hidden:
@@ -147,10 +142,12 @@ class GraphicsComponent(ABC):
 
         for surface in self.surfaces:
             source_corner_points = GraphicsComponent.get_transformed_corners(surface, accumulated_transform)
-            transformed_image, point_min, _ = GraphicsComponent.get_transformed_image(
-                surface, accumulated_transform, source_corner_points
+            transformed_image, min_pixel_position, _ = GraphicsComponent.get_transformed_image(
+                surface, accumulated_transform
             )
-            new_x, new_y = point_min
+            min_position = GraphicsComponent.get_min_position(source_corner_points)
+
+            new_x, new_y = min_position - min_pixel_position
             casted_x, casted_y = int(new_x), int(new_y)
 
             screen.blit(transformed_image, (casted_x, casted_y))
