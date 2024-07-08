@@ -25,6 +25,9 @@ class BlockyGame:
     def __clear_display(self):
         self.display.fill((255, 255, 255))
 
+    def __wait_for_clock(self):
+        self.clock.tick(self.game_config.frames_per_second)
+
     def __init__(self, game_config: PyGameConfig, blocky_game_config: BlockyGameConfig):
         self.game_config = game_config
         self.blocky_game_config = blocky_game_config
@@ -45,6 +48,7 @@ class BlockyGame:
 
     def main_loop(self):
         while not self.stopped:
+            self.__wait_for_clock()
             self.__process_events()
             self.__clear_display()
             self.renderer.render()

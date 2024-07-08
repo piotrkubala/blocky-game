@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 import pygame
 import numpy as np
 import cv2
-from matplotlib import pyplot as plt
 
 
 def load_texture_with_max_size(texture_path: str, max_size: int) -> pygame.Surface:

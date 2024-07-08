@@ -96,16 +96,34 @@ class Key(TakeableThing):
 
 
 class Terminal(Thing):
-    def __init__(self, name: str):
+    def prepare_visuals(self, max_size: int):
+        self.graphics_component.clear_surfaces()
+
+        sprite_surface = load_texture_with_max_size("../images/terminal.png", max_size)
+
+        self.graphics_component.add_surface(sprite_surface)
+
+    def __init__(self, name: str, max_size: int = 50):
         super().__init__(name)
+
+        self.prepare_visuals(max_size)
 
     def get_children(self) -> list[GameObject]:
         return []
 
 
 class MapExit(Thing):
-    def __init__(self, name: str):
+    def prepare_visuals(self, max_size: int):
+        self.graphics_component.clear_surfaces()
+
+        sprite_surface = load_texture_with_max_size("../images/exit.png", max_size)
+
+        self.graphics_component.add_surface(sprite_surface)
+
+    def __init__(self, name: str, max_size: int = 50):
         super().__init__(name)
+
+        self.prepare_visuals(max_size)
 
     def get_children(self) -> list[GameObject]:
         return []

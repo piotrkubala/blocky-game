@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class PyGameConfig:
-    frames_per_second: int = 60
+    frames_per_second: int = 30
     screen_width: int = 800
     screen_height: int = 600
     screen_title: str = "Blocky Game"
