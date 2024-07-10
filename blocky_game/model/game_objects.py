@@ -24,6 +24,34 @@ class GameObject(ABC):
         pass
 
 
+class RectangularContainer(GameObject):
+    def __init__(self, name: str, width: int, height: int):
+        super().__init__(name)
+
+        self.width = width
+        self.height = height
+
+        self.children: list[GameObject] = []
+
+    def add_child(self, child: GameObject):
+        self.children.append(child)
+
+        child_space = self.height // len(self.children)
+
+        self.graphics_component.clear_transform()
+        self.graphics_component.translate(0, -self.height // 2 + child_space // 2)
+
+        for i, child in enumerate(self.children):
+            child.graphics_component.clear_translate()
+            child.graphics_component.translate(0, i * child_space)
+
+    def clear_children(self):
+        self.children = []
+
+    def get_children(self) -> list[GameObject]:
+        return self.children
+
+
 class Colour(GameObject):
     def __init__(self, name: str, width: int = 10):
         super().__init__(name)
@@ -154,8 +182,49 @@ class Person(GameObject):
         return list(self.equipment.values())
 
 
-class Entrance(GameObject):
+class Door(GameObject):
     def prepare_visuals(self, width: int, height: int):
+        self.graphics_component.clear_surfaces()
+
+        outer_rect = pygame.Surface((width, height))
+        outer_rect.fill((0, 0, 0))
+
+        inner_rect = pygame.Surface((width - 2, height - 2))
+        inner_rect.fill(self.colour.colour_rgb)
+
+        outer_rect.blit(inner_rect, (1, 1))
+
+        self.graphics_component.add_surface(outer_rect)
+
+    def __init__(self, name: str, colour: Colour, width: int = 10, height: int = 10):
+        super().__init__(name)
+
+        self.width = width
+        self.height = height
+
+        self.colour: Colour = colour
+
+        self.prepare_visuals(width, height)
+
+    def get_children(self) -> list[GameObject]:
+        return [self.colour]
+
+
+class Entrance(GameObject):
+    def prepare_doors(self):
+        self.doors_container.clear_children()
+
+        for i, colour in enumerate(self.colours):
+            door = Door(f"{self.name}_{i}_door", colour)
+            self.doors_container.add_child(door)
+
+            if colour.name not in self.colours_dict:
+                door.graphics_component.hide()
+
+    def prepare_visuals(self, width: int, height: int):
+        self.width = width
+        self.height = height
+
         self.graphics_component.clear_surfaces()
 
         outer_rect = pygame.Surface((width, height))
@@ -167,22 +236,31 @@ class Entrance(GameObject):
 
         self.graphics_component.add_surface(outer_rect)
 
-    def __init__(self, name: str, width: int = 80, height: int = 20):
+        self.prepare_doors()
+
+    def __init__(self, name: str, width: int = 20, height: int = 80):
         super().__init__(name)
 
-        self.doors: dict[str, Colour] = {}
+        self.colours_dict: dict[str, Colour] = {}
         self.colours: list[Colour] = []  # should be a reference to the colours in the game board
+        self.width = width
+        self.height = height
+
+        container_name = f"{name}_doors"
+        self.doors_container: RectangularContainer = RectangularContainer(container_name, width, height)
 
         self.prepare_visuals(width, height)
 
     def add_door(self, door_name: str, colour: Colour):
-        self.doors[door_name] = colour
+        self.colours_dict[door_name] = colour
+        self.prepare_doors()
 
     def get_children(self) -> list[GameObject]:
-        return list(self.doors.values())
+        return list(self.colours_dict.values()) + [self.doors_container]
 
     def set_colours(self, colours: list[Colour]):
         self.colours = colours
+        self.prepare_doors()
 
 
 class Room(GameObject):
@@ -228,8 +306,10 @@ class Room(GameObject):
             case Direction.UP:
                 entrance.graphics_component.rotate(-90)
             case Direction.DOWN:
+                entrance.graphics_component.flip_vertical()
                 entrance.graphics_component.rotate(90)
             case Direction.LEFT:
+                entrance.graphics_component.flip_vertical()
                 entrance.graphics_component.rotate(180)
             case Direction.RIGHT:
                 pass

@@ -61,6 +61,26 @@ class GraphicsComponent(ABC):
         ])
         self.transform = scale_matrix @ self.transform
 
+    def flip_horizontal(self):
+        flip_matrix = np.array([
+            [-1, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1]
+        ])
+        self.transform = flip_matrix @ self.transform
+
+    def flip_vertical(self):
+        flip_matrix = np.array([
+            [1, 0, 0],
+            [0, -1, 0],
+            [0, 0, 1]
+        ])
+        self.transform = flip_matrix @ self.transform
+
+    def clear_translate(self):
+        self.transform[0, -1] = 0
+        self.transform[1, -1] = 0
+
     @staticmethod
     def get_transformed_corners(surface: pygame.surface, accumulated_transform: np.ndarray) -> np.ndarray:
         width, height = surface.get_size()
@@ -68,9 +88,16 @@ class GraphicsComponent(ABC):
         corners = np.array([
             [-width / 2, -height / 2, 1],
             [width / 2, height / 2, 1],
+            [-width / 2, height / 2, 1],
+            [width / 2, -height / 2, 1]
         ]).T
 
         return (accumulated_transform @ corners)[:2].T
+
+    @staticmethod
+    def get_transformed_size(surface: pygame.surface, accumulated_transform: np.ndarray) -> np.ndarray:
+        corners = GraphicsComponent.get_transformed_corners(surface, accumulated_transform)
+        return np.max(corners, axis=0) - np.min(corners, axis=0)
 
     @staticmethod
     def get_transformed_position(accumulated_transform: np.ndarray) -> np.ndarray:
