@@ -145,7 +145,7 @@ class MapExit(Thing):
 
         self.graphics_component.add_surface(sprite_surface)
 
-    def __init__(self, name: str, max_size: int = 30):
+    def __init__(self, name: str, max_size: int = 40):
         super().__init__(name)
 
         self.prepare_visuals(max_size)
@@ -162,7 +162,7 @@ class Person(GameObject):
 
         self.graphics_component.add_surface(sprite_surface)
 
-    def __init__(self, name: str, max_size: int = 30):
+    def __init__(self, name: str, max_size: int = 40):
         super().__init__(name)
         self.equipment: dict[str, TakeableThing] = {}
         self.escaped: bool = False
@@ -382,17 +382,26 @@ class Place(GameObject):
 
 class GameBoard(GameObject):
     def center_board(self, screen_width: int, screen_height: int, size_ratio: float = 0.8):
-        board_width = self.columns * self.place_width
-        board_height = self.rows * self.place_width
+        real_columns_count = self.max_row_index - self.min_row_index + 1
+        real_rows_count = self.max_column_index - self.min_column_index + 1
+
+        board_width = real_columns_count * self.place_width
+        board_height = real_rows_count * self.place_width
 
         board_size = max(board_width, board_height)
         max_board_size = min(screen_width, screen_height) * size_ratio
 
         scale_factor = max_board_size / board_size
-        self.graphics_component.scale(scale_factor, scale_factor)
 
-        top_left_x_offset = (screen_width - board_width * scale_factor) // 2
-        top_left_y_offset = (screen_height - board_height * scale_factor) // 2
+        self.graphics_component.scale(scale_factor, scale_factor)
+        new_board_width = board_width * scale_factor
+        new_board_height = board_height * scale_factor
+
+        empty_columns_size = self.min_row_index * self.place_width * scale_factor
+        empty_rows_size = self.min_column_index * self.place_width * scale_factor
+
+        top_left_x_offset = (screen_width - new_board_width - empty_columns_size) / 2
+        top_left_y_offset = (screen_height - new_board_height - empty_rows_size) / 2
 
         self.graphics_component.translate(top_left_x_offset, top_left_y_offset)
 
@@ -405,6 +414,11 @@ class GameBoard(GameObject):
         self.board: list[list[None | Place]] = [[None for _ in range(columns)] for _ in range(rows)]
         self.colours: list[Colour] = []
 
+        self.min_row_index = rows
+        self.min_column_index = columns
+        self.max_row_index = 0
+        self.max_column_index = 0
+
     def __getitem__(self, key: tuple[int, int]) -> Place | None:
         row, column = key
         return self.board[row][column]
@@ -416,6 +430,12 @@ class GameBoard(GameObject):
         value.prepare_visuals(self.place_width)
         value.graphics_component.clear_transform()
         value.graphics_component.translate(row * delta, column * delta)
+
+        self.min_row_index = min(self.min_row_index, row)
+        self.min_column_index = min(self.min_column_index, column)
+
+        self.max_row_index = max(self.max_row_index, row)
+        self.max_column_index = max(self.max_column_index, column)
 
     def get_neighbour(self, row: int, column: int, direction: Direction) -> Place | None:
         row_offset, column_offset = direction.value

@@ -4,10 +4,10 @@ from dataclasses import dataclass
 @dataclass
 class PyGameConfig:
     frames_per_second: int = 30
-    screen_width: int = 800
-    screen_height: int = 600
+    screen_width: int = 1200
+    screen_height: int = 750
     screen_title: str = "Blocky Game"
-    size_ratio: float = 1.0
+    size_ratio: float = 0.9
 
 
 @dataclass
