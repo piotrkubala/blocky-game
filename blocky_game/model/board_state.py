@@ -222,3 +222,6 @@ class BoardState:
         self.problem.check(self.domain.domain)
 
         self.game_board, self.game_objects = self.__generate_representation()
+
+    def center_board(self, screen_width: int, screen_height: int, size_ratio: float):
+        self.game_board.center_board(screen_width, screen_height, size_ratio)

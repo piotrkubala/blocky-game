@@ -38,12 +38,9 @@ class RectangularContainer(GameObject):
 
         child_space = self.height // len(self.children)
 
-        self.graphics_component.clear_transform()
-        self.graphics_component.translate(0, -self.height // 2 + child_space // 2)
-
         for i, child in enumerate(self.children):
             child.graphics_component.clear_translate()
-            child.graphics_component.translate(0, i * child_space)
+            child.graphics_component.translate(0, i * child_space -self.height // 2 + child_space // 2)
 
     def clear_children(self):
         self.children = []
@@ -131,7 +128,7 @@ class Terminal(Thing):
 
         self.graphics_component.add_surface(sprite_surface)
 
-    def __init__(self, name: str, max_size: int = 50):
+    def __init__(self, name: str, max_size: int = 30):
         super().__init__(name)
 
         self.prepare_visuals(max_size)
@@ -148,7 +145,7 @@ class MapExit(Thing):
 
         self.graphics_component.add_surface(sprite_surface)
 
-    def __init__(self, name: str, max_size: int = 50):
+    def __init__(self, name: str, max_size: int = 30):
         super().__init__(name)
 
         self.prepare_visuals(max_size)
@@ -165,7 +162,7 @@ class Person(GameObject):
 
         self.graphics_component.add_surface(sprite_surface)
 
-    def __init__(self, name: str, max_size: int = 50):
+    def __init__(self, name: str, max_size: int = 30):
         super().__init__(name)
         self.equipment: dict[str, TakeableThing] = {}
         self.escaped: bool = False
@@ -226,6 +223,7 @@ class Entrance(GameObject):
         self.height = height
 
         self.graphics_component.clear_surfaces()
+        self.graphics_component.clear_transform()
 
         outer_rect = pygame.Surface((width, height))
         outer_rect.fill((200, 0, 0))
@@ -238,9 +236,10 @@ class Entrance(GameObject):
 
         self.prepare_doors()
 
-    def __init__(self, name: str, width: int = 20, height: int = 80):
+    def __init__(self, name: str, direction: Direction | None = None, width: int = 20, height: int = 80):
         super().__init__(name)
 
+        self.direction: Direction | None = direction
         self.colours_dict: dict[str, Colour] = {}
         self.colours: list[Colour] = []  # should be a reference to the colours in the game board
         self.width = width
@@ -250,6 +249,9 @@ class Entrance(GameObject):
         self.doors_container: RectangularContainer = RectangularContainer(container_name, width, height)
 
         self.prepare_visuals(width, height)
+
+    def set_direction(self, direction: Direction):
+        self.direction = direction
 
     def add_door(self, door_name: str, colour: Colour):
         self.colours_dict[door_name] = colour
@@ -277,12 +279,25 @@ class Room(GameObject):
         self.graphics_component.add_surface(outer_rect)
         self.wall_width = wall_width
 
+        width_part = width // 4
+        self.people_container.graphics_component.clear_transform()
+        self.people_container.graphics_component.translate(-width_part, 0)
+
+        self.things_container.graphics_component.clear_transform()
+        self.things_container.graphics_component.translate(width_part, 0)
+
+        self.width = width
+        self.wall_width = wall_width
+
     def __init__(self, name: str, width: int = 100):
         super().__init__(name)
 
-        self.people: dict[str, Person] = {}
-        self.things_contained: dict[str, Thing] = {}
         self.entrances: dict[Direction, Entrance] = {}
+
+        width_part = width // 3
+        height_part = width * 9 // 10
+        self.people_container = RectangularContainer(f"{name}_people", width_part, height_part)
+        self.things_container = RectangularContainer(f"{name}_things", width_part, height_part)
 
         self.width = width
         self.wall_width = 6
@@ -290,13 +305,13 @@ class Room(GameObject):
         self.prepare_visuals(width)
 
     def add_person(self, person: Person):
-        self.people[person.name] = person
+        self.people_container.add_child(person)
 
     def add_thing(self, thing: Thing):
-        self.things_contained[thing.name] = thing
+        self.things_container.add_child(thing)
 
-    def add_entrance(self, entrance: Entrance, direction: Direction, entrance_width: int = 10):
-        self.entrances[direction] = entrance
+    def set_entrance_position(self, entrance: Entrance, entrance_width: int):
+        direction = entrance.direction
 
         entrance_height = int(self.width * 0.8)
         entrance.prepare_visuals(entrance_width, entrance_height)
@@ -313,9 +328,21 @@ class Room(GameObject):
                 entrance.graphics_component.rotate(180)
             case Direction.RIGHT:
                 pass
+            case _:
+                raise ValueError(f"Invalid direction {direction}")
+
+    def set_all_entrances_positions(self, entrance_width: int = 10):
+        for entrance in self.entrances.values():
+            self.set_entrance_position(entrance, entrance_width)
+
+    def add_entrance(self, entrance: Entrance, direction: Direction, entrance_width: int = 10):
+        self.entrances[direction] = entrance
+        entrance.set_direction(direction)
+
+        self.set_entrance_position(entrance, entrance_width)
 
     def get_children(self) -> list[GameObject]:
-        return list(self.people.values()) + list(self.things_contained.values()) + list(self.entrances.values())
+        return [self.people_container, self.things_container] + list(self.entrances.values())
 
 
 class Place(GameObject):
@@ -330,15 +357,21 @@ class Place(GameObject):
         outer_rect.blit(inner_rect, (1, 1))
 
         self.graphics_component.add_surface(outer_rect)
+        self.width = width
 
-    def __init__(self, name: str, width: int = 100):
+    def __init__(self, name: str, width: int = 100, room_size_ratio: float = 0.9):
         super().__init__(name)
 
+        self.width = width
         self.room: Room | None = None
         self.prepare_visuals(width)
+        self.room_size_ratio = room_size_ratio
 
     def set_room(self, room: Room):
         self.room = room
+        room_width = int(self.width * self.room_size_ratio)
+        room.prepare_visuals(room_width)
+        room.set_all_entrances_positions()
 
     def unset_room(self):
         self.room = None
@@ -348,6 +381,21 @@ class Place(GameObject):
 
 
 class GameBoard(GameObject):
+    def center_board(self, screen_width: int, screen_height: int, size_ratio: float = 0.8):
+        board_width = self.columns * self.place_width
+        board_height = self.rows * self.place_width
+
+        board_size = max(board_width, board_height)
+        max_board_size = min(screen_width, screen_height) * size_ratio
+
+        scale_factor = max_board_size / board_size
+        self.graphics_component.scale(scale_factor, scale_factor)
+
+        top_left_x_offset = (screen_width - board_width * scale_factor) // 2
+        top_left_y_offset = (screen_height - board_height * scale_factor) // 2
+
+        self.graphics_component.translate(top_left_x_offset, top_left_y_offset)
+
     def __init__(self, rows: int, columns: int, place_width: int = 150):
         super().__init__("")
 

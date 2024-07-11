@@ -39,6 +39,7 @@ class BlockyGame:
         height = self.game_config.screen_height
         self.display = pygame.display.set_mode((width, height))
         self.clock = pygame.time.Clock()
+        self.board_state.center_board(width, height, self.game_config.size_ratio)
 
         self.renderer = GameRenderer(self.board_state, self.display)
 
