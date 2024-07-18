@@ -40,6 +40,10 @@ class BlockyGame:
     def __quit_pygame(self):
         pygame.quit()
 
+        # TODO: delete this:
+        print(self.board_state.serialize_state("blocky-problem-test"))
+
+
     def __update_display(self):
         pygame.display.update()
 

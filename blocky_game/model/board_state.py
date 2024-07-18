@@ -213,7 +213,33 @@ class BoardState:
                 case _:
                     raise ValueError(f"Invalid predicate {relation.name}")
 
+        game_objects[game_board.name] = game_board
+
         return game_board, game_objects
+
+    def __serialize_objects(self) -> list[str]:
+        objects_representation = []
+
+        for obj in sorted(self.problem.objects, key=lambda x: (x.type_tag, x.name)):
+            objects_representation.append(f"{obj.name} - {obj.type_tag}")
+
+        return objects_representation
+
+    def __serialize_relations(self) -> list[str]:
+        relations_representation = []
+
+        for obj in self.game_objects.values():
+            object_relations_representation = obj.serialize_relations()
+            relations_representation.extend(object_relations_representation)
+
+        preprocessed_relations = [f"({relation})" for relation in relations_representation]
+        preprocessed_relations.sort()
+        return preprocessed_relations
+
+    def __serialize_goals(self) -> list[str]:
+        goals_representation = [str(self.problem.goal)]
+
+        return goals_representation
 
     def __init__(self, board_domain: BoardDomain, problem_definition_path: str):
         self.problem = pddl.parse_problem(problem_definition_path)
@@ -225,3 +251,27 @@ class BoardState:
 
     def center_board(self, screen_width: int, screen_height: int, size_ratio: float):
         self.game_board.center_board(screen_width, screen_height, size_ratio)
+
+    def serialize_state(self, problem_name: str) -> str:
+        separator = "\n            "
+
+        objects_representation = separator.join(self.__serialize_objects())
+        relations_representation = separator.join(self.__serialize_relations())
+        goals_representation = separator.join(self.__serialize_goals())
+
+        return f'''
+(define (problem {problem_name})
+    (:domain {self.domain.domain.name})
+        (:objects
+            {objects_representation})
+        (:init
+            (reversed right left)
+            (reversed up down)
+            (reversed down up)
+            (reversed left right)
+            
+            {relations_representation})
+        (:goal
+            {goals_representation})
+)
+        '''

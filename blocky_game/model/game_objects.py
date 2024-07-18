@@ -23,6 +23,9 @@ class GameObject(ABC):
     def get_children(self) -> list['GameObject']:
         pass
 
+    def serialize_relations(self) -> list[str]:
+        return []
+
 
 class RectangularContainer(GameObject):
     def __init__(self, name: str, width: int, height: int):
@@ -119,6 +122,9 @@ class Key(TakeableThing):
     def get_children(self) -> list[GameObject]:
         return [self.colour]
 
+    def serialize_relations(self) -> list[str]:
+        return [f"is {self.name} {self.colour.name}"]
+
 
 class Terminal(Thing):
     def prepare_visuals(self, max_size: int):
@@ -177,6 +183,14 @@ class Person(GameObject):
 
     def get_children(self) -> list[GameObject]:
         return list(self.equipment.values())
+
+    def serialize_relations(self) -> list[str]:
+        return [
+            f"owned {thing.name} {self.name}" for thing in self.equipment.values()
+        ] + [
+            f"escaped {self.name}"
+            for _ in [0] if self.escaped
+        ]
 
 
 class Door(GameObject):
@@ -264,6 +278,11 @@ class Entrance(GameObject):
         self.colours = colours
         self.prepare_doors()
 
+    def serialize_relations(self) -> list[str]:
+        return [
+            f"has_door {self.name} {door.name}" for door in self.colours_dict.values()
+        ]
+
 
 class Room(GameObject):
     def prepare_visuals(self, width: int, wall_width: int = 6):
@@ -344,6 +363,25 @@ class Room(GameObject):
     def get_children(self) -> list[GameObject]:
         return [self.people_container, self.things_container] + list(self.entrances.values())
 
+    def serialize_relations(self) -> list[str]:
+        direction_to_str = {
+            Direction.UP: "up",
+            Direction.DOWN: "down",
+            Direction.LEFT: "left",
+            Direction.RIGHT: "right"
+        }
+
+        return [
+            f"passage {self.name} {entrance.name} {direction_to_str[direction]}"
+            for direction, entrance in self.entrances.items()
+        ] + [
+            f"contains {self.name} {thing.name}"
+            for thing in self.things_container.children
+        ] + [
+            f"in {person.name} {self.name}"
+            for person in self.people_container.children
+        ]
+
 
 class Place(GameObject):
     def prepare_visuals(self, width: int):
@@ -378,6 +416,11 @@ class Place(GameObject):
 
     def get_children(self) -> list[GameObject]:
         return [self.room] if self.room is not None else []
+
+    def serialize_relations(self) -> list[str]:
+        return [
+            f"free {self.name}" if self.room is None else f"at {self.room.name} {self.name}"
+        ]
 
 
 class GameBoard(GameObject):
@@ -452,3 +495,29 @@ class GameBoard(GameObject):
 
     def get_children(self) -> list[GameObject]:
         return [place for row in self.board for place in row if place is not None]
+
+    def serialize_relations(self) -> list[str]:
+        relations_representation = []
+
+        for i in range(self.rows):
+            for j in range(self.columns):
+                this_place = self.board[i][j]
+
+                if this_place is None:
+                    continue
+                this_place_name = this_place.name
+
+                if i > 0 and self.board[i - 1][j] is not None:
+                    up_place_name = self.board[i - 1][j].name
+                    relations_representation.append(f"adjacent {this_place_name} {up_place_name} up")
+                if i < self.rows - 1 and self.board[i + 1][j] is not None:
+                    down_place_name = self.board[i + 1][j].name
+                    relations_representation.append(f"adjacent {this_place_name} {down_place_name} down")
+                if j > 0 and self.board[i][j - 1] is not None:
+                    left_place_name = self.board[i][j - 1].name
+                    relations_representation.append(f"adjacent {this_place_name} {left_place_name} left")
+                if j < self.columns - 1 and self.board[i][j + 1] is not None:
+                    right_place_name = self.board[i][j + 1].name
+                    relations_representation.append(f"adjacent {this_place_name} {right_place_name} right")
+
+        return relations_representation
