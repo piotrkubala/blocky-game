@@ -5,12 +5,24 @@ from blocky_game.config.config import PyGameConfig, BlockyGameConfig
 from blocky_game.graphics.game_renderer import GameRenderer
 from blocky_game.model.board_state import BoardState
 from blocky_game.model.board_domain import BoardDomain
+from blocky_game.graphics.animations import AnimationsBox, PulsatingAnimation, LinearAnimation
 
 
 class BlockyGame:
     def __process_mouse_click(self, x: int, y: int):
         point = np.array([x, y])
-        print(self.renderer.get_object_colliding_with_point(point))
+        colliding_object = self.renderer.get_object_colliding_with_point(point, self.animations_box)
+        if colliding_object is None:
+            return
+
+        animation = self.animations_box[colliding_object]
+        if animation is None:
+            new_animation = PulsatingAnimation(1000, 0.1)
+            self.animations_box[colliding_object] = new_animation
+        else:
+            current_transformation = self.renderer.get_object_transform(colliding_object)
+            new_animation = LinearAnimation(1000, current_transformation)
+            self.animations_box[colliding_object] = new_animation
 
     def __process_events(self):
         for event in pygame.event.get():
@@ -36,6 +48,13 @@ class BlockyGame:
 
     def __wait_for_clock(self):
         self.clock.tick(self.game_config.frames_per_second)
+        current_time = pygame.time.get_ticks()
+        self.delta_time = current_time - self.last_tick_time
+        self.last_tick_time = current_time
+
+    def __render_game(self):
+        self.renderer.render(self.animations_box)
+        self.animations_box.update(self.delta_time)
 
     def __init__(self, game_config: PyGameConfig, blocky_game_config: BlockyGameConfig):
         self.game_config = game_config
@@ -50,9 +69,12 @@ class BlockyGame:
         self.clock = pygame.time.Clock()
         self.board_state.center_board(width, height, self.game_config.size_ratio)
 
+        self.animations_box = AnimationsBox()
         self.renderer = GameRenderer(self.board_state, self.display)
 
         self.stopped = False
+        self.last_tick_time = pygame.time.get_ticks()
+        self.delta_time = 0
 
         self.__init_pygame()
 
@@ -61,7 +83,7 @@ class BlockyGame:
             self.__wait_for_clock()
             self.__process_events()
             self.__clear_display()
-            self.renderer.render()
+            self.__render_game()
             self.__update_display()
 
         self.__quit_pygame()
