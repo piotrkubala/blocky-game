@@ -13,4 +13,4 @@ class PyGameConfig:
 @dataclass
 class BlockyGameConfig:
     domain_definition_path: str = "../domain/blocky_game.pddl"
-    problem_definition_path: str = "../problems/problem2.pddl"
+    problem_definition_path: str = "../problems/problem1.pddl"

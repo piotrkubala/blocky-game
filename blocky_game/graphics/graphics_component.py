@@ -104,6 +104,17 @@ class GraphicsComponent(ABC):
         return accumulated_transform[:2, -1]
 
     @staticmethod
+    def is_point_inside_of_surface(point: np.ndarray, accumulated_reverse_transform: np.ndarray, surface: pygame.surface) -> bool:
+        width, height = surface.get_size()
+        point_extended = np.array([point[0], point[1], 1])
+        point_transformed = accumulated_reverse_transform @ point_extended
+
+        is_x_inside = -width / 2 <= point_transformed[0] <= width / 2
+        is_y_inside = -height / 2 <= point_transformed[1] <= height / 2
+
+        return is_x_inside and is_y_inside
+
+    @staticmethod
     def get_transformed_image(surface: pygame.surface,
                               accumulated_transform: np.ndarray) -> tuple[pygame.Surface, np.ndarray]:
         source_image = pygame.surfarray.pixels3d(surface)
@@ -153,6 +164,16 @@ class GraphicsComponent(ABC):
         )
 
         return pygame.surfarray.make_surface(transformed_image), image_size
+
+    def is_point_inside(self, point: np.ndarray, accumulated_transform: np.ndarray) -> bool:
+        if self.hidden:
+            return False
+
+        reverse_transform = np.linalg.inv(accumulated_transform)
+        return any(
+            GraphicsComponent.is_point_inside_of_surface(point, reverse_transform, surface)
+            for surface in self.surfaces
+        )
 
     def draw(self, screen: pygame.Surface, accumulated_transform: np.ndarray = np.identity(3)):
         if self.hidden:

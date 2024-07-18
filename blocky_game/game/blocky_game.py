@@ -1,4 +1,5 @@
 import pygame
+import numpy as np
 
 from blocky_game.config.config import PyGameConfig, BlockyGameConfig
 from blocky_game.graphics.game_renderer import GameRenderer
@@ -7,10 +8,18 @@ from blocky_game.model.board_domain import BoardDomain
 
 
 class BlockyGame:
+    def __process_mouse_click(self, x: int, y: int):
+        point = np.array([x, y])
+        print(self.renderer.get_object_colliding_with_point(point))
+
     def __process_events(self):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.stopped = True
+            match event.type:
+                case pygame.QUIT:
+                    self.stopped = True
+                case pygame.MOUSEBUTTONDOWN:
+                    x, y = pygame.mouse.get_pos()
+                    self.__process_mouse_click(x, y)
 
     def __init_pygame(self):
         pygame.init()
