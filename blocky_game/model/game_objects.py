@@ -13,6 +13,17 @@ class Direction(Enum):
     DOWN = (1, 0)
     LEFT = (0, -1)
 
+    def reverse(self):
+        match self:
+            case Direction.UP:
+                return Direction.DOWN
+            case Direction.DOWN:
+                return Direction.UP
+            case Direction.LEFT:
+                return Direction.RIGHT
+            case Direction.RIGHT:
+                return Direction.LEFT
+
 
 class GameObject(ABC):
     def __init__(self, name: str):
@@ -36,20 +47,29 @@ class RectangularContainer(GameObject):
 
         self.children: list[GameObject] = []
 
-    def add_child(self, child: GameObject):
-        self.children.append(child)
-
+    def update_positions(self):
         child_space = self.height // len(self.children)
 
         for i, child in enumerate(self.children):
             child.graphics_component.clear_translate()
             child.graphics_component.translate(0, i * child_space -self.height // 2 + child_space // 2)
 
+    def add_child(self, child: GameObject):
+        self.children.append(child)
+        self.update_positions()
+
+    def remove_child(self, child: GameObject):
+        self.children.remove(child)
+        self.update_positions()
+
     def clear_children(self):
         self.children = []
 
     def get_children(self) -> list[GameObject]:
         return self.children
+
+    def is_inside_by_name(self, name: str) -> bool:
+        return any(child.name == name for child in self.children)
 
 
 class Colour(GameObject):
@@ -125,6 +145,9 @@ class Key(TakeableThing):
     def serialize_relations(self) -> list[str]:
         return [f"is {self.name} {self.colour.name}"]
 
+    def is_of_colour(self, colour: Colour) -> bool:
+        return self.colour.name == colour.name
+
 
 class Terminal(Thing):
     def prepare_visuals(self, max_size: int):
@@ -191,6 +214,12 @@ class Person(GameObject):
             f"escaped {self.name}"
             for _ in [0] if self.escaped
         ]
+
+    def is_owned(self, thing: TakeableThing) -> bool:
+        return thing.name in self.equipment
+
+    def did_escape(self) -> bool:
+        return self.escaped
 
 
 class Door(GameObject):
@@ -283,6 +312,9 @@ class Entrance(GameObject):
             f"has_door {self.name} {door.name}" for door in self.colours_dict.values()
         ]
 
+    def has_door(self, colour: Colour) -> bool:
+        return colour.name in self.colours_dict
+
 
 class Room(GameObject):
     def prepare_visuals(self, width: int, wall_width: int = 6):
@@ -325,6 +357,9 @@ class Room(GameObject):
 
     def add_person(self, person: Person):
         self.people_container.add_child(person)
+
+    def remove_person(self, person: Person):
+        self.people_container.remove_child(person)
 
     def add_thing(self, thing: Thing):
         self.things_container.add_child(thing)
@@ -382,6 +417,15 @@ class Room(GameObject):
             for person in self.people_container.children
         ]
 
+    def is_person_in(self, person: Person) -> bool:
+        return self.people_container.is_inside_by_name(person.name)
+
+    def does_contain(self, thing: Thing) -> bool:
+        return self.things_container.is_inside_by_name(thing.name)
+
+    def has_passage(self, entrance: Entrance, direction: Direction) -> bool:
+        return self.entrances.get(direction).name == entrance.name
+
 
 class Place(GameObject):
     def prepare_visuals(self, width: int):
@@ -422,6 +466,12 @@ class Place(GameObject):
             f"free {self.name}" if self.room is None else f"at {self.room.name} {self.name}"
         ]
 
+    def is_room_at(self, room: Room) -> bool:
+        return self.room is not None and self.room.name == room.name
+
+    def is_free(self) -> bool:
+        return self.room is None
+
 
 class GameBoard(GameObject):
     def center_board(self, screen_width: int, screen_height: int, size_ratio: float = 0.8):
@@ -456,6 +506,7 @@ class GameBoard(GameObject):
         self.columns: int = columns
         self.board: list[list[None | Place]] = [[None for _ in range(columns)] for _ in range(rows)]
         self.colours: list[Colour] = []
+        self.place_name_to_coordinates: dict[str, tuple[int, int]] = {}
 
         self.min_row_index = rows
         self.min_column_index = columns
@@ -469,6 +520,11 @@ class GameBoard(GameObject):
     def __setitem__(self, key: tuple[int, int], value: Place | None):
         row, column = key
         self.board[row][column] = value
+
+        if value is None:
+            return
+
+        self.place_name_to_coordinates[value.name] = (row, column)
         delta = self.place_width - 1
         value.prepare_visuals(self.place_width)
         value.graphics_component.clear_transform()
@@ -521,3 +577,12 @@ class GameBoard(GameObject):
                     relations_representation.append(f"adjacent {this_place_name} {right_place_name} right")
 
         return relations_representation
+
+    def are_adjacent(self, place1: Place, place2: Place) -> bool:
+        row1, column1 = self.place_name_to_coordinates[place1.name]
+        row2, column2 = self.place_name_to_coordinates[place2.name]
+
+        if abs(row1 - row2) + abs(column1 - column2) != 1:
+            return False
+
+        return row1 == row2 or column1 == column2

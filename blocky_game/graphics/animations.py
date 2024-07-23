@@ -84,3 +84,5 @@ class AnimationsBox:
         for key in animations_key_to_delete:
             del self.animations[key]
 
+    def set_move_animation(self, game_object: GameObject, duration: float, start_transformation: np.ndarray):
+        self[game_object] = LinearAnimation(duration, start_transformation)
