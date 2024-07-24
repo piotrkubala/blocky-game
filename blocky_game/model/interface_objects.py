@@ -3,7 +3,7 @@ import pygame
 from blocky_game.graphics.action_button_processor import GraphicalActionButtonProcessor, \
     GraphicalGoActionButtonProcessor, GraphicalTakeActionButtonProcessor, GraphicalEscapeActionButtonProcessor, \
     GraphicalMoveActionButtonProcessor
-from blocky_game.model.game_objects import GameObject, RectangularContainer, GameBoard
+from blocky_game.model.game_objects import GameObject, RectangularContainer, GameScreen
 from blocky_game.graphics.graphics_component import get_font
 
 
@@ -21,6 +21,7 @@ class ActionButton(GameObject):
         rect.fill((255, 255, 0))
 
         action_name = self.action_processor.get_name().upper()
+
         roboto_font = get_font("roboto", "Roboto-Regular.ttf", 20)
         text_surface = roboto_font.render(action_name, True, (0, 0, 0))
 
@@ -47,8 +48,10 @@ class ActionButtonContainer(GameObject):
         self.action_buttons.graphics_component.clear_transform()
         self.action_buttons.graphics_component.translate(screen_width - self.width / 2, screen_height / 2)
 
-    def __init__(self, name: str, width: int = 200, height: int = 700):
+    def __init__(self, name: str, game_screen: GameScreen, width: int = 200, height: int = 700):
         super().__init__(name)
+
+        self.game_screen = game_screen
 
         self.width = width
         self.height = height
@@ -63,10 +66,10 @@ class ActionButtonContainer(GameObject):
 
     def create_buttons(self):
         action_processors = [
-            GraphicalGoActionButtonProcessor(),
-            GraphicalTakeActionButtonProcessor(),
-            GraphicalEscapeActionButtonProcessor(),
-            GraphicalMoveActionButtonProcessor()
+            GraphicalGoActionButtonProcessor(self.game_screen),
+            GraphicalTakeActionButtonProcessor(self.game_screen),
+            GraphicalEscapeActionButtonProcessor(self.game_screen),
+            GraphicalMoveActionButtonProcessor(self.game_screen)
         ]
 
         for action_processor in action_processors:
@@ -78,18 +81,3 @@ class ActionButtonContainer(GameObject):
         return [self.action_buttons]
 
 
-class GameScreen(GameObject):
-    def initialize_positions(self, screen_width: int, screen_height: int, size_ratio: float):
-        self.graphics_component.clear_transform()
-
-        self.game_board.center_board(screen_width, screen_height, size_ratio)
-        self.action_button_container.set_position(screen_width, screen_height)
-
-    def __init__(self, game_board: GameBoard):
-        super().__init__("screen")
-
-        self.game_board = game_board
-        self.action_button_container = ActionButtonContainer("action_buttons")
-
-    def get_children(self) -> list[GameObject]:
-        return [self.game_board, self.action_button_container]

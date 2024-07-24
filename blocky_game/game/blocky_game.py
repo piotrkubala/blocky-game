@@ -3,6 +3,7 @@ import numpy as np
 
 from blocky_game.config.config import PyGameConfig, BlockyGameConfig
 from blocky_game.graphics.game_renderer import GameRenderer
+from blocky_game.graphics.interface_manager import InterfaceManager
 from blocky_game.model.board_state import BoardState
 from blocky_game.model.board_domain import BoardDomain
 from blocky_game.graphics.animations import AnimationsBox, PulsatingAnimation, LinearAnimation
@@ -75,6 +76,8 @@ class BlockyGame:
         self.display = pygame.display.set_mode((width, height))
         self.clock = pygame.time.Clock()
         self.board_state.center_board(width, height, self.game_config.size_ratio)
+
+        self.interface_manager = InterfaceManager(self.board_state.game_screen, width, height)
 
         self.animations_box = AnimationsBox()
         self.renderer = GameRenderer(self.board_state, self.display)

@@ -14,8 +14,7 @@ from .game_objects import (
     Key,
     Terminal,
     MapExit,
-    Entrance, )
-from .interface_objects import GameScreen
+    Entrance, GameScreen, )
 
 
 def place_name_to_coordinates(place_name: str) -> tuple[int, int]:
@@ -248,10 +247,10 @@ class BoardState:
         self.problem.check(self.domain.domain)
 
         self.game_board, self.game_objects = self.__generate_representation()
-        self.game_screen = GameScreen(self.game_board)
+        self.game_screen = GameScreen(self.game_board, self.game_objects)
 
     def center_board(self, screen_width: int, screen_height: int, size_ratio: float):
-        self.game_screen.initialize_positions(screen_width, screen_height, size_ratio)
+        self.game_board.center_board(screen_width, screen_height, size_ratio)
 
     def serialize_state(self, problem_name: str) -> str:
         separator = "\n            "

@@ -589,3 +589,28 @@ class GameBoard(GameObject):
             return False
 
         return row1 == row2 or column1 == column2
+
+
+class GameInterface(GameObject):
+    def __init__(self, name: str):
+        super().__init__(name)
+
+        self.children = []
+
+    def get_children(self) -> list[GameObject]:
+        return self.children
+
+    def add_child(self, child: GameObject):
+        self.children.append(child)
+
+
+class GameScreen(GameObject):
+    def __init__(self, game_board: GameBoard, game_objects: dict[str, GameObject]):
+        super().__init__("screen")
+
+        self.game_board = game_board
+        self.interface = GameInterface("interface")
+        self.game_objects = game_objects
+
+    def get_children(self) -> list[GameObject]:
+        return [self.game_board, self.interface]
