@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 import re
 
 from blocky_game.graphics.animations import AnimationsBox
@@ -95,3 +95,8 @@ class TextActionGenerator(ActionGenerator):
             self.actions.append(action)
         except ValueError as e:
             print(e)
+
+
+class GraphicalActionGenerator(ActionGenerator):
+    def __init__(self, animations_box: AnimationsBox, renderer: GameRenderer, board_state: BoardState):
+        super().__init__(animations_box, renderer, board_state)

@@ -21,6 +21,7 @@ class GameRenderer:
         animated_transformation = self.__get_animated_transformation(game_object, animations_box, transformation)
         game_object.graphics_component.draw(self.screen, animated_transformation)
         self.current_transforms[game_object.name] = animated_transformation
+        self.rendered_objects[game_object.name] = game_object
 
         for child in game_object.get_children():
             self.__render_game_object(child, animated_transformation, animations_box)
@@ -47,13 +48,14 @@ class GameRenderer:
         self.board_state = board_state
         self.screen = screen
         self.current_transforms: dict[str, np.ndarray] = {}
+        self.rendered_objects: dict[str, GameObject] = {}
 
     def render(self, animations_box: AnimationsBox):
-        self.__render_game_object(self.board_state.game_board, np.identity(3), animations_box)
+        self.__render_game_object(self.board_state.game_screen, np.identity(3), animations_box)
 
     def get_objects_colliding_with_point(self, point: np.ndarray, animations_box: AnimationsBox
                                          ) -> list[tuple[int, GameObject]]:
-        return self.__get_objects_colliding_with_point(point, self.board_state.game_board, animations_box)
+        return self.__get_objects_colliding_with_point(point, self.board_state.game_screen, animations_box)
 
     def get_object_colliding_with_point(self, point: np.ndarray, animations_box: AnimationsBox) -> GameObject | None:
         objects_colliding_with_point = self.get_objects_colliding_with_point(point, animations_box)
@@ -66,3 +68,6 @@ class GameRenderer:
 
     def get_object_transform(self, game_object: GameObject) -> np.ndarray:
         return self.current_transforms.get(game_object.name, np.identity(3))
+
+    def get_object_by_name(self, name: str) -> GameObject | None:
+        return self.rendered_objects.get(name, None)
