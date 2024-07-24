@@ -35,6 +35,7 @@ class BlockyGame:
 
     def __init_pygame(self):
         pygame.init()
+        pygame.font.init()
         pygame.display.set_caption(self.game_config.screen_title)
 
     def __quit_pygame(self):
@@ -64,6 +65,8 @@ class BlockyGame:
         self.game_config = game_config
         self.blocky_game_config = blocky_game_config
 
+        self.__init_pygame()
+
         self.board_domain = BoardDomain(blocky_game_config.domain_definition_path)
         self.board_state = BoardState(self.board_domain, blocky_game_config.problem_definition_path)
 
@@ -79,8 +82,6 @@ class BlockyGame:
         self.stopped = False
         self.last_tick_time = pygame.time.get_ticks()
         self.delta_time = 0
-
-        self.__init_pygame()
 
     def main_loop(self):
         while not self.stopped:

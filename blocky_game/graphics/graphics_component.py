@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
+from functools import lru_cache
 
 import pygame
 import numpy as np
 import cv2
 
 
+@lru_cache(maxsize=1024)
 def load_texture_with_max_size(texture_path: str, max_size: int) -> pygame.Surface:
     sprite_surface = pygame.image.load(texture_path)
     texture_width, texture_height = sprite_surface.get_size()
@@ -12,6 +14,12 @@ def load_texture_with_max_size(texture_path: str, max_size: int) -> pygame.Surfa
     scale_factor = max_size / max_dimension
     new_width, new_height = int(texture_width * scale_factor), int(texture_height * scale_factor)
     return pygame.transform.smoothscale(sprite_surface, (new_width, new_height))
+
+
+@lru_cache(maxsize=64)
+def get_font(family_name: str, file_name: str, size: int) -> pygame.font.Font:
+    path = f"../fonts/{family_name}/{file_name}"
+    return pygame.font.Font(path, size)
 
 
 class GraphicsComponent(ABC):

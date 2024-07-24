@@ -6,7 +6,8 @@ from blocky_game.model.board_state import BoardState, GameObject
 
 
 class GameRenderer:
-    def __get_animated_transformation(self, game_object: GameObject,
+    @staticmethod
+    def __get_animated_transformation(game_object: GameObject,
                                       animations_box: AnimationsBox,
                                       transformation: np.ndarray) -> np.ndarray:
         animation = animations_box[game_object]
@@ -18,7 +19,7 @@ class GameRenderer:
 
     def __render_game_object(self, game_object: GameObject, transformation: np.ndarray, animations_box: AnimationsBox):
         transformation = transformation @ game_object.graphics_component.transform
-        animated_transformation = self.__get_animated_transformation(game_object, animations_box, transformation)
+        animated_transformation = GameRenderer.__get_animated_transformation(game_object, animations_box, transformation)
         game_object.graphics_component.draw(self.screen, animated_transformation)
         self.current_transforms[game_object.name] = animated_transformation
         self.rendered_objects[game_object.name] = game_object
@@ -31,7 +32,7 @@ class GameRenderer:
                                            transformation: np.ndarray = np.identity(3), depth: int = 0
                                            ) -> list[tuple[int, GameObject]]:
         transformation = transformation @ game_object.graphics_component.transform
-        animated_transformation = self.__get_animated_transformation(game_object, animation_box, transformation)
+        animated_transformation = GameRenderer.__get_animated_transformation(game_object, animation_box, transformation)
 
         colliding_objects = []
         if game_object.graphics_component.is_point_inside(point, animated_transformation):

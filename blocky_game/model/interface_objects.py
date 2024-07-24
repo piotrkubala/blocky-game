@@ -4,6 +4,7 @@ from blocky_game.graphics.action_button_processor import GraphicalActionButtonPr
     GraphicalGoActionButtonProcessor, GraphicalTakeActionButtonProcessor, GraphicalEscapeActionButtonProcessor, \
     GraphicalMoveActionButtonProcessor
 from blocky_game.model.game_objects import GameObject, RectangularContainer, GameBoard
+from blocky_game.graphics.graphics_component import get_font
 
 
 class ActionButtonState(GameObject):
@@ -18,6 +19,14 @@ class ActionButton(GameObject):
     def prepare_visuals(self, width: int = 140, height: int = 120):
         rect = pygame.Surface((width, height))
         rect.fill((255, 255, 0))
+
+        action_name = self.action_processor.get_name().upper()
+        roboto_font = get_font("roboto", "Roboto-Regular.ttf", 20)
+        text_surface = roboto_font.render(action_name, True, (0, 0, 0))
+
+        text_width, text_height = text_surface.get_size()
+
+        rect.blit(text_surface, (width / 2 - text_width / 2, height - text_height / 2 * 3))
 
         self.graphics_component.add_surface(rect)
 
