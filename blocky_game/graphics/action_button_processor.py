@@ -1,6 +1,7 @@
 from abc import abstractmethod, ABC
 
 from blocky_game.model.game_objects import GameObject, GameScreen
+from blocky_game.model.game_objects_container import GameObjectsContainer
 
 
 class GameObjectsAggregator(ABC):
@@ -18,7 +19,14 @@ class GameObjectsAggregator(ABC):
 
 
 class ActionProcessorActivity(ABC):
-    pass
+    @abstractmethod
+    def select_active(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer) -> list[GameObject]:
+        pass
+
+
+# class ActionProcessorPersonSelectionActivity(ActionProcessorActivity):
+#     def select_active(self, game_screen: GameScreen) -> list[GameObject]:
+#         return list(game_screen.game_objects_container["person"].values())
 
 
 class ActionActivitiesSequence:
@@ -50,8 +58,9 @@ class ActionActivitiesSequence:
 
 
 class GraphicalActionButtonProcessor(ABC):
-    def __init__(self, game_screen: GameScreen):
+    def __init__(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer):
         self.game_screen = game_screen
+        self.game_objects_container = game_objects_container
 
     @abstractmethod
     def get_name(self) -> str:
@@ -59,32 +68,32 @@ class GraphicalActionButtonProcessor(ABC):
 
 
 class GraphicalGoActionButtonProcessor(GraphicalActionButtonProcessor):
-    def __init__(self, game_screen: GameScreen):
-        super().__init__(game_screen)
+    def __init__(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer):
+        super().__init__(game_screen, game_objects_container)
 
     def get_name(self) -> str:
         return "go"
 
 
 class GraphicalTakeActionButtonProcessor(GraphicalActionButtonProcessor):
-    def __init__(self, game_screen: GameScreen):
-        super().__init__(game_screen)
+    def __init__(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer):
+        super().__init__(game_screen, game_objects_container)
 
     def get_name(self) -> str:
         return "take"
 
 
 class GraphicalEscapeActionButtonProcessor(GraphicalActionButtonProcessor):
-    def __init__(self, game_screen: GameScreen):
-        super().__init__(game_screen)
+    def __init__(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer):
+        super().__init__(game_screen, game_objects_container)
 
     def get_name(self) -> str:
         return "escape"
 
 
 class GraphicalMoveActionButtonProcessor(GraphicalActionButtonProcessor):
-    def __init__(self, game_screen: GameScreen):
-        super().__init__(game_screen)
+    def __init__(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer):
+        super().__init__(game_screen, game_objects_container)
 
     def get_name(self) -> str:
         return "move"

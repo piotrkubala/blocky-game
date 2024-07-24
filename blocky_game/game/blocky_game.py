@@ -77,7 +77,11 @@ class BlockyGame:
         self.clock = pygame.time.Clock()
         self.board_state.center_board(width, height, self.game_config.size_ratio)
 
-        self.interface_manager = InterfaceManager(self.board_state.game_screen, width, height)
+        self.interface_manager = InterfaceManager(
+            self.board_state.game_screen,
+            self.board_state.game_objects_container,
+            width, height
+        )
 
         self.animations_box = AnimationsBox()
         self.renderer = GameRenderer(self.board_state, self.display)

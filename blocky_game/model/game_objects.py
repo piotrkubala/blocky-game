@@ -605,12 +605,11 @@ class GameInterface(GameObject):
 
 
 class GameScreen(GameObject):
-    def __init__(self, game_board: GameBoard, game_objects: dict[str, GameObject]):
+    def __init__(self, game_board: GameBoard):
         super().__init__("screen")
 
         self.game_board = game_board
         self.interface = GameInterface("interface")
-        self.game_objects = game_objects
 
     def get_children(self) -> list[GameObject]:
         return [self.game_board, self.interface]

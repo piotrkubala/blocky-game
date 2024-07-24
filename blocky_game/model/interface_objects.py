@@ -5,6 +5,7 @@ from blocky_game.graphics.action_button_processor import GraphicalActionButtonPr
     GraphicalMoveActionButtonProcessor
 from blocky_game.model.game_objects import GameObject, RectangularContainer, GameScreen
 from blocky_game.graphics.graphics_component import get_font
+from blocky_game.model.game_objects_container import GameObjectsContainer
 
 
 class ActionButtonState(GameObject):
@@ -48,10 +49,13 @@ class ActionButtonContainer(GameObject):
         self.action_buttons.graphics_component.clear_transform()
         self.action_buttons.graphics_component.translate(screen_width - self.width / 2, screen_height / 2)
 
-    def __init__(self, name: str, game_screen: GameScreen, width: int = 200, height: int = 700):
+    def __init__(self, name: str, game_screen: GameScreen,
+                 game_objects_container: GameObjectsContainer,
+                 width: int = 200, height: int = 700):
         super().__init__(name)
 
         self.game_screen = game_screen
+        self.game_objects_container = game_objects_container
 
         self.width = width
         self.height = height
@@ -66,10 +70,10 @@ class ActionButtonContainer(GameObject):
 
     def create_buttons(self):
         action_processors = [
-            GraphicalGoActionButtonProcessor(self.game_screen),
-            GraphicalTakeActionButtonProcessor(self.game_screen),
-            GraphicalEscapeActionButtonProcessor(self.game_screen),
-            GraphicalMoveActionButtonProcessor(self.game_screen)
+            GraphicalGoActionButtonProcessor(self.game_screen, self.game_objects_container),
+            GraphicalTakeActionButtonProcessor(self.game_screen, self.game_objects_container),
+            GraphicalEscapeActionButtonProcessor(self.game_screen, self.game_objects_container),
+            GraphicalMoveActionButtonProcessor(self.game_screen, self.game_objects_container)
         ]
 
         for action_processor in action_processors:

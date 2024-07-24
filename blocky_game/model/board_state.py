@@ -15,6 +15,7 @@ from .game_objects import (
     Terminal,
     MapExit,
     Entrance, GameScreen, )
+from .game_objects_container import GameObjectsContainer
 
 
 def place_name_to_coordinates(place_name: str) -> tuple[int, int]:
@@ -108,7 +109,7 @@ def assert_game_object_type(game_object: GameObject, expected_type: str):
 
 
 class BoardState:
-    def __generate_representation(self) -> tuple[GameBoard, dict[str, GameObject]]:
+    def __generate_representation(self) -> tuple[GameBoard, dict[str, GameObject], GameObjectsContainer]:
         max_row, max_column = 0, 0
 
         for obj in self.problem.objects:
@@ -119,6 +120,7 @@ class BoardState:
 
         game_board = GameBoard(max_row + 1, max_column + 1)
         game_objects = {}
+        game_objects_container = GameObjectsContainer()
 
         for obj in self.problem.objects:
             game_object = pddl_type_to_object(obj.type_tag, obj.name)
@@ -127,6 +129,7 @@ class BoardState:
                 continue
 
             game_objects[obj.name] = game_object
+            game_objects_container.add_object(obj.type_tag, game_object)
 
             if obj.type_tag == "place":
                 row, column = place_name_to_coordinates(obj.name)
@@ -213,8 +216,9 @@ class BoardState:
                     raise ValueError(f"Invalid predicate {relation.name}")
 
         game_objects[game_board.name] = game_board
+        game_objects_container.add_object("board", game_board)
 
-        return game_board, game_objects
+        return game_board, game_objects, game_objects_container
 
     def __serialize_objects(self) -> list[str]:
         objects_representation = []
@@ -246,8 +250,8 @@ class BoardState:
 
         self.problem.check(self.domain.domain)
 
-        self.game_board, self.game_objects = self.__generate_representation()
-        self.game_screen = GameScreen(self.game_board, self.game_objects)
+        self.game_board, self.game_objects, self.game_objects_container = self.__generate_representation()
+        self.game_screen = GameScreen(self.game_board)
 
     def center_board(self, screen_width: int, screen_height: int, size_ratio: float):
         self.game_board.center_board(screen_width, screen_height, size_ratio)
