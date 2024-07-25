@@ -47,12 +47,17 @@ class InterfaceManager:
 
         return False
 
+    def __deactivate_button(self, button: ActionButton):
+        active_objects = button.action_processor.get_active()
+        self.unmark_objects(active_objects)
+        button.deactivate()
+
     def __process_when_clicked(self, clicked_buttons: list[ActionButton], colliding_object: GameObject):
         print("Processing when clicked")
         match colliding_object:
             case ActionButton() as action_button:
                 if action_button in clicked_buttons:
-                    action_button.deactivate()
+                    self.__deactivate_button(action_button)
             case GameObject():
                 for button in clicked_buttons:
                     if self.__toggle_select_object(button, colliding_object):

@@ -44,6 +44,14 @@ class ActionProcessorRoomSelectionActivity(ActionProcessorActivity):
         return list(self.game_objects_container["room"].values())
 
 
+class ActionProcessorTakeableThingSelectionActivity(ActionProcessorActivity):
+    def __init__(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer):
+        super().__init__(game_screen, game_objects_container)
+
+    def select_active(self) -> list[GameObject]:
+        return list(self.game_objects_container["takeable"].values())
+
+
 class ActionActivitiesSequence:
     def __init__(self, activities: list[ActionProcessorActivity]):
         self.activities = activities
@@ -148,6 +156,11 @@ class GraphicalGoActionButtonProcessor(GraphicalActionButtonProcessor):
 class GraphicalTakeActionButtonProcessor(GraphicalActionButtonProcessor):
     def __init__(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer):
         super().__init__(game_screen, game_objects_container)
+
+        self.activities = ActionActivitiesSequence([
+            ActionProcessorPersonSelectionActivity(game_screen, game_objects_container),
+            ActionProcessorTakeableThingSelectionActivity(game_screen, game_objects_container)
+        ])
 
     def get_name(self) -> str:
         return "take"
