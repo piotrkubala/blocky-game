@@ -8,6 +8,14 @@ from blocky_game.model.interface_objects import ActionButtonContainer, ActionBut
 
 
 class InterfaceManager:
+    def __mark_possible_objects(self, action_button: ActionButton):
+        action_processor = action_button.action_processor
+        possible_objects = action_processor.get_active()
+        print(f"Possible objects: {possible_objects}")
+
+        for game_object in possible_objects:
+            self.mark_object(game_object)
+
     def __initialize_interface(self):
         self.action_button_container = ActionButtonContainer(
             "action_button_container", self.game_screen,
@@ -18,6 +26,7 @@ class InterfaceManager:
         self.game_screen.interface.add_child(self.action_button_container)
 
     def __process_when_clicked(self, clicked_buttons: list[ActionButton], colliding_object: GameObject):
+        print("Processing when clicked")
         match colliding_object:
             case ActionButton() as action_button:
                 if action_button in clicked_buttons:
@@ -25,7 +34,7 @@ class InterfaceManager:
             case GameObject():
                 for button in clicked_buttons:
                     if button.action_processor.select_object(colliding_object):
-                        self.click_object(colliding_object)
+                        self.mark_object(colliding_object)
                         return
             case _:
                 raise ValueError(f"Unknown object type: {type(colliding_object)}")
@@ -34,8 +43,8 @@ class InterfaceManager:
         print("Processing when not clicked")
         match colliding_object:
             case ActionButton() as action_button:
-                print("Action button clicked")
                 action_button.activate()
+                self.__mark_possible_objects(action_button)
             case GameObject():
                 pass
             case _:
@@ -53,21 +62,21 @@ class InterfaceManager:
 
         self.__initialize_interface()
 
-    def click_object(self, game_object: GameObject):
+    def mark_object(self, game_object: GameObject):
         new_animation = PulsatingAnimation(1000, 0.1)
         self.animations_box[game_object] = new_animation
 
-    def unclick_object(self, game_object: GameObject):
+    def unmark_object(self, game_object: GameObject):
         current_transformation = self.renderer.get_object_transform(game_object)
         new_animation = LinearAnimation(1000, current_transformation)
         self.animations_box[game_object] = new_animation
 
-    def toggle_object_click(self, game_object: GameObject):
+    def toggle_mark_object(self, game_object: GameObject):
         animation = self.animations_box[game_object]
         if animation is None:
-            self.click_object(game_object)
+            self.mark_object(game_object)
         else:
-            self.unclick_object(game_object)
+            self.unmark_object(game_object)
 
     def process_click(self, x: int, y: int):
         point = np.array([x, y])

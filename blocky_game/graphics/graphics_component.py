@@ -23,10 +23,19 @@ def get_font(family_name: str, file_name: str, size: int) -> pygame.font.Font:
 
 
 class GraphicsComponent(ABC):
-    def __init__(self):
+    def __init__(self, selection_colour: tuple[int, int, int] = (0, 0, 0), seletion_margin: int = 6):
         self.transform = np.identity(3)
         self.surfaces: list[pygame.surface] = []
         self.hidden = False
+        self.selected: bool = False
+        self.selection_colour = selection_colour
+        self.selection_margin = seletion_margin
+
+    def select(self):
+        self.selected = True
+
+    def deselect(self):
+        self.selected = False
 
     def add_surface(self, surface: pygame.surface):
         self.surfaces.append(surface)
@@ -183,17 +192,49 @@ class GraphicsComponent(ABC):
             for surface in self.surfaces
         )
 
+    def __draw_surface(self, screen: pygame.Surface, accumulated_transform: np.ndarray,
+                       surface: pygame.Surface) -> tuple[int, int, int, int]:
+        transformed_position = GraphicsComponent.get_transformed_position(accumulated_transform)
+        transformed_image, image_size = GraphicsComponent.get_transformed_image(
+            surface, accumulated_transform
+        )
+
+        new_x, new_y = transformed_position - image_size / 2
+        casted_x, casted_y = int(new_x), int(new_y)
+        image_size_x, image_size_y = image_size
+
+        screen.blit(transformed_image, (casted_x, casted_y))
+
+        return casted_x, casted_y, image_size_x, image_size_y
+
     def draw(self, screen: pygame.Surface, accumulated_transform: np.ndarray = np.identity(3)):
         if self.hidden:
             return
 
+        min_x, min_y = 0, 0
+        max_x, max_y = 0, 0
+        found_first = False
+
         for surface in self.surfaces:
-            transformed_position = GraphicsComponent.get_transformed_position(accumulated_transform)
-            transformed_image, image_size = GraphicsComponent.get_transformed_image(
-                surface, accumulated_transform
-            )
+            casted_x, casted_y, image_size_x, image_size_y = self.__draw_surface(screen, accumulated_transform, surface)
 
-            new_x, new_y = transformed_position - image_size / 2
-            casted_x, casted_y = int(new_x), int(new_y)
+            if found_first:
+                min_x = min(min_x, casted_x)
+                min_y = min(min_y, casted_y)
+                max_x = max(max_x, casted_x + image_size_x)
+                max_y = max(max_y, casted_y + image_size_y)
+            else:
+                min_x, min_y = casted_x, casted_y
+                max_x, max_y = casted_x + image_size_x, casted_y + image_size_y
+                found_first = True
 
-            screen.blit(transformed_image, (casted_x, casted_y))
+        if self.selected and found_first:
+            rect_width = max_x - min_x + self.selection_margin * 2
+            rect_height = max_y - min_y + self.selection_margin * 2
+
+            rect_x = min_x - self.selection_margin
+            rect_y = min_y - self.selection_margin
+
+            pygame.draw.rect(screen, self.selection_colour, (rect_x, rect_y, rect_width, rect_height), 2)
+
+

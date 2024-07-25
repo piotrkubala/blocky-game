@@ -1,12 +1,11 @@
 import pygame
-import numpy as np
 
 from blocky_game.config.config import PyGameConfig, BlockyGameConfig
 from blocky_game.graphics.game_renderer import GameRenderer
 from blocky_game.graphics.interface_manager import InterfaceManager
 from blocky_game.model.board_state import BoardState
 from blocky_game.model.board_domain import BoardDomain
-from blocky_game.graphics.animations import AnimationsBox, PulsatingAnimation, LinearAnimation
+from blocky_game.graphics.animations import AnimationsBox
 
 
 class BlockyGame:
