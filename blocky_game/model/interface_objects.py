@@ -17,9 +17,11 @@ class ActionButtonState(GameObject):
 
 
 class ActionButton(GameObject):
-    def prepare_visuals(self, width: int = 140, height: int = 120):
-        rect = pygame.Surface((width, height))
-        rect.fill((255, 255, 0))
+    def prepare_visuals(self):
+        self.graphics_component.clear_surfaces()
+
+        rect = pygame.Surface((self.width, self.height))
+        rect.fill(self.current_colour)
 
         action_name = self.action_processor.get_name().upper()
 
@@ -28,20 +30,39 @@ class ActionButton(GameObject):
 
         text_width, text_height = text_surface.get_size()
 
-        rect.blit(text_surface, (width / 2 - text_width / 2, height - text_height / 2 * 3))
+        rect.blit(text_surface, (self.width / 2 - text_width / 2, self.height - text_height / 2 * 3))
 
         self.graphics_component.add_surface(rect)
 
-    def __init__(self, name: str, action_processor: GraphicalActionButtonProcessor):
+    def __init__(self, name: str, action_processor: GraphicalActionButtonProcessor,
+                 width: int = 140, height: int = 120):
         super().__init__(name)
 
         self.action_button_state: ActionButtonState = ActionButtonState(f"{name}_action_button_state")
         self.action_processor = action_processor
 
+        self.active_colour = (0, 200, 0)
+        self.not_active_colour = (200, 200, 0)
+
+        self.width = width
+        self.height = height
+
+        self.current_colour = self.not_active_colour
+
         self.prepare_visuals()
 
     def is_active(self) -> bool:
         return self.action_processor.is_active
+
+    def activate(self):
+        self.action_processor.activate()
+        self.current_colour = self.active_colour
+        self.prepare_visuals()
+
+    def deactivate(self):
+        self.action_processor.deactivate()
+        self.current_colour = self.not_active_colour
+        self.prepare_visuals()
 
     def get_children(self) -> list[GameObject]:
         return [self.action_button_state]

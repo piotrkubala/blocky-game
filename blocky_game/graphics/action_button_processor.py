@@ -86,9 +86,18 @@ class GraphicalActionButtonProcessor(ABC):
 
     def deactivate(self):
         self.is_active = False
+        self.activities.reset()
 
-    def select_object(self, game_object: GameObject):
+    def select_object(self, game_object: GameObject) -> bool:
+        if not self.is_active:
+            return False
+
+        if game_object not in self.get_active():
+            return False
+
         self.selected_objects.append(game_object)
+
+        return True
 
     def get_active(self) -> list[GameObject]:
         current_activity = self.activities.get_current_activity()

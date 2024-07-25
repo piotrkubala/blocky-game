@@ -18,10 +18,28 @@ class InterfaceManager:
         self.game_screen.interface.add_child(self.action_button_container)
 
     def __process_when_clicked(self, clicked_buttons: list[ActionButton], colliding_object: GameObject):
-        pass
+        match colliding_object:
+            case ActionButton() as action_button:
+                if action_button in clicked_buttons:
+                    action_button.deactivate()
+            case GameObject():
+                for button in clicked_buttons:
+                    if button.action_processor.select_object(colliding_object):
+                        self.click_object(colliding_object)
+                        return
+            case _:
+                raise ValueError(f"Unknown object type: {type(colliding_object)}")
 
     def __process_when_not_clicked(self, colliding_object: GameObject):
-        pass
+        print("Processing when not clicked")
+        match colliding_object:
+            case ActionButton() as action_button:
+                print("Action button clicked")
+                action_button.activate()
+            case GameObject():
+                pass
+            case _:
+                raise ValueError(f"Unknown object type: {type(colliding_object)}")
 
     def __init__(self, game_screen: GameScreen, renderer: GameRenderer,
                  animations_box: AnimationsBox, game_objects_container: GameObjectsContainer,
