@@ -11,19 +11,7 @@ from blocky_game.graphics.animations import AnimationsBox, PulsatingAnimation, L
 
 class BlockyGame:
     def __process_mouse_click(self, x: int, y: int):
-        point = np.array([x, y])
-        colliding_object = self.renderer.get_object_colliding_with_point(point, self.animations_box)
-        if colliding_object is None:
-            return
-
-        animation = self.animations_box[colliding_object]
-        if animation is None:
-            new_animation = PulsatingAnimation(1000, 0.1)
-            self.animations_box[colliding_object] = new_animation
-        else:
-            current_transformation = self.renderer.get_object_transform(colliding_object)
-            new_animation = LinearAnimation(1000, current_transformation)
-            self.animations_box[colliding_object] = new_animation
+        self.interface_manager.process_click(x, y)
 
     def __process_events(self):
         for event in pygame.event.get():
@@ -77,14 +65,16 @@ class BlockyGame:
         self.clock = pygame.time.Clock()
         self.board_state.center_board(width, height, self.game_config.size_ratio)
 
+        self.animations_box = AnimationsBox()
+        self.renderer = GameRenderer(self.board_state, self.display)
+
         self.interface_manager = InterfaceManager(
             self.board_state.game_screen,
+            self.renderer,
+            self.animations_box,
             self.board_state.game_objects_container,
             width, height
         )
-
-        self.animations_box = AnimationsBox()
-        self.renderer = GameRenderer(self.board_state, self.display)
 
         self.stopped = False
         self.last_tick_time = pygame.time.get_ticks()

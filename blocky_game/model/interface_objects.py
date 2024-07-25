@@ -40,6 +40,9 @@ class ActionButton(GameObject):
 
         self.prepare_visuals()
 
+    def is_active(self) -> bool:
+        return self.action_processor.is_active
+
     def get_children(self) -> list[GameObject]:
         return [self.action_button_state]
 
@@ -80,6 +83,9 @@ class ActionButtonContainer(GameObject):
             action_name = action_processor.get_name()
             action_button = ActionButton(f"{action_name}_button", action_processor)
             self.add_action_button(action_button)
+
+    def get_active_buttons(self) -> list[ActionButton]:
+        return [action_button for action_button in self.action_buttons.get_children() if action_button.is_active()]
 
     def get_children(self) -> list[GameObject]:
         return [self.action_buttons]
