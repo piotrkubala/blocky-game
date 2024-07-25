@@ -57,8 +57,8 @@ class ActionActivitiesSequence:
         self.current_activity_index += 1
         activities_count = len(self.activities)
 
-        if self.current_activity_index >= activities_count:
-            self.current_activity_index = activities_count - 1
+        if self.current_activity_index > activities_count:
+            self.current_activity_index = activities_count
 
     def previous_activity(self):
         self.current_activity_index -= 1
@@ -88,6 +88,11 @@ class GraphicalActionButtonProcessor(ABC):
         self.is_active = False
         self.activities.reset()
 
+        for selected_object in self.selected_objects:
+            selected_object.graphics_component.deselect()
+
+        self.selected_objects.clear()
+
     def select_object(self, game_object: GameObject) -> bool:
         if not self.is_active:
             return False
@@ -96,8 +101,23 @@ class GraphicalActionButtonProcessor(ABC):
             return False
 
         self.selected_objects.append(game_object)
+        game_object.graphics_component.select()
+        self.activities.next_activity()
 
         return True
+
+    def deselect_last_object(self):
+        if not self.selected_objects:
+            return
+
+        self.selected_objects.pop().graphics_component.deselect()
+        self.activities.previous_activity()
+
+    def get_last_selected_object(self) -> GameObject | None:
+        if not self.selected_objects:
+            return None
+
+        return self.selected_objects[-1]
 
     def get_active(self) -> list[GameObject]:
         current_activity = self.activities.get_current_activity()

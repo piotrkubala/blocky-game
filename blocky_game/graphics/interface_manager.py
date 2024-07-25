@@ -25,6 +25,28 @@ class InterfaceManager:
 
         self.game_screen.interface.add_child(self.action_button_container)
 
+    def __toggle_objects(self, old_objects: list[GameObject], action_button: ActionButton):
+        self.unmark_objects(old_objects)
+
+        new_objects = action_button.action_processor.get_active()
+        self.mark_objects(new_objects)
+
+    def __toggle_select_object(self, clicked_button: ActionButton, colliding_object: GameObject):
+        last_selected_object = clicked_button.action_processor.get_last_selected_object()
+        current_active_objects = clicked_button.action_processor.get_active()
+
+        if last_selected_object == colliding_object:
+            clicked_button.action_processor.deselect_last_object()
+            self.__toggle_objects(current_active_objects, clicked_button)
+            return True
+
+        if clicked_button.action_processor.select_object(colliding_object):
+            self.toggle_mark_object(colliding_object)
+            self.__toggle_objects(current_active_objects, clicked_button)
+            return True
+
+        return False
+
     def __process_when_clicked(self, clicked_buttons: list[ActionButton], colliding_object: GameObject):
         print("Processing when clicked")
         match colliding_object:
@@ -33,8 +55,7 @@ class InterfaceManager:
                     action_button.deactivate()
             case GameObject():
                 for button in clicked_buttons:
-                    if button.action_processor.select_object(colliding_object):
-                        self.mark_object(colliding_object)
+                    if self.__toggle_select_object(button, colliding_object):
                         return
             case _:
                 raise ValueError(f"Unknown object type: {type(colliding_object)}")
@@ -77,6 +98,18 @@ class InterfaceManager:
             self.mark_object(game_object)
         else:
             self.unmark_object(game_object)
+
+    def mark_objects(self, game_objects: list[GameObject]):
+        for game_object in game_objects:
+            self.mark_object(game_object)
+
+    def unmark_objects(self, game_objects: list[GameObject]):
+        for game_object in game_objects:
+            self.unmark_object(game_object)
+
+    def toggle_mark_objects(self, game_objects: list[GameObject]):
+        for game_object in game_objects:
+            self.toggle_mark_object(game_object)
 
     def process_click(self, x: int, y: int):
         point = np.array([x, y])
