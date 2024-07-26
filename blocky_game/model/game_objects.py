@@ -218,6 +218,7 @@ class Person(GameObject):
 
     def escape(self):
         self.escaped = True
+        self.graphics_component.hide()
 
     def add_equipment(self, equipment: TakeableThing):
         self.equipment[equipment.name] = equipment

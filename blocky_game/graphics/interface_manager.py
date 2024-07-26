@@ -12,7 +12,6 @@ class InterfaceManager:
     def __mark_possible_objects(self, action_button: ActionButton):
         action_processor = action_button.action_processor
         possible_objects = action_processor.get_active()
-        print(f"Possible objects: {possible_objects}")
 
         for game_object in possible_objects:
             self.mark_object(game_object)

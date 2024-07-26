@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import numpy as np
+
 from blocky_game.graphics.animations import AnimationsBox
 from blocky_game.graphics.game_renderer import GameRenderer
 from blocky_game.model.board_state import BoardState
@@ -90,7 +92,7 @@ class GoAction(Action):
         self.room1.remove_person(self.person)
         self.room2.add_person(self.person)
 
-        self.set_move_animation(self.person, 0.5)
+        self.set_move_animation(self.person, 500.0)
 
         return True
 
@@ -217,7 +219,7 @@ class MoveAction(Action):
         self.place1.unset_room()
         self.place2.set_room(self.moved_room)
 
-        self.set_move_animation(self.moved_room, 0.5)
+        self.set_move_animation(self.moved_room, 500.0)
 
         return True
 
