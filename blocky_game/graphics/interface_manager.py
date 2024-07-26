@@ -5,6 +5,7 @@ from blocky_game.graphics.game_renderer import GameRenderer
 from blocky_game.model.game_objects import GameScreen, GameObject
 from blocky_game.model.game_objects_container import GameObjectsContainer
 from blocky_game.model.interface_objects import ActionButtonContainer, ActionButton
+from blocky_game.model.board_state import BoardState
 
 
 class InterfaceManager:
@@ -25,6 +26,12 @@ class InterfaceManager:
 
         self.game_screen.interface.add_child(self.action_button_container)
 
+    def __execute_action_if_possible(self, action_button: ActionButton):
+        action_processor = action_button.action_processor
+        if action_processor.is_finished():
+            action = action_processor.generate_action(self.animations_box, self.renderer, self.board_state)
+            print(action)
+
     def __toggle_objects(self, old_objects: list[GameObject], action_button: ActionButton):
         self.unmark_objects(old_objects)
 
@@ -43,6 +50,7 @@ class InterfaceManager:
         if clicked_button.action_processor.select_object(colliding_object):
             self.toggle_mark_object(colliding_object)
             self.__toggle_objects(current_active_objects, clicked_button)
+            self.__execute_action_if_possible(clicked_button)
             return True
 
         return False
@@ -74,11 +82,12 @@ class InterfaceManager:
             case _:
                 raise ValueError(f"Unknown object type: {type(colliding_object)}")
 
-    def __init__(self, game_screen: GameScreen, renderer: GameRenderer,
+    def __init__(self, game_screen: GameScreen, renderer: GameRenderer, board_state: BoardState,
                  animations_box: AnimationsBox, game_objects_container: GameObjectsContainer,
                  screen_width: int, screen_height: int):
         self.game_screen = game_screen
         self.renderer = renderer
+        self.board_state = board_state
         self.animations_box = animations_box
         self.game_objects_container = game_objects_container
         self.screen_width = screen_width

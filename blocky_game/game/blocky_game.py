@@ -70,6 +70,7 @@ class BlockyGame:
         self.interface_manager = InterfaceManager(
             self.board_state.game_screen,
             self.renderer,
+            self.board_state,
             self.animations_box,
             self.board_state.game_objects_container,
             width, height

@@ -26,6 +26,20 @@ class Action(ABC):
     def execute(self) -> bool:
         pass
 
+    @abstractmethod
+    def get_name(self) -> str:
+        pass
+
+    @abstractmethod
+    def get_params_names(self) -> list[str]:
+        pass
+
+    def __str__(self):
+        params = self.get_params_names()
+        params_str = ", ".join(params)
+
+        return f"{self.get_name()}({params_str})"
+
 
 class GoAction(Action):
     def __init__(self, animations_box: AnimationsBox, renderer: GameRenderer, board_state: BoardState,
@@ -78,6 +92,25 @@ class GoAction(Action):
 
         self.set_move_animation(self.person, 0.5)
 
+        return True
+
+    def get_name(self) -> str:
+        return "go"
+
+    def get_params_names(self) -> list[str]:
+        return [
+            self.person.name,
+            self.room1.name,
+            self.room2.name,
+            self.place1.name,
+            self.place2.name,
+            self.entrance1.name,
+            self.entrance2.name,
+            self.direction.name,
+            self.colour.name,
+            self.key.name,
+        ]
+
 
 class TakeAction(Action):
     def __init__(self, animations_box: AnimationsBox, renderer: GameRenderer, board_state: BoardState,
@@ -103,6 +136,16 @@ class TakeAction(Action):
 
         return True
 
+    def get_name(self) -> str:
+        return "take"
+
+    def get_params_names(self) -> list[str]:
+        return [
+            self.person.name,
+            self.thing.name,
+            self.room.name,
+        ]
+
 
 class EscapeAction(Action):
     def __init__(self, animations_box: AnimationsBox, renderer: GameRenderer, board_state: BoardState,
@@ -126,6 +169,16 @@ class EscapeAction(Action):
         self.person.escape()
 
         return True
+
+    def get_name(self) -> str:
+        return "escape"
+
+    def get_params_names(self) -> list[str]:
+        return [
+            self.person.name,
+            self.room.name,
+            self.map_exit.name,
+        ]
 
 
 class MoveAction(Action):
@@ -166,3 +219,17 @@ class MoveAction(Action):
         self.set_move_animation(self.moved_room, 0.5)
 
         return True
+
+    def get_name(self) -> str:
+        return "move"
+
+    def get_params_names(self) -> list[str]:
+        return [
+            self.moved_room.name,
+            self.place1.name,
+            self.place2.name,
+            self.direction.name,
+            self.person.name,
+            self.dwelled_room.name,
+            self.terminal.name,
+        ]
