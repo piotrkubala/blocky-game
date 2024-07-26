@@ -61,7 +61,7 @@ class GoAction(Action):
         self.key = key
 
     def check_preconditions(self) -> bool:
-        are_rooms_adjacent = self.board_state.game_board.are_adjacent(self.room1, self.room2)
+        are_rooms_adjacent = self.board_state.game_board.are_adjacent(self.place1, self.place2)
         is_room1_at_place1 = self.place1.is_room_at(self.room1)
         is_room2_at_place2 = self.place2.is_room_at(self.room2)
         has_passage_room1 = self.room1.has_passage(self.entrance1, self.direction)
@@ -199,9 +199,10 @@ class MoveAction(Action):
     def check_preconditions(self) -> bool:
         is_person_in_dwelled_room = self.dwelled_room.is_person_in(self.person)
         contains_terminal = self.dwelled_room.does_contain(self.terminal)
-        is_place2_free = self.board_state.game_board.is_place_free(self.place2)
+        is_place2_free = self.place2.is_free()
         is_moved_room_at_place1 = self.place1.is_room_at(self.moved_room)
-        are_places_adjacent = self.board_state.game_board.are_adjacent(self.place1, self.place2, self.direction)
+        are_places_adjacent = \
+            self.board_state.game_board.get_adjacency_direction(self.place1, self.place2) == self.direction
 
         return is_person_in_dwelled_room \
             and contains_terminal \

@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+
+import numpy as np
 import pygame
 
 from blocky_game.graphics.graphics_component import GraphicsComponent, load_texture_with_max_size
@@ -58,11 +60,14 @@ class RectangularContainer(GameObject):
         self.children: list[GameObject] = []
 
     def update_positions(self):
+        if len(self.children) == 0:
+            return
+
         child_space = self.height // len(self.children)
 
         for i, child in enumerate(self.children):
             child.graphics_component.clear_translate()
-            child.graphics_component.translate(0, i * child_space -self.height // 2 + child_space // 2)
+            child.graphics_component.translate(0, i * child_space - self.height // 2 + child_space // 2)
 
     def add_child(self, child: GameObject):
         self.children.append(child)
@@ -92,7 +97,7 @@ class Colour(GameObject):
             "blue": (0, 0, 255),
             "yellow": (255, 255, 0),
             "black": (0, 0, 0),
-            "white": (255, 255, 255)
+            "white": (200, 200, 200)
         }
 
         self.colour_rgb = colour_name_to_rgb.get(name, tuple(randint(0, 255) for _ in range(3)))
@@ -126,10 +131,13 @@ class Key(TakeableThing):
     def prepare_visuals(self, max_size: int, colour_rgb: tuple[int, int, int] = (0, 0, 0)):
         self.graphics_component.clear_surfaces()
 
-        sprite_surface = load_texture_with_max_size("../images/key.png", max_size)
+        sprite_surface = load_texture_with_max_size("../images/key.png", max_size).copy()
 
         sprite_image = pygame.surfarray.pixels3d(sprite_surface)
-        sprite_image[sprite_image[:, :, 0] < 200] = colour_rgb
+
+        threshold = 200
+        part_to_replace = np.all(sprite_image < threshold, axis=-1)
+        sprite_image[part_to_replace] = colour_rgb
 
         sprite_transformed_surface = pygame.surfarray.make_surface(sprite_image)
 
@@ -606,14 +614,14 @@ class GameBoard(GameObject):
 
         if row1 == row2:
             if column1 + 1 == column2:
-                return Direction.RIGHT
+                return Direction.DOWN
             if column1 - 1 == column2:
-                return Direction.LEFT
+                return Direction.UP
         if column1 == column2:
             if row1 + 1 == row2:
-                return Direction.DOWN
+                return Direction.RIGHT
             if row1 - 1 == row2:
-                return Direction.UP
+                return Direction.LEFT
 
         return None
 

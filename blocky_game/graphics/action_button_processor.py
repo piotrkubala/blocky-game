@@ -53,7 +53,8 @@ class ActionProcessorTakeableThingSelectionActivity(ActionProcessorActivity):
         super().__init__(game_screen, game_objects_container)
 
     def select_active(self) -> list[GameObject]:
-        return list(self.game_objects_container["takeable"].values())
+        return list(self.game_objects_container["takeable"].values()) + \
+               list(self.game_objects_container["key"].values())
 
 
 class ActionProcessorEscapeSelectionActivity(ActionProcessorActivity):
@@ -226,7 +227,7 @@ class GraphicalGoActionButtonProcessor(GraphicalActionButtonProcessor):
 
         return GoAction(animations_box, renderer, board_state,
                         person, room1, room2, place1, place2,
-                        entrance1,entrance2, adjacency_direction, colour, key)
+                        entrance1, entrance2, adjacency_direction, colour, key)
 
 
 class GraphicalTakeActionButtonProcessor(GraphicalActionButtonProcessor):

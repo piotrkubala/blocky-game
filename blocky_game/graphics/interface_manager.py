@@ -28,9 +28,17 @@ class InterfaceManager:
 
     def __execute_action_if_possible(self, action_button: ActionButton):
         action_processor = action_button.action_processor
-        if action_processor.is_finished():
-            action = action_processor.generate_action(self.animations_box, self.renderer, self.board_state)
-            print(action)
+        if not action_processor.is_finished():
+            return
+
+        action = action_processor.generate_action(self.animations_box, self.renderer, self.board_state)
+        action_button.deactivate()
+        print(action)
+
+        if action is None:
+            return
+
+        action.execute()
 
     def __toggle_objects(self, old_objects: list[GameObject], action_button: ActionButton):
         self.unmark_objects(old_objects)
