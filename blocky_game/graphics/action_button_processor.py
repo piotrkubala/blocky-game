@@ -1,6 +1,10 @@
 from abc import abstractmethod, ABC
 
-from blocky_game.model.game_objects import GameObject, GameScreen, Person
+from blocky_game.graphics.animations import AnimationsBox
+from blocky_game.graphics.game_renderer import GameRenderer
+from blocky_game.model.actions import Action, GoAction, TakeAction, EscapeAction, MoveAction
+from blocky_game.model.board_state import BoardState
+from blocky_game.model.game_objects import GameObject, GameScreen, Person, Room, Place, Key, MapExit, Terminal
 from blocky_game.model.game_objects_container import GameObjectsContainer
 
 
@@ -130,6 +134,9 @@ class GraphicalActionButtonProcessor(ABC):
 
         return True
 
+    def is_finished(self) -> bool:
+        return self.is_active and self.activities.is_finished()
+
     def deselect_last_object(self):
         if not self.selected_objects:
             return
@@ -155,6 +162,11 @@ class GraphicalActionButtonProcessor(ABC):
     def get_name(self) -> str:
         pass
 
+    @abstractmethod
+    def generate_action(self, animations_box: AnimationsBox, renderer: GameRenderer,
+                        board_state: BoardState) -> Action | None:
+        pass
+
 
 class GraphicalGoActionButtonProcessor(GraphicalActionButtonProcessor):
     def __init__(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer):
@@ -167,6 +179,54 @@ class GraphicalGoActionButtonProcessor(GraphicalActionButtonProcessor):
 
     def get_name(self) -> str:
         return "go"
+
+    def generate_action(self, animations_box: AnimationsBox, renderer: GameRenderer,
+                        board_state: BoardState) -> Action | None:
+        if not self.is_finished():
+            return None
+
+        person: Person = self.selected_objects[0]
+        room2: Room = self.selected_objects[1]
+
+        potential_places_person = [place for place in self.game_objects_container["place"].values()
+                                   if place.is_transitive_child(person)]
+        potential_places_room2 = [place for place in self.game_objects_container["place"].values()
+                                  if place.is_transitive_child(room2)]
+
+        if not potential_places_person or not potential_places_room2:
+            return None
+
+        place1: Place = potential_places_person[0]
+        place2: Place = potential_places_room2[0]
+
+        if place1.is_free() or place2.is_free():
+            return None
+
+        adjacency_direction = self.game_screen.game_board.get_adjacency_direction(place1, place2)
+        if adjacency_direction is None:
+            return None
+        reverse_direction = adjacency_direction.reverse()
+
+        room1 = place1.room
+
+        entrance1 = room1.entrances[adjacency_direction]
+        entrance2 = room2.entrances[reverse_direction]
+
+        common_colours = set(colour for colour in entrance1.colours_dict.values()
+                             if colour.name in entrance2.colours_dict)
+
+        correct_keys: list[Key] = [key for key in self.game_objects_container["key"].values()
+                                 if person.is_owned(key) and key.colour in common_colours]
+
+        if not correct_keys:
+            return None
+
+        key = correct_keys[0]
+        colour = key.colour
+
+        return GoAction(animations_box, renderer, board_state,
+                        person, room1, room2, place1, place2,
+                        entrance1,entrance2, adjacency_direction, colour, key)
 
 
 class GraphicalTakeActionButtonProcessor(GraphicalActionButtonProcessor):
@@ -181,6 +241,24 @@ class GraphicalTakeActionButtonProcessor(GraphicalActionButtonProcessor):
     def get_name(self) -> str:
         return "take"
 
+    def generate_action(self, animations_box: AnimationsBox, renderer: GameRenderer,
+                        board_state: BoardState) -> Action | None:
+        if not self.is_finished():
+            return None
+
+        person: Person = self.selected_objects[0]
+        takeable_thing = self.selected_objects[1]
+
+        possible_rooms = [room for room in self.game_objects_container["room"].values()
+                          if room.is_transitive_child(takeable_thing)]
+
+        if not possible_rooms:
+            return None
+
+        room: Room = possible_rooms[0]
+
+        return TakeAction(animations_box, renderer, board_state, person, takeable_thing, room)
+
 
 class GraphicalEscapeActionButtonProcessor(GraphicalActionButtonProcessor):
     def __init__(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer):
@@ -192,6 +270,31 @@ class GraphicalEscapeActionButtonProcessor(GraphicalActionButtonProcessor):
 
     def get_name(self) -> str:
         return "escape"
+
+    def generate_action(self, animations_box: AnimationsBox, renderer: GameRenderer,
+                        board_state: BoardState) -> Action | None:
+        if not self.is_finished():
+            return None
+
+        person: Person = self.selected_objects[0]
+
+        possible_rooms: list[Room] = [room for room in self.game_objects_container["room"].values()
+                                      if room.is_transitive_child(person)]
+
+        if not possible_rooms:
+            return None
+
+        room = possible_rooms[0]
+
+        possible_exits: list[MapExit] = [map_exit for map_exit in self.game_objects_container["exit"].values()
+                                         if room.is_transitive_child(map_exit)]
+
+        if not possible_exits:
+            return None
+
+        map_exit = possible_exits[0]
+
+        return EscapeAction(animations_box, renderer, board_state, person, map_exit, room)
 
 
 class GraphicalMoveActionButtonProcessor(GraphicalActionButtonProcessor):
@@ -206,3 +309,44 @@ class GraphicalMoveActionButtonProcessor(GraphicalActionButtonProcessor):
 
     def get_name(self) -> str:
         return "move"
+
+    def generate_action(self, animations_box: AnimationsBox, renderer: GameRenderer,
+                        board_state: BoardState) -> Action | None:
+        if not self.is_finished():
+            return None
+
+        person: Person = self.selected_objects[0]
+        moved_room: Room = self.selected_objects[1]
+        place2: Place = self.selected_objects[2]
+
+        possible_rooms_person: list[Room] = [room for room in self.game_objects_container["room"].values()
+                                             if room.is_transitive_child(person)]
+
+        if not possible_rooms_person:
+            return None
+
+        dwelled_room = possible_rooms_person[0]
+
+        possible_terminals: list[Terminal] = [terminal for terminal in self.game_objects_container["terminal"].values()
+                                              if dwelled_room.is_transitive_child(terminal)]
+
+        if not possible_terminals:
+            return None
+
+        terminal = possible_terminals[0]
+
+        possible_places_room: list[Place] = [place for place in self.game_objects_container["place"].values()
+                                             if place.is_transitive_child(moved_room)]
+
+        if not possible_places_room:
+            return None
+
+        place1 = possible_places_room[0]
+
+        adjacency_direction = self.game_screen.game_board.get_adjacency_direction(place1, place2)
+
+        if adjacency_direction is None:
+            return None
+
+        return MoveAction(animations_box, renderer, board_state, moved_room, place1, place2,
+                          adjacency_direction, person, dwelled_room, terminal)

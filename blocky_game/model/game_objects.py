@@ -37,6 +37,16 @@ class GameObject(ABC):
     def serialize_relations(self) -> list[str]:
         return []
 
+    def is_transitive_child(self, game_object: 'GameObject') -> bool:
+        if any(child.name == game_object.name for child in self.get_children()):
+            return True
+
+        for child in self.get_children():
+            if child.is_transitive_child(game_object):
+                return True
+
+        return False
+
 
 class RectangularContainer(GameObject):
     def __init__(self, name: str, width: int, height: int):
@@ -589,6 +599,23 @@ class GameBoard(GameObject):
             return False
 
         return row1 == row2 or column1 == column2
+
+    def get_adjacency_direction(self, place1: Place, place2: Place) -> Direction | None:
+        row1, column1 = self.place_name_to_coordinates[place1.name]
+        row2, column2 = self.place_name_to_coordinates[place2.name]
+
+        if row1 == row2:
+            if column1 + 1 == column2:
+                return Direction.RIGHT
+            if column1 - 1 == column2:
+                return Direction.LEFT
+        if column1 == column2:
+            if row1 + 1 == row2:
+                return Direction.DOWN
+            if row1 - 1 == row2:
+                return Direction.UP
+
+        return None
 
 
 class GameInterface(GameObject):
