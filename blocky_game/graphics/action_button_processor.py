@@ -52,6 +52,22 @@ class ActionProcessorTakeableThingSelectionActivity(ActionProcessorActivity):
         return list(self.game_objects_container["takeable"].values())
 
 
+class ActionProcessorEscapeSelectionActivity(ActionProcessorActivity):
+    def __init__(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer):
+        super().__init__(game_screen, game_objects_container)
+
+    def select_active(self) -> list[GameObject]:
+        return list(self.game_objects_container["escape"].values())
+
+
+class ActionProcessorEmptyPlaceSelectionActivity(ActionProcessorActivity):
+    def __init__(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer):
+        super().__init__(game_screen, game_objects_container)
+
+    def select_active(self) -> list[GameObject]:
+        return list(filter(lambda place: place.is_free(), self.game_objects_container["place"].values()))
+
+
 class ActionActivitiesSequence:
     def __init__(self, activities: list[ActionProcessorActivity]):
         self.activities = activities
@@ -170,6 +186,10 @@ class GraphicalEscapeActionButtonProcessor(GraphicalActionButtonProcessor):
     def __init__(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer):
         super().__init__(game_screen, game_objects_container)
 
+        self.activities = ActionActivitiesSequence([
+            ActionProcessorPersonSelectionActivity(game_screen, game_objects_container)
+        ])
+
     def get_name(self) -> str:
         return "escape"
 
@@ -177,6 +197,12 @@ class GraphicalEscapeActionButtonProcessor(GraphicalActionButtonProcessor):
 class GraphicalMoveActionButtonProcessor(GraphicalActionButtonProcessor):
     def __init__(self, game_screen: GameScreen, game_objects_container: GameObjectsContainer):
         super().__init__(game_screen, game_objects_container)
+
+        self.activities = ActionActivitiesSequence([
+            ActionProcessorPersonSelectionActivity(game_screen, game_objects_container),
+            ActionProcessorRoomSelectionActivity(game_screen, game_objects_container),
+            ActionProcessorEmptyPlaceSelectionActivity(game_screen, game_objects_container)
+        ])
 
     def get_name(self) -> str:
         return "move"

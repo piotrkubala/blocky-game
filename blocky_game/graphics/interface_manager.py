@@ -53,7 +53,6 @@ class InterfaceManager:
         button.deactivate()
 
     def __process_when_clicked(self, clicked_buttons: list[ActionButton], colliding_object: GameObject):
-        print("Processing when clicked")
         match colliding_object:
             case ActionButton() as action_button:
                 if action_button in clicked_buttons:
@@ -66,7 +65,6 @@ class InterfaceManager:
                 raise ValueError(f"Unknown object type: {type(colliding_object)}")
 
     def __process_when_not_clicked(self, colliding_object: GameObject):
-        print("Processing when not clicked")
         match colliding_object:
             case ActionButton() as action_button:
                 action_button.activate()
