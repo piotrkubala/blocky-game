@@ -212,6 +212,8 @@ class Person(GameObject):
     def __init__(self, name: str, max_size: int = 40):
         super().__init__(name)
         self.equipment: dict[str, TakeableThing] = {}
+        self.equipment_container: RectangularContainer = \
+            RectangularContainer(f"{name}_equipment", 10, max_size)
         self.escaped: bool = False
 
         self.prepare_visuals(max_size)
@@ -222,9 +224,11 @@ class Person(GameObject):
 
     def add_equipment(self, equipment: TakeableThing):
         self.equipment[equipment.name] = equipment
+        self.equipment_container.add_child(equipment)
+        equipment.graphics_component.clickable = False
 
     def get_children(self) -> list[GameObject]:
-        return list(self.equipment.values())
+        return [self.equipment_container]
 
     def serialize_relations(self) -> list[str]:
         return [

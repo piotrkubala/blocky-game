@@ -1,4 +1,6 @@
-from .game_objects import GameObject
+from .game_objects import (
+    GameObject, Person, Direction, Key, Colour, Entrance, Place, Room, GameBoard, TakeableThing, MapExit, Terminal
+)
 
 
 class GameObjectsContainer:

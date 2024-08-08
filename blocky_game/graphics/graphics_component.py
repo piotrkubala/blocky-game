@@ -27,6 +27,7 @@ class GraphicsComponent(ABC):
         self.transform = np.identity(3)
         self.surfaces: list[pygame.surface] = []
         self.hidden = False
+        self.clickable = True
         self.selected: bool = False
         self.selection_colour = selection_colour
         self.selection_margin = seletion_margin
@@ -183,7 +184,7 @@ class GraphicsComponent(ABC):
         return pygame.surfarray.make_surface(transformed_image), image_size
 
     def is_point_inside(self, point: np.ndarray, accumulated_transform: np.ndarray) -> bool:
-        if self.hidden:
+        if self.hidden or not self.clickable:
             return False
 
         reverse_transform = np.linalg.inv(accumulated_transform)
