@@ -222,6 +222,9 @@ class Person(GameObject):
         self.escaped = True
         self.graphics_component.hide()
 
+        for equipment in self.equipment.values():
+            equipment.graphics_component.hide()
+
     def add_equipment(self, equipment: TakeableThing):
         self.equipment[equipment.name] = equipment
         self.equipment_container.add_child(equipment)

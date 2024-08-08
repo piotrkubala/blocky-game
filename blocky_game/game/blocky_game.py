@@ -21,6 +21,10 @@ class BlockyGame:
                     x, y = pygame.mouse.get_pos()
                     self.__process_mouse_click(x, y)
 
+    def __check_if_game_is_over(self):
+        if self.board_state.game_objects_container.is_game_ended():
+            self.stopped = True
+
     def __init_pygame(self):
         pygame.init()
         pygame.font.init()
@@ -87,5 +91,6 @@ class BlockyGame:
             self.__clear_display()
             self.__render_game()
             self.__update_display()
+            self.__check_if_game_is_over()
 
         self.__quit_pygame()

@@ -37,7 +37,7 @@ class ActionProcessorPersonSelectionActivity(ActionProcessorActivity):
         super().__init__(game_screen, game_objects_container)
 
     def select_active(self) -> list[GameObject]:
-        return list(self.game_objects_container["person"].values())
+        return list(self.game_objects_container.get_people().values())
 
 
 class ActionProcessorRoomSelectionActivity(ActionProcessorActivity):
@@ -45,7 +45,7 @@ class ActionProcessorRoomSelectionActivity(ActionProcessorActivity):
         super().__init__(game_screen, game_objects_container)
 
     def select_active(self) -> list[GameObject]:
-        return list(self.game_objects_container["room"].values())
+        return list(self.game_objects_container.get_rooms().values())
 
 
 class ActionProcessorTakeableThingSelectionActivity(ActionProcessorActivity):
@@ -53,8 +53,7 @@ class ActionProcessorTakeableThingSelectionActivity(ActionProcessorActivity):
         super().__init__(game_screen, game_objects_container)
 
     def select_active(self) -> list[GameObject]:
-        return list(self.game_objects_container["takeable"].values()) + \
-               list(self.game_objects_container["key"].values())
+        return list(self.game_objects_container.get_takeables().values())
 
 
 class ActionProcessorEscapeSelectionActivity(ActionProcessorActivity):
@@ -62,7 +61,7 @@ class ActionProcessorEscapeSelectionActivity(ActionProcessorActivity):
         super().__init__(game_screen, game_objects_container)
 
     def select_active(self) -> list[GameObject]:
-        return list(self.game_objects_container["escape"].values())
+        return list(self.game_objects_container.get_map_exits().values())
 
 
 class ActionProcessorEmptyPlaceSelectionActivity(ActionProcessorActivity):
@@ -70,7 +69,7 @@ class ActionProcessorEmptyPlaceSelectionActivity(ActionProcessorActivity):
         super().__init__(game_screen, game_objects_container)
 
     def select_active(self) -> list[GameObject]:
-        return list(filter(lambda place: place.is_free(), self.game_objects_container["place"].values()))
+        return list(filter(lambda place: place.is_free(), self.game_objects_container.get_places().values()))
 
 
 class ActionActivitiesSequence:
@@ -189,9 +188,9 @@ class GraphicalGoActionButtonProcessor(GraphicalActionButtonProcessor):
         person: Person = self.selected_objects[0]
         room2: Room = self.selected_objects[1]
 
-        potential_places_person = [place for place in self.game_objects_container["place"].values()
+        potential_places_person = [place for place in self.game_objects_container.get_places().values()
                                    if place.is_transitive_child(person)]
-        potential_places_room2 = [place for place in self.game_objects_container["place"].values()
+        potential_places_room2 = [place for place in self.game_objects_container.get_places().values()
                                   if place.is_transitive_child(room2)]
 
         if not potential_places_person or not potential_places_room2:
@@ -216,8 +215,8 @@ class GraphicalGoActionButtonProcessor(GraphicalActionButtonProcessor):
         common_colours = set(colour for colour in entrance1.colours_dict.values()
                              if colour.name in entrance2.colours_dict)
 
-        correct_keys: list[Key] = [key for key in self.game_objects_container["key"].values()
-                                 if person.is_owned(key) and key.colour in common_colours]
+        correct_keys: list[Key] = [key for key in self.game_objects_container.get_keys().values()
+                                   if person.is_owned(key) and key.colour in common_colours]
 
         if not correct_keys:
             return None
@@ -250,7 +249,7 @@ class GraphicalTakeActionButtonProcessor(GraphicalActionButtonProcessor):
         person: Person = self.selected_objects[0]
         takeable_thing = self.selected_objects[1]
 
-        possible_rooms = [room for room in self.game_objects_container["room"].values()
+        possible_rooms = [room for room in self.game_objects_container.get_rooms().values()
                           if room.is_transitive_child(takeable_thing)]
 
         if not possible_rooms:
@@ -279,7 +278,7 @@ class GraphicalEscapeActionButtonProcessor(GraphicalActionButtonProcessor):
 
         person: Person = self.selected_objects[0]
 
-        possible_rooms: list[Room] = [room for room in self.game_objects_container["room"].values()
+        possible_rooms: list[Room] = [room for room in self.game_objects_container.get_rooms().values()
                                       if room.is_transitive_child(person)]
 
         if not possible_rooms:
@@ -287,7 +286,7 @@ class GraphicalEscapeActionButtonProcessor(GraphicalActionButtonProcessor):
 
         room = possible_rooms[0]
 
-        possible_exits: list[MapExit] = [map_exit for map_exit in self.game_objects_container["exit"].values()
+        possible_exits: list[MapExit] = [map_exit for map_exit in self.game_objects_container.get_map_exits().values()
                                          if room.is_transitive_child(map_exit)]
 
         if not possible_exits:
@@ -320,7 +319,7 @@ class GraphicalMoveActionButtonProcessor(GraphicalActionButtonProcessor):
         moved_room: Room = self.selected_objects[1]
         place2: Place = self.selected_objects[2]
 
-        possible_rooms_person: list[Room] = [room for room in self.game_objects_container["room"].values()
+        possible_rooms_person: list[Room] = [room for room in self.game_objects_container.get_rooms().values()
                                              if room.is_transitive_child(person)]
 
         if not possible_rooms_person:
@@ -328,7 +327,8 @@ class GraphicalMoveActionButtonProcessor(GraphicalActionButtonProcessor):
 
         dwelled_room = possible_rooms_person[0]
 
-        possible_terminals: list[Terminal] = [terminal for terminal in self.game_objects_container["terminal"].values()
+        possible_terminals: list[Terminal] = [terminal for terminal in
+                                              self.game_objects_container.get_terminals().values()
                                               if dwelled_room.is_transitive_child(terminal)]
 
         if not possible_terminals:
@@ -336,7 +336,7 @@ class GraphicalMoveActionButtonProcessor(GraphicalActionButtonProcessor):
 
         terminal = possible_terminals[0]
 
-        possible_places_room: list[Place] = [place for place in self.game_objects_container["place"].values()
+        possible_places_room: list[Place] = [place for place in self.game_objects_container.get_places().values()
                                              if place.is_transitive_child(moved_room)]
 
         if not possible_places_room:

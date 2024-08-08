@@ -129,7 +129,7 @@ class BoardState:
                 continue
 
             game_objects[obj.name] = game_object
-            game_objects_container.add_object(obj.type_tag, game_object)
+            game_objects_container.add_object(game_object)
 
             if obj.type_tag == "place":
                 row, column = place_name_to_coordinates(obj.name)
@@ -216,7 +216,7 @@ class BoardState:
                     raise ValueError(f"Invalid predicate {relation.name}")
 
         game_objects[game_board.name] = game_board
-        game_objects_container.add_object("board", game_board)
+        game_objects_container.add_object(game_board)
 
         return game_board, game_objects, game_objects_container
 
