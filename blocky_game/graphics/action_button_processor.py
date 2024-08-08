@@ -209,6 +209,9 @@ class GraphicalGoActionButtonProcessor(GraphicalActionButtonProcessor):
 
         room1 = place1.room
 
+        if adjacency_direction not in room1.entrances or reverse_direction not in room2.entrances:
+            return None
+
         entrance1 = room1.entrances[adjacency_direction]
         entrance2 = room2.entrances[reverse_direction]
 
