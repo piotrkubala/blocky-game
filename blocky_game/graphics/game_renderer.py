@@ -1,5 +1,6 @@
 import pygame
 import numpy as np
+from collections import deque
 
 from blocky_game.graphics.animations import AnimationsBox
 from blocky_game.model.board_state import BoardState, GameObject
@@ -18,30 +19,40 @@ class GameRenderer:
         return animation.apply(transformation)
 
     def __render_game_object(self, game_object: GameObject, transformation: np.ndarray, animations_box: AnimationsBox):
-        transformation = transformation @ game_object.graphics_component.transform
-        animated_transformation = GameRenderer.__get_animated_transformation(game_object, animations_box, transformation)
-        game_object.graphics_component.draw(self.screen, animated_transformation)
-        self.current_transforms[game_object.name] = animated_transformation
-        self.rendered_objects[game_object.name] = game_object
+        queue = deque([(game_object, transformation)])
 
-        for child in game_object.get_children():
-            self.__render_game_object(child, animated_transformation, animations_box)
+        while queue:
+            current_game_object, current_transformation = queue.popleft()
+            animated_transformation = GameRenderer.__get_animated_transformation(current_game_object, animations_box,
+                                                                                 current_transformation)
+
+            current_game_object.graphics_component.draw(self.screen, animated_transformation)
+
+            self.current_transforms[current_game_object.name] = animated_transformation
+            self.rendered_objects[current_game_object.name] = current_game_object
+
+            for child in current_game_object.get_children():
+                child_transformation = animated_transformation @ child.graphics_component.transform
+                queue.append((child, child_transformation))
 
     def __get_objects_colliding_with_point(self, point: np.ndarray, game_object: GameObject,
                                            animation_box: AnimationsBox,
                                            transformation: np.ndarray = np.identity(3), depth: int = 0
                                            ) -> list[tuple[int, GameObject]]:
-        transformation = transformation @ game_object.graphics_component.transform
-        animated_transformation = GameRenderer.__get_animated_transformation(game_object, animation_box, transformation)
-
+        queue = deque([(game_object, transformation, depth)])
         colliding_objects = []
-        if game_object.graphics_component.is_point_inside(point, animated_transformation):
-            colliding_objects.append((depth, game_object))
 
-        for child in game_object.get_children():
-            colliding_objects.extend(self.__get_objects_colliding_with_point(point, child, animation_box,
-                                                                             animated_transformation,
-                                                                             depth + 1))
+        while queue:
+            current_game_object, current_transformation, current_depth = queue.popleft()
+            animated_transformation = GameRenderer.__get_animated_transformation(current_game_object, animation_box,
+                                                                                 current_transformation)
+
+            if current_game_object.graphics_component.is_point_inside(point, animated_transformation):
+                colliding_objects.append((current_depth, current_game_object))
+
+            for child in current_game_object.get_children():
+                child_transformation = animated_transformation @ child.graphics_component.transform
+                queue.append((child, child_transformation, current_depth + 1))
 
         return colliding_objects
 
