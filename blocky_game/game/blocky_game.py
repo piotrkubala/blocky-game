@@ -1,6 +1,7 @@
 import pygame
 
 from blocky_game.config.config import PyGameConfig, BlockyGameConfig
+from blocky_game.game.actions_list import ActionsList
 from blocky_game.graphics.game_renderer import GameRenderer
 from blocky_game.graphics.interface_manager import InterfaceManager
 from blocky_game.model.board_state import BoardState
@@ -10,7 +11,8 @@ from blocky_game.graphics.animations import AnimationsBox
 
 class BlockyGame:
     def __process_mouse_click(self, x: int, y: int):
-        self.interface_manager.process_click(x, y)
+        if self.actions_list.done():
+            self.interface_manager.process_click(x, y)
 
     def __process_events(self):
         for event in pygame.event.get():
@@ -21,7 +23,28 @@ class BlockyGame:
                     x, y = pygame.mouse.get_pos()
                     self.__process_mouse_click(x, y)
 
+    def __is_delay_time_over(self):
+        return pygame.time.get_ticks() - self.last_static_action_time > \
+               self.game_config.animation_duration + self.game_config.actions_delay
+
+    def __process_noninteractive_actions(self):
+        if self.actions_list.done() or self.animations_box.is_animation_active():
+            return
+
+        if not self.__is_delay_time_over():
+            return
+
+        action = self.actions_list.get_action()
+        self.actions_list.update_index()
+
+        if action is not None:
+            action.execute(self.game_config.animation_duration)
+            self.last_static_action_time = pygame.time.get_ticks()
+
     def __check_if_game_is_over(self):
+        if not self.__is_delay_time_over():
+            return
+
         if self.board_state.game_objects_container.is_game_ended():
             self.stopped = True
 
@@ -33,9 +56,16 @@ class BlockyGame:
     def __quit_pygame(self):
         pygame.quit()
 
-        # TODO: delete this:
-        print(self.board_state.serialize_state("blocky-problem-test"))
+        serialization_path = self.blocky_game_config.state_serialization_path
 
+        if serialization_path is None:
+            return
+
+        file_name = serialization_path.split("/")[-1]
+        problem_name = file_name.split(".")[0]
+
+        with open(serialization_path, "w") as file:
+            file.write(self.board_state.serialize_state(problem_name))
 
     def __update_display(self):
         pygame.display.update()
@@ -80,14 +110,23 @@ class BlockyGame:
             width, height
         )
 
+        self.actions_list = ActionsList(
+            self.blocky_game_config.actions_list_path,
+            self.animations_box,
+            self.renderer,
+            self.board_state
+        )
+
         self.stopped = False
         self.last_tick_time = pygame.time.get_ticks()
         self.delta_time = 0
+        self.last_static_action_time = pygame.time.get_ticks() - self.game_config.animation_duration
 
     def main_loop(self):
         while not self.stopped:
             self.__wait_for_clock()
             self.__process_events()
+            self.__process_noninteractive_actions()
             self.__clear_display()
             self.__render_game()
             self.__update_display()

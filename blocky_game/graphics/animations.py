@@ -86,3 +86,6 @@ class AnimationsBox:
 
     def set_move_animation(self, game_object: GameObject, duration: float, start_transformation: np.ndarray):
         self[game_object] = LinearAnimation(duration, start_transformation)
+
+    def is_animation_active(self):
+        return any(not animation.is_finished() for animation in self.animations.values())

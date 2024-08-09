@@ -5,6 +5,7 @@ from blocky_game.graphics.animations import AnimationsBox
 from blocky_game.graphics.game_renderer import GameRenderer
 from blocky_game.model.actions import Action, GoAction, TakeAction, EscapeAction, MoveAction
 from blocky_game.model.board_state import BoardState
+from blocky_game.model.game_objects import Direction
 
 
 class ActionGenerator(ABC):
@@ -14,6 +15,8 @@ class ActionGenerator(ABC):
         self.animations_box = animations_box
         self.renderer = renderer
         self.board_state = board_state
+
+        self.objects_container = self.board_state.game_objects_container
 
     def get_last_action(self) -> Action | None:
         if self.actions:
@@ -29,18 +32,34 @@ class TextActionGenerator(ActionGenerator):
         person, room1, room2, place1, place2, entrance1, \
             entrance2, direction, _, colour, key = parameters
 
+        person_object = self.objects_container.get_people()[person]
+        room1_object = self.objects_container.get_rooms()[room1]
+        room2_object = self.objects_container.get_rooms()[room2]
+        place1_object = self.objects_container.get_places()[place1]
+        place2_object = self.objects_container.get_places()[place2]
+        entrance1_object = self.objects_container.get_entrances()[entrance1]
+        entrance2_object = self.objects_container.get_entrances()[entrance2]
+        direction_object = Direction.from_name(direction)
+        colour_object = self.objects_container.get_colours()[colour]
+        key_object = self.objects_container.get_keys()[key]
+
         return GoAction(self.animations_box, self.renderer, self.board_state,
-                        person, room1, room2, place1, place2,
-                        entrance1, entrance2, direction, colour, key)
+                        person_object, room1_object, room2_object,
+                        place1_object, place2_object, entrance1_object,
+                        entrance2_object, direction_object, colour_object, key_object)
 
     def __parse_take_action(self, parameters: list[str]):
         if len(parameters) != 3:
             raise ValueError("Invalid number of parameters for 'take' action")
 
-        person, takeable_thing, place = parameters
+        person, takeable_thing, room = parameters
+
+        person_object = self.objects_container.get_people()[person]
+        takeable_thing_object = self.objects_container.get_takeables()[takeable_thing]
+        room_object = self.objects_container.get_rooms()[room]
 
         return TakeAction(self.animations_box, self.renderer, self.board_state,
-                          person, takeable_thing, place)
+                          person_object, takeable_thing_object, room_object)
 
     def __parse_escape_action(self, parameters: list[str]):
         if len(parameters) != 3:
@@ -48,8 +67,12 @@ class TextActionGenerator(ActionGenerator):
 
         person, room, map_exit = parameters
 
+        person_object = self.objects_container.get_people()[person]
+        room_object = self.objects_container.get_rooms()[room]
+        map_exit_object = self.objects_container.get_map_exits()[map_exit]
+
         return EscapeAction(self.animations_box, self.renderer, self.board_state,
-                            person, room, map_exit)
+                            person_object, map_exit_object, room_object)
 
     def __parse_move_action(self, parameters: list[str]):
         if len(parameters) != 7:
@@ -57,9 +80,17 @@ class TextActionGenerator(ActionGenerator):
 
         moved_room, place1, place2, direction, person, dwelled_room, terminal = parameters
 
+        moved_room_object = self.objects_container.get_rooms()[moved_room]
+        place1_object = self.objects_container.get_places()[place1]
+        place2_object = self.objects_container.get_places()[place2]
+        direction_object = Direction.from_name(direction)
+        person_object = self.objects_container.get_people()[person]
+        dwelled_room_object = self.objects_container.get_rooms()[dwelled_room]
+        terminal_object = self.objects_container.get_terminals()[terminal]
+
         return MoveAction(self.animations_box, self.renderer, self.board_state,
-                          moved_room, place1, place2, direction, person,
-                          dwelled_room, terminal)
+                          moved_room_object, place1_object, place2_object, direction_object,
+                          person_object, dwelled_room_object, terminal_object)
 
     def __parse_action_description(self, action_description: str) -> Action:
         # should be of the form "action_name(param1, param2, ..., paramN)"

@@ -26,6 +26,15 @@ class Direction(Enum):
             case Direction.RIGHT:
                 return Direction.LEFT
 
+    @staticmethod
+    def from_name(name: str) -> 'Direction':
+        return {
+            "UP": Direction.UP,
+            "RIGHT": Direction.RIGHT,
+            "DOWN": Direction.DOWN,
+            "LEFT": Direction.LEFT
+        }[name]
+
 
 class GameObject(ABC):
     def __init__(self, name: str):

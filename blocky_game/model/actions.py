@@ -25,7 +25,7 @@ class Action(ABC):
         pass
 
     @abstractmethod
-    def execute(self) -> bool:
+    def execute(self, animation_duration: float = 500.0) -> bool:
         pass
 
     @abstractmethod
@@ -59,6 +59,7 @@ class GoAction(Action):
         self.entrance1 = entrance1
         self.entrance2 = entrance2
         self.direction = direction
+        self.reverse_direction = direction.reverse()
         self.colour = colour
         self.key = key
 
@@ -85,14 +86,14 @@ class GoAction(Action):
             and is_key_owned \
             and is_key_of_colour
 
-    def execute(self) -> bool:
+    def execute(self, animation_duration: float = 500.0) -> bool:
         if not self.check_preconditions():
             return False
 
         self.room1.remove_person(self.person)
         self.room2.add_person(self.person)
 
-        self.set_move_animation(self.person, 500.0)
+        self.set_move_animation(self.person, animation_duration)
 
         return True
 
@@ -109,6 +110,7 @@ class GoAction(Action):
             self.entrance1.name,
             self.entrance2.name,
             self.direction.name,
+            self.reverse_direction.name,
             self.colour.name,
             self.key.name,
         ]
@@ -129,12 +131,14 @@ class TakeAction(Action):
 
         return is_thing_in_room and is_person_in_room
 
-    def execute(self) -> bool:
+    def execute(self, animation_duration: float = 500.0) -> bool:
         if not self.check_preconditions():
             return False
 
         self.room.remove_thing(self.thing)
         self.person.add_equipment(self.thing)
+
+        self.set_move_animation(self.thing, animation_duration)
 
         return True
 
@@ -164,7 +168,7 @@ class EscapeAction(Action):
 
         return is_exit_in_room and is_person_in_room
 
-    def execute(self) -> bool:
+    def execute(self, animation_duration: float = 500.0) -> bool:
         if not self.check_preconditions():
             return False
 
@@ -212,14 +216,14 @@ class MoveAction(Action):
             and is_moved_room_at_place1 \
             and are_places_adjacent
 
-    def execute(self) -> bool:
+    def execute(self, animation_duration: float = 500.0) -> bool:
         if not self.check_preconditions():
             return False
 
         self.place1.unset_room()
         self.place2.set_room(self.moved_room)
 
-        self.set_move_animation(self.moved_room, 500.0)
+        self.set_move_animation(self.moved_room, animation_duration)
 
         return True
 
