@@ -103,19 +103,33 @@ class RectangularContainer(GameObject):
 
 
 class Colour(GameObject):
+    colour_name_to_rgb = {
+        "red": (255, 0, 0),
+        "green": (0, 255, 0),
+        "blue": (0, 0, 255),
+        "yellow": (255, 255, 0),
+        "black": (0, 0, 0),
+        "white": (200, 200, 200),
+        "purple": (128, 0, 128),
+        "cyan": (0, 255, 255),
+        "magenta": (255, 0, 255),
+        "orange": (255, 165, 0),
+        "pink": (255, 192, 203),
+        "brown": (165, 42, 42),
+        "grey": (128, 128, 128),
+        "violet": (238, 130, 238),
+        "gold": (255, 215, 0),
+        "lime": (0, 255, 0),
+        "navy": (0, 0, 128),
+        "turquoise": (64, 224, 208),
+        "indigo": (75, 0, 130),
+        "beige": (245, 245, 220)
+    }
+
     def __init__(self, name: str, width: int = 10):
         super().__init__(name)
 
-        colour_name_to_rgb = {
-            "red": (255, 0, 0),
-            "green": (0, 255, 0),
-            "blue": (0, 0, 255),
-            "yellow": (255, 255, 0),
-            "black": (0, 0, 0),
-            "white": (200, 200, 200)
-        }
-
-        self.colour_rgb = colour_name_to_rgb.get(name, tuple(randint(0, 255) for _ in range(3)))
+        self.colour_rgb = Colour.colour_name_to_rgb.get(name, tuple(randint(0, 255) for _ in range(3)))
 
         pygame_rect_surface = pygame.Surface((width, width))
         pygame_rect_surface.fill(self.colour_rgb)
