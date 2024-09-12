@@ -100,7 +100,6 @@ class GameObjectsContainer:
         all_objects.update(self.entrances)
         all_objects.update(self.places)
         all_objects.update(self.rooms)
-        all_objects.update(self.game_boards)
         all_objects.update(self.map_exits)
         all_objects.update(self.terminals)
         return all_objects

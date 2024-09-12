@@ -1,4 +1,5 @@
 import pddl
+from typing import Any
 
 from .board_domain import BoardDomain
 from .game_objects import (
@@ -109,10 +110,12 @@ def assert_game_object_type(game_object: GameObject, expected_type: str):
 
 
 class BoardState:
-    def __generate_representation(self) -> tuple[GameBoard, dict[str, GameObject], GameObjectsContainer]:
+    @staticmethod
+    def __generate_representation(pddl_problem: Any) -> (
+            tuple)[GameBoard, dict[str, GameObject], GameObjectsContainer]:
         max_row, max_column = 0, 0
 
-        for obj in self.problem.objects:
+        for obj in pddl_problem.objects:
             if obj.type_tag == "place":
                 row, column = place_name_to_coordinates(obj.name)
                 max_row = max(max_row, row)
@@ -122,7 +125,7 @@ class BoardState:
         game_objects = {}
         game_objects_container = GameObjectsContainer()
 
-        for obj in self.problem.objects:
+        for obj in pddl_problem.objects:
             game_object = pddl_type_to_object(obj.type_tag, obj.name)
 
             if game_object is None:
@@ -140,7 +143,7 @@ class BoardState:
                 assert_game_object_type(game_object, "colour")
                 game_board.colours.append(game_object)
 
-        for relation in self.problem.init:
+        for relation in pddl_problem.init:
             match relation.name:
                 case "at":
                     room, place = relation.terms
@@ -223,8 +226,9 @@ class BoardState:
     def __serialize_objects(self) -> list[str]:
         objects_representation = []
 
-        for obj in sorted(self.problem.objects, key=lambda x: (x.type_tag, x.name)):
-            objects_representation.append(f"{obj.name} - {obj.type_tag}")
+        for obj in sorted(self.game_objects_container.get_all_objects().values(),
+                          key=lambda x: (x.get_type_name(), x.name)):
+            objects_representation.append(f"{obj.name} - {obj.get_type_name()}")
 
         return objects_representation
 
@@ -240,18 +244,28 @@ class BoardState:
         return preprocessed_relations
 
     def __serialize_goals(self) -> list[str]:
-        goals_representation = [str(self.problem.goal)]
+        goals_representation = [self.goal_representation]
 
         return goals_representation
 
-    def __init__(self, board_domain: BoardDomain, problem_definition_path: str):
-        self.problem = pddl.parse_problem(problem_definition_path)
-        self.domain = board_domain
-
-        self.problem.check(self.domain.domain)
-
-        self.game_board, self.game_objects, self.game_objects_container = self.__generate_representation()
+    def __init__(self, domain: BoardDomain, game_board: GameBoard, game_objects: dict[str, GameObject],
+                 game_objects_container: GameObjectsContainer, goal_representation: str):
+        self.domain = domain
+        self.game_board = game_board
+        self.game_objects = game_objects
+        self.game_objects_container = game_objects_container
+        self.goal_representation = goal_representation
         self.game_screen = GameScreen(self.game_board)
+
+    @staticmethod
+    def from_pddl(board_domain: BoardDomain, problem_definition_path: str):
+        pddl_problem = pddl.parse_problem(problem_definition_path)
+        pddl_problem.check(board_domain.domain)
+
+        game_board, game_objects, game_objects_container = BoardState.__generate_representation(pddl_problem)
+        goal_representation = str(pddl_problem.goal)
+
+        return BoardState(board_domain, game_board, game_objects, game_objects_container, goal_representation)
 
     def center_board(self, screen_width: int, screen_height: int, size_ratio: float):
         self.game_board.center_board(screen_width, screen_height, size_ratio)
@@ -263,8 +277,8 @@ class BoardState:
         relations_representation = separator.join(self.__serialize_relations())
         goals_representation = separator.join(self.__serialize_goals())
 
-        return f'''
-(define (problem {problem_name})
+        return \
+            f'''(define (problem {problem_name})
     (:domain {self.domain.domain.name})
         (:objects
             {objects_representation})

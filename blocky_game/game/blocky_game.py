@@ -90,7 +90,7 @@ class BlockyGame:
         self.__init_pygame()
 
         self.board_domain = BoardDomain(blocky_game_config.domain_definition_path)
-        self.board_state = BoardState(self.board_domain, blocky_game_config.problem_definition_path)
+        self.board_state = BoardState.from_pddl(self.board_domain, blocky_game_config.problem_definition_path)
 
         width = self.game_config.screen_width
         height = self.game_config.screen_height

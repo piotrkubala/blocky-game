@@ -45,6 +45,9 @@ class GameObject(ABC):
     def get_children(self) -> list['GameObject']:
         pass
 
+    def get_type_name(self) -> str:
+        return "object"
+
     def serialize_relations(self) -> list[str]:
         return []
 
@@ -92,6 +95,9 @@ class RectangularContainer(GameObject):
     def get_children(self) -> list[GameObject]:
         return self.children
 
+    def get_type_name(self) -> str:
+        return "container"
+
     def is_inside_by_name(self, name: str) -> bool:
         return any(child.name == name for child in self.children)
 
@@ -119,6 +125,9 @@ class Colour(GameObject):
     def get_children(self) -> list[GameObject]:
         return []
 
+    def get_type_name(self) -> str:
+        return "colour"
+
 
 class Thing(GameObject):
     def __init__(self, name: str):
@@ -127,6 +136,9 @@ class Thing(GameObject):
     def get_children(self) -> list[GameObject]:
         return []
 
+    def get_type_name(self) -> str:
+        return "thing"
+
 
 class TakeableThing(Thing):
     def __init__(self, name: str):
@@ -134,6 +146,9 @@ class TakeableThing(Thing):
 
     def get_children(self) -> list[GameObject]:
         return []
+
+    def get_type_name(self) -> str:
+        return "takeable"
 
 
 class Key(TakeableThing):
@@ -169,6 +184,9 @@ class Key(TakeableThing):
     def get_children(self) -> list[GameObject]:
         return [self.colour]
 
+    def get_type_name(self) -> str:
+        return "key"
+
     def serialize_relations(self) -> list[str]:
         return [f"is {self.name} {self.colour.name}"]
 
@@ -192,6 +210,9 @@ class Terminal(Thing):
     def get_children(self) -> list[GameObject]:
         return []
 
+    def get_type_name(self) -> str:
+        return "terminal"
+
 
 class MapExit(Thing):
     def prepare_visuals(self, max_size: int):
@@ -208,6 +229,9 @@ class MapExit(Thing):
 
     def get_children(self) -> list[GameObject]:
         return []
+
+    def get_type_name(self) -> str:
+        return "exit"
 
 
 class Person(GameObject):
@@ -241,6 +265,9 @@ class Person(GameObject):
 
     def get_children(self) -> list[GameObject]:
         return [self.equipment_container]
+
+    def get_type_name(self) -> str:
+        return "person"
 
     def serialize_relations(self) -> list[str]:
         return [
@@ -283,6 +310,9 @@ class Door(GameObject):
 
     def get_children(self) -> list[GameObject]:
         return [self.colour]
+
+    def get_type_name(self) -> str:
+        return "door"
 
 
 class Entrance(GameObject):
@@ -337,6 +367,9 @@ class Entrance(GameObject):
 
     def get_children(self) -> list[GameObject]:
         return list(self.colours_dict.values()) + [self.doors_container]
+
+    def get_type_name(self) -> str:
+        return "entrance"
 
     def set_colours(self, colours: list[Colour]):
         self.colours = colours
@@ -436,6 +469,9 @@ class Room(GameObject):
     def get_children(self) -> list[GameObject]:
         return [self.people_container, self.things_container] + list(self.entrances.values())
 
+    def get_type_name(self) -> str:
+        return "room"
+
     def serialize_relations(self) -> list[str]:
         direction_to_str = {
             Direction.UP: "up",
@@ -498,6 +534,9 @@ class Place(GameObject):
 
     def get_children(self) -> list[GameObject]:
         return [self.room] if self.room is not None else []
+
+    def get_type_name(self) -> str:
+        return "place"
 
     def serialize_relations(self) -> list[str]:
         return [
@@ -590,6 +629,9 @@ class GameBoard(GameObject):
     def get_children(self) -> list[GameObject]:
         return [place for row in self.board for place in row if place is not None]
 
+    def get_type_name(self) -> str:
+        return "board"
+
     def serialize_relations(self) -> list[str]:
         relations_representation = []
 
@@ -652,6 +694,9 @@ class GameInterface(GameObject):
     def get_children(self) -> list[GameObject]:
         return self.children
 
+    def get_type_name(self) -> str:
+        return "interface"
+
     def add_child(self, child: GameObject):
         self.children.append(child)
 
@@ -665,3 +710,6 @@ class GameScreen(GameObject):
 
     def get_children(self) -> list[GameObject]:
         return [self.game_board, self.interface]
+
+    def get_type_name(self) -> str:
+        return "screen"
