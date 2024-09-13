@@ -12,6 +12,12 @@ from blocky_game.model.board_state import BoardState
 
 
 class ProblemGenerator(ABC):
+    def __init__(self, domain: BoardDomain, rows: int, columns: int, keys_count: int):
+        self.domain = domain
+        self.rows = rows
+        self.columns = columns
+        self.keys_count = keys_count
+
     @abstractmethod
     def generate(self) -> BoardState:
         pass
@@ -20,13 +26,14 @@ class ProblemGenerator(ABC):
 class SimpleProblemGenerator(ProblemGenerator):
     def __fill_with_places(self, game_objects_container: GameObjectsContainer, board: GameBoard):
         max_coordinate = max(self.rows, self.columns)
-        digits_per_coordinate = np.floor(np.log10(max_coordinate)) + 1
+        digits_per_coordinate = int(np.floor(np.log10(max_coordinate))) + 1
 
         for x in range(1, self.rows + 1):
             for y in range(1, self.columns + 1):
-                place_name = f"room_{x:0{digits_per_coordinate}d}_{y:0{digits_per_coordinate}d}"
+                place_name = f"place{x:0{digits_per_coordinate}d}{y:0{digits_per_coordinate}d}"
                 place = Place(place_name)
 
+                print(x, y)
                 board[x, y] = place
                 game_objects_container.add_object(place)
 
@@ -92,14 +99,11 @@ class SimpleProblemGenerator(ProblemGenerator):
         return f"(escaped({person.name}))"
 
     def __init__(self, domain: BoardDomain, rows: int, columns: int, keys_count: int):
-        self.domain = domain
-        self.columns = columns
-        self.rows = rows
-        self.keys_count = keys_count
+        super().__init__(domain, rows, columns, keys_count)
 
     def generate(self) -> BoardState:
         game_objects_container = GameObjectsContainer()
-        board = GameBoard(self.rows, self.columns)
+        board = GameBoard(self.rows + 1, self.columns + 1)
 
         self.__fill_with_places(game_objects_container, board)
         self.__fill_with_rooms(game_objects_container, board)

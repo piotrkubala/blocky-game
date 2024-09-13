@@ -90,7 +90,16 @@ class BlockyGame:
         self.__init_pygame()
 
         self.board_domain = BoardDomain(blocky_game_config.domain_definition_path)
-        self.board_state = BoardState.from_pddl(self.board_domain, blocky_game_config.problem_definition_path)
+
+        self.board_state = \
+            BoardState.from_pddl(self.board_domain, blocky_game_config.problem_definition_path) \
+            if blocky_game_config.generator_config is None \
+            else blocky_game_config.generator_config.generator(
+                self.board_domain,
+                blocky_game_config.generator_config.rows,
+                blocky_game_config.generator_config.columns,
+                blocky_game_config.generator_config.keys_count
+            ).generate()
 
         width = self.game_config.screen_width
         height = self.game_config.screen_height
