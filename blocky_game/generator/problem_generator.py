@@ -5,7 +5,7 @@ import random
 
 from blocky_game.model.board_domain import BoardDomain
 from blocky_game.model.game_objects import (
-    GameObject, GameBoard, MapExit, Person, Room, Place,
+    GameObject, GameBoard, MapExit, Person, Room, Place, Direction, Entrance, Colour, Door,
 )
 from blocky_game.model.game_objects_container import GameObjectsContainer
 from blocky_game.model.board_state import BoardState
@@ -33,9 +33,33 @@ class SimpleProblemGenerator(ProblemGenerator):
                 place_name = f"place{x:0{digits_per_coordinate}d}{y:0{digits_per_coordinate}d}"
                 place = Place(place_name)
 
-                print(x, y)
                 board[x, y] = place
                 game_objects_container.add_object(place)
+
+    def __create_doors(self, game_objects_container: GameObjectsContainer, entrance: Entrance):
+        for colour in game_objects_container.get_colours().values():
+            door_name = f"door_{entrance.name}_{colour}"
+            entrance.add_door(door_name, colour)
+
+    def __create_entrance(self, game_objects_container: GameObjectsContainer,
+                          game_board: GameBoard, room: Room, direction: Direction):
+        entrances_count = len(game_objects_container.get_entrances())
+        entrance_name = f"entrance_{entrances_count + 1}"
+
+        entrance = Entrance(entrance_name, direction)
+        game_objects_container.add_object(entrance)
+
+        entrance.colours = game_board.colours
+
+        room.add_entrance(entrance, direction)
+
+        self.__create_doors(game_objects_container, entrance)
+
+    def __create_entrances(self, game_objects_container: GameObjectsContainer, game_board: GameBoard, room: Room):
+        directions = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]
+
+        for direction in directions:
+            self.__create_entrance(game_objects_container, game_board, room, direction)
 
     def __fill_with_rooms(self, game_objects_container: GameObjectsContainer, board: GameBoard):
         added_rooms_count = 0
@@ -54,8 +78,10 @@ class SimpleProblemGenerator(ProblemGenerator):
                 place_to_add = board[x, y]
                 place_to_add.set_room(room)
 
-                game_objects_container.add_object(room)
+                game_objects_container.add_room(room)
                 added_rooms_count += 1
+
+                self.__create_entrances(game_objects_container, board, room)
 
     def __create_map_exit(self, game_objects_container: GameObjectsContainer, board: GameBoard) -> \
             tuple[MapExit, np.ndarray]:
@@ -98,12 +124,24 @@ class SimpleProblemGenerator(ProblemGenerator):
     def __get_goal_representation(person: Person) -> str:
         return f"(escaped({person.name}))"
 
+    def __select_colours(self, game_objects_container: GameObjectsContainer, board: GameBoard):
+        possible_colours = list(Colour.colour_name_to_rgb.keys())
+        colours_names = random.sample(possible_colours, self.keys_count)
+
+        colours = [Colour(colour_name) for colour_name in colours_names]
+        for colour in colours:
+            game_objects_container.add_object(colour)
+
+        board.colours = colours
+
     def __init__(self, domain: BoardDomain, rows: int, columns: int, keys_count: int):
         super().__init__(domain, rows, columns, keys_count)
 
     def generate(self) -> BoardState:
         game_objects_container = GameObjectsContainer()
         board = GameBoard(self.rows + 1, self.columns + 1)
+
+        self.__select_colours(game_objects_container, board)
 
         self.__fill_with_places(game_objects_container, board)
         self.__fill_with_rooms(game_objects_container, board)
