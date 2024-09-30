@@ -271,7 +271,7 @@ class SimpleProblemGenerator(ProblemGenerator):
         colours_set = set(colours)
         random_path = self._get_random_path(board, start_position, end_position, colours_set, avoided_coords)
 
-        for previous_position, next_position in zip(random_path[:-1], random_path[1:]):
+        for i, (previous_position, next_position) in enumerate(zip(random_path[:-1], random_path[1:])):
             previous_x, previous_y = previous_position
             next_x, next_y = next_position
 
@@ -288,7 +288,7 @@ class SimpleProblemGenerator(ProblemGenerator):
                     next_position, direction, colours_set):
                 continue
 
-            colour = random.choice(colours)
+            colour = random.choice(colours) if i < len(random_path) - 1 else colours[-1]
 
             SimpleProblemGenerator.__add_doors(previous_room, next_room, direction, colour)
 
@@ -315,6 +315,22 @@ class SimpleProblemGenerator(ProblemGenerator):
 
         board.colours = colours
 
+    def __get_positions_to_rooms(self, board: GameBoard) -> dict[tuple[int, int], Room]:
+        positions_to_rooms = {}
+        for x in range(1, self.rows + 1):
+            for y in range(1, self.columns + 1):
+                place = board[x, y]
+                if place is not None and place.room is not None:
+                    positions_to_rooms[(x, y)] = place.room
+
+        return positions_to_rooms
+
+    @staticmethod
+    def __revert_rooms_positions(board: GameBoard, positions_to_rooms: dict[tuple[int, int], Room]):
+        for (x, y), room in positions_to_rooms.items():
+            place = board[x, y]
+            place.set_room(room)
+
     def __init__(self, domain: BoardDomain, rows: int, columns: int, keys_count: int):
         super().__init__(domain, rows, columns, keys_count)
 
@@ -329,6 +345,8 @@ class SimpleProblemGenerator(ProblemGenerator):
 
         self.__fill_with_places(game_objects_container, board)
         self.__fill_with_rooms(game_objects_container, board)
+
+        rooms_original_positions = self.__get_positions_to_rooms(board)
 
         _, exit_position = self.__create_map_exit(game_objects_container, board)
         person, person_position = self.__create_player(game_objects_container, board, exit_position)
@@ -345,6 +363,7 @@ class SimpleProblemGenerator(ProblemGenerator):
             board, person_position, terminal_position, {exit_position_tuple}, self.used_colours
         )
 
+        SimpleProblemGenerator.__revert_rooms_positions(board, rooms_original_positions)
         goal_representation = self.__get_goal_representation(person)
 
         return BoardState(

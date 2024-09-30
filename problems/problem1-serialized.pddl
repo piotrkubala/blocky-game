@@ -1,10 +1,10 @@
 (define (problem problem1-serialized)
     (:domain blocky-game)
         (:objects
-            cyan - colour
-            green - colour
-            indigo - colour
-            violet - colour
+            beige - colour
+            black - colour
+            navy - colour
+            red - colour
             entrance_1 - entrance
             entrance_10 - entrance
             entrance_11 - entrance
@@ -82,7 +82,7 @@
             entrance_8 - entrance
             entrance_9 - entrance
             main_exit - exit
-            key_cyan - key
+            key_black - key
             player - person
             place11 - place
             place12 - place
@@ -132,37 +132,37 @@
             
             (at room_0 place11)
             (at room_1 place12)
-            (at room_10 place34)
-            (at room_11 place41)
-            (at room_12 place42)
-            (at room_13 place43)
-            (at room_14 place44)
+            (at room_10 place33)
+            (at room_11 place34)
+            (at room_12 place41)
+            (at room_13 place42)
+            (at room_14 place53)
             (at room_15 place51)
             (at room_16 place52)
-            (at room_17 place53)
-            (at room_18 place54)
+            (at room_17 place54)
+            (at room_18 place44)
             (at room_2 place13)
             (at room_3 place14)
             (at room_4 place21)
             (at room_5 place22)
-            (at room_6 place24)
-            (at room_7 place31)
-            (at room_8 place32)
-            (at room_9 place33)
+            (at room_6 place23)
+            (at room_7 place24)
+            (at room_8 place31)
+            (at room_9 place32)
             (contains room_1 main_exit)
-            (contains room_10 terminal)
-            (contains room_4 key_cyan)
-            (free place23)
-            (has_door entrance_18 cyan)
-            (has_door entrance_21 cyan)
-            (has_door entrance_24 cyan)
-            (has_door entrance_34 cyan)
-            (has_door entrance_35 cyan)
-            (has_door entrance_37 cyan)
-            (has_door entrance_38 cyan)
-            (has_door entrance_41 cyan)
-            (in player room_4)
-            (is key_cyan cyan)
+            (contains room_8 terminal)
+            (free place43)
+            (has_door entrance_26 black)
+            (has_door entrance_28 black)
+            (has_door entrance_29 black)
+            (has_door entrance_34 black)
+            (has_door entrance_37 black)
+            (has_door entrance_38 black)
+            (has_door entrance_41 black)
+            (has_door entrance_43 black)
+            (in player room_8)
+            (is key_black black)
+            (owned key_black player)
             (passage room_0 entrance_1 up)
             (passage room_0 entrance_2 down)
             (passage room_0 entrance_3 left)
