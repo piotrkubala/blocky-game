@@ -89,7 +89,6 @@ class GameObjectsContainer:
     def get_takeables(self) -> dict[str, TakeableThing]:
         takeables = {}
         takeables.update(self.keys)
-        takeables.update(self.colours)
         return takeables
 
     def get_all_objects(self) -> dict[str, GameObject]:

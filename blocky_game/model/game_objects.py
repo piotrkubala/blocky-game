@@ -632,10 +632,7 @@ class GameBoard(GameObject):
         new_row = row + row_offset
         new_column = column + column_offset
 
-        is_valid_row = 0 <= new_row < self.rows
-        is_valid_column = 0 <= new_column < self.columns
-
-        if not is_valid_row or not is_valid_column:
+        if not self.is_position_valid(new_row, new_column):
             return None
 
         return self.board[new_row][new_column]
@@ -697,6 +694,9 @@ class GameBoard(GameObject):
                 return Direction.LEFT
 
         return None
+
+    def is_position_valid(self, row: int, column: int) -> bool:
+        return 0 <= row < self.rows and 0 <= column < self.columns
 
 
 class GameInterface(GameObject):
