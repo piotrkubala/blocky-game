@@ -23,18 +23,19 @@ class ProblemGenerator(ABC):
     def __restore_path(previous_positions: dict[tuple[int, int], tuple[int, int] | None],
                        end_position: np.ndarray) -> list[np.ndarray]:
         path = []
-        current_position = tuple(end_position)
-        while current_position:
-            path.append(np.array(current_position))
-            current_position = previous_positions[current_position]
+        current_position = end_position
+        while current_position is not None:
+            path.append(current_position)
+            position_x, position_y = current_position
+            current_position = previous_positions[(position_x, position_y)]
 
         path.reverse()
         return path
 
     @staticmethod
-    def __check_door_colour_exists(game_board: GameBoard,
-                                   first_position: np.ndarray, second_position: np.ndarray,
-                                   direction: Direction, colours: set[Colour]) -> bool:
+    def _does_door_with_colour_exist(game_board: GameBoard,
+                                     first_position: np.ndarray, second_position: np.ndarray,
+                                     direction: Direction, colours: set[Colour]) -> bool:
         first_position_x, first_position_y = first_position
         second_position_x, second_position_y = second_position
 
@@ -61,19 +62,23 @@ class ProblemGenerator(ABC):
         if first_entrance is None or second_entrance is None:
             return False
 
-        first_colours = set(first_entrance.colours)
-        second_colours = set(second_entrance.colours)
+        first_colours = set(first_entrance.colours_dict.values())
+        second_colours = set(second_entrance.colours_dict.values())
 
         common_colours = first_colours.intersection(second_colours).intersection(colours)
 
         return len(common_colours) > 0
 
     @staticmethod
-    def _get_random_path_using_keys(game_board: GameBoard, keys: set[Key],
-                                    start_position: np.ndarray, end_position: np.ndarray) -> list[np.ndarray]:
-        start_position_x, start_position_y = start_position
+    def _check_room_exists(game_board: GameBoard, position: np.ndarray) -> bool:
+        x, y = position
+        place = game_board[x, y]
+        return place is not None and place is not None
 
-        colours = set(key.colour for key in keys)
+    @staticmethod
+    def _get_random_path(game_board: GameBoard, start_position: np.ndarray,
+                         end_position: np.ndarray, colours: set[Colour] | None) -> list[np.ndarray]:
+        start_position_x, start_position_y = start_position
 
         previous_positions: dict[tuple[int, int], tuple[int, int] | None] = {(start_position_x, start_position_y): None}
         visited = {tuple(start_position)}
@@ -95,11 +100,18 @@ class ProblemGenerator(ABC):
                 new_position_x, new_position_y = new_position
                 new_position_tuple = (new_position_x, new_position_y)
 
-                if new_position_tuple in visited or not game_board.is_position_valid(*new_position) or \
-                        not ProblemGenerator.__check_door_colour_exists(
-                            game_board, current_position, new_position,
-                            direction, colours):
+                if new_position_tuple in visited or not game_board.is_position_valid(*new_position):
                     continue
+
+                if colours is None:
+                    if not ProblemGenerator._check_room_exists(game_board, new_position):
+                        continue
+                else:
+                    if not ProblemGenerator._check_room_exists(game_board, new_position) and \
+                            not ProblemGenerator._does_door_with_colour_exist(
+                                game_board, current_position, new_position,
+                                direction, colours):
+                        continue
 
                 visited.add(new_position_tuple)
                 stack.append(new_position)
@@ -146,10 +158,7 @@ class SimpleProblemGenerator(ProblemGenerator):
         game_objects_container.add_object(entrance)
 
         entrance.colours = game_board.colours
-
         room.add_entrance(entrance, direction)
-
-        self.__create_doors(game_objects_container, entrance)
 
     def __create_entrances(self, game_objects_container: GameObjectsContainer, game_board: GameBoard, room: Room):
         directions = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]
@@ -213,9 +222,9 @@ class SimpleProblemGenerator(ProblemGenerator):
 
         return person, player_position
 
-    def __create_terminal_with_path(self, game_objects_container: GameObjectsContainer,
-                                    board: GameBoard, person: Person, person_position: np.ndarray,
-                                    exit_position: np.ndarray) -> tuple[Terminal, np.ndarray]:
+    def __create_terminal(self, game_objects_container: GameObjectsContainer,
+                          board: GameBoard, person_position: np.ndarray,
+                          exit_position: np.ndarray) -> tuple[Terminal, np.ndarray]:
         terminal = Terminal("terminal")
         game_objects_container.add_object(terminal)
 
@@ -229,7 +238,7 @@ class SimpleProblemGenerator(ProblemGenerator):
         terminal_room = board[terminal_x, terminal_y].room
         person_room = board[person_x, person_y].room
 
-        initial_colour = self.__get_random_not_used_colour(board)
+        initial_colour = self.__get_next_not_used_colour(board)
 
         terminal_room.add_thing(terminal)
         terminal_position = np.array([terminal_x, terminal_y])
@@ -243,31 +252,70 @@ class SimpleProblemGenerator(ProblemGenerator):
         return terminal, terminal_position
 
     @staticmethod
+    def __add_doors(first_room: Room, second_room: Room, direction: Direction, colour: Colour):
+        first_entrance = first_room.entrances[direction]
+        second_entrance = second_room.entrances[direction.reverse()]
+
+        first_entrance.add_door(colour.name, colour)
+        second_entrance.add_door(colour.name, colour)
+
+        first_entrance.prepare_doors()
+        second_entrance.prepare_doors()
+
+    def __prepare_doors_path(self, board: GameBoard, start_position: np.ndarray,
+                             end_position: np.ndarray, colours: list[Colour]):
+        colours_set = set(colours)
+        random_path = self._get_random_path(board, start_position, end_position, colours_set)
+
+        for previous_position, next_position in zip(random_path[:-1], random_path[1:]):
+            previous_x, previous_y = previous_position
+            next_x, next_y = next_position
+
+            previous_room = board[previous_x, previous_y].room
+            next_room = board[next_x, next_y].room
+
+            position_difference = next_position - previous_position
+
+            difference_x, difference_y = position_difference
+            direction = Direction.from_vector(difference_x, difference_y)
+
+            if ProblemGenerator._does_door_with_colour_exist(
+                    board, previous_position,
+                    next_position, direction, colours_set):
+                continue
+
+            colour = random.choice(colours)
+
+            SimpleProblemGenerator.__add_doors(previous_room, next_room, direction, colour)
+
+    @staticmethod
     def __get_goal_representation(person: Person) -> str:
         return f"(escaped({person.name}))"
 
-    def __get_random_not_used_colour(self, board: GameBoard) -> Colour:
-        possible_colours = [colour for colour in board.colours if colour not in self.used_colours]
+    def __get_next_not_used_colour(self, board: GameBoard) -> Colour:
+        index = self.not_used_colour_index
+        self.not_used_colour_index += 1
+        self.used_colours.append(board.colours[index])
 
-        colour = random.choice(possible_colours)
-        self.used_colours.add(colour)
-
-        return colour
+        return board.colours[index]
 
     def __select_colours(self, game_objects_container: GameObjectsContainer, board: GameBoard):
         possible_colours = list(Colour.colour_name_to_rgb.keys())
         colours_names = random.sample(possible_colours, self.keys_count)
+        random.shuffle(colours_names)
 
         colours = [Colour(colour_name) for colour_name in colours_names]
         for colour in colours:
             game_objects_container.add_object(colour)
+        self.not_used_colour_index = 0
 
         board.colours = colours
 
     def __init__(self, domain: BoardDomain, rows: int, columns: int, keys_count: int):
         super().__init__(domain, rows, columns, keys_count)
 
-        self.used_colours = set()
+        self.used_colours = []
+        self.not_used_colour_index = 0
 
     def generate(self) -> BoardState:
         game_objects_container = GameObjectsContainer()
@@ -281,8 +329,10 @@ class SimpleProblemGenerator(ProblemGenerator):
         _, exit_position = self.__create_map_exit(game_objects_container, board)
         person, person_position = self.__create_player(game_objects_container, board, exit_position)
 
-        terminal, _ = \
-            self.__create_terminal_with_path(game_objects_container, board, person, person_position, exit_position)
+        terminal, _ = self.__create_terminal(game_objects_container, board, person_position, exit_position)
+        self.__prepare_doors_path(
+            board, person_position, exit_position, self.used_colours
+        )
 
         goal_representation = self.__get_goal_representation(person)
 

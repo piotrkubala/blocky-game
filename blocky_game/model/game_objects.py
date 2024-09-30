@@ -35,6 +35,15 @@ class Direction(Enum):
             "LEFT": Direction.LEFT
         }[name]
 
+    @staticmethod
+    def from_vector(vector_x, vector_y) -> 'Direction':
+        return {
+            (-1, 0): Direction.UP,
+            (0, 1): Direction.RIGHT,
+            (1, 0): Direction.DOWN,
+            (0, -1): Direction.LEFT
+        }[(vector_x, vector_y)]
+
 
 class GameObject(ABC):
     def __init__(self, name: str):
@@ -333,7 +342,7 @@ class Entrance(GameObject):
     def prepare_doors(self):
         self.doors_container.clear_children()
 
-        for i, colour in enumerate(self.colours):
+        for i, colour in enumerate(self.colours_dict.values()):
             door = Door(f"{self.name}_{i}_door", colour)
             self.doors_container.add_child(door)
 
