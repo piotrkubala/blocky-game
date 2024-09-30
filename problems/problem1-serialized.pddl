@@ -1,10 +1,10 @@
 (define (problem problem1-serialized)
     (:domain blocky-game)
         (:objects
-            beige - colour
-            black - colour
-            brown - colour
-            magenta - colour
+            cyan - colour
+            green - colour
+            indigo - colour
+            violet - colour
             entrance_1 - entrance
             entrance_10 - entrance
             entrance_11 - entrance
@@ -82,7 +82,7 @@
             entrance_8 - entrance
             entrance_9 - entrance
             main_exit - exit
-            key_brown - key
+            key_cyan - key
             player - person
             place11 - place
             place12 - place
@@ -149,22 +149,20 @@
             (at room_7 place31)
             (at room_8 place32)
             (at room_9 place33)
-            (contains room_3 key_brown)
-            (contains room_4 terminal)
-            (contains room_7 main_exit)
+            (contains room_1 main_exit)
+            (contains room_10 terminal)
+            (contains room_4 key_cyan)
             (free place23)
-            (has_door entrance_11 brown)
-            (has_door entrance_12 brown)
-            (has_door entrance_15 brown)
-            (has_door entrance_21 brown)
-            (has_door entrance_22 brown)
-            (has_door entrance_32 brown)
-            (has_door entrance_33 brown)
-            (has_door entrance_35 brown)
-            (has_door entrance_6 brown)
-            (has_door entrance_8 brown)
-            (in player room_3)
-            (is key_brown brown)
+            (has_door entrance_18 cyan)
+            (has_door entrance_21 cyan)
+            (has_door entrance_24 cyan)
+            (has_door entrance_34 cyan)
+            (has_door entrance_35 cyan)
+            (has_door entrance_37 cyan)
+            (has_door entrance_38 cyan)
+            (has_door entrance_41 cyan)
+            (in player room_4)
+            (is key_cyan cyan)
             (passage room_0 entrance_1 up)
             (passage room_0 entrance_2 down)
             (passage room_0 entrance_3 left)
