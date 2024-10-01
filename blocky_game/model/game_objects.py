@@ -26,6 +26,9 @@ class Direction(Enum):
             case Direction.RIGHT:
                 return Direction.LEFT
 
+    def to_vector(self):
+        return np.array(self.value)
+
     @staticmethod
     def from_name(name: str) -> 'Direction':
         return {
@@ -706,6 +709,9 @@ class GameBoard(GameObject):
 
     def is_position_valid(self, row: int, column: int) -> bool:
         return 0 <= row < self.rows and 0 <= column < self.columns
+
+    def does_place_exist(self, row: int, column: int) -> bool:
+        return self.is_position_valid(row, column) and self[row, column] is not None
 
 
 class GameInterface(GameObject):

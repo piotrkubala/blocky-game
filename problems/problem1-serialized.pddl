@@ -2,9 +2,9 @@
     (:domain blocky-game)
         (:objects
             beige - colour
-            black - colour
-            navy - colour
-            red - colour
+            green - colour
+            indigo - colour
+            white - colour
             entrance_1 - entrance
             entrance_10 - entrance
             entrance_11 - entrance
@@ -82,7 +82,10 @@
             entrance_8 - entrance
             entrance_9 - entrance
             main_exit - exit
-            key_black - key
+            key_beige - key
+            key_green - key
+            key_indigo - key
+            key_white - key
             player - person
             place11 - place
             place12 - place
@@ -132,37 +135,67 @@
             
             (at room_0 place11)
             (at room_1 place12)
-            (at room_10 place33)
-            (at room_11 place34)
-            (at room_12 place41)
-            (at room_13 place42)
-            (at room_14 place53)
+            (at room_10 place34)
+            (at room_11 place41)
+            (at room_12 place42)
+            (at room_13 place43)
+            (at room_14 place44)
             (at room_15 place51)
             (at room_16 place52)
-            (at room_17 place54)
-            (at room_18 place44)
+            (at room_17 place53)
+            (at room_18 place54)
             (at room_2 place13)
             (at room_3 place14)
             (at room_4 place21)
             (at room_5 place22)
-            (at room_6 place23)
-            (at room_7 place24)
-            (at room_8 place31)
-            (at room_9 place32)
-            (contains room_1 main_exit)
-            (contains room_8 terminal)
-            (free place43)
-            (has_door entrance_26 black)
-            (has_door entrance_28 black)
-            (has_door entrance_29 black)
-            (has_door entrance_34 black)
-            (has_door entrance_37 black)
-            (has_door entrance_38 black)
-            (has_door entrance_41 black)
-            (has_door entrance_43 black)
-            (in player room_8)
-            (is key_black black)
-            (owned key_black player)
+            (at room_6 place24)
+            (at room_7 place31)
+            (at room_8 place32)
+            (at room_9 place33)
+            (contains room_15 key_indigo)
+            (contains room_16 key_beige)
+            (contains room_18 main_exit)
+            (contains room_2 key_green)
+            (contains room_5 terminal)
+            (contains room_8 key_white)
+            (free place23)
+            (has_door entrance_18 green)
+            (has_door entrance_20 green)
+            (has_door entrance_21 green)
+            (has_door entrance_23 green)
+            (has_door entrance_24 indigo)
+            (has_door entrance_31 green)
+            (has_door entrance_32 green)
+            (has_door entrance_34 indigo)
+            (has_door entrance_35 indigo)
+            (has_door entrance_36 beige)
+            (has_door entrance_37 indigo)
+            (has_door entrance_40 indigo)
+            (has_door entrance_47 green)
+            (has_door entrance_48 green)
+            (has_door entrance_51 beige)
+            (has_door entrance_52 white)
+            (has_door entrance_54 white)
+            (has_door entrance_55 indigo)
+            (has_door entrance_55 white)
+            (has_door entrance_56 indigo)
+            (has_door entrance_57 white)
+            (has_door entrance_6 green)
+            (has_door entrance_60 indigo)
+            (has_door entrance_63 green)
+            (has_door entrance_66 beige)
+            (has_door entrance_69 beige)
+            (has_door entrance_69 white)
+            (has_door entrance_70 white)
+            (has_door entrance_71 indigo)
+            (has_door entrance_75 indigo)
+            (has_door entrance_8 green)
+            (has_door entrance_9 green)
+            (in player room_2)
+            (is key_beige beige)
+            (is key_green green)
+            (is key_indigo indigo)
+            (is key_white white)
             (passage room_0 entrance_1 up)
             (passage room_0 entrance_2 down)
             (passage room_0 entrance_3 left)

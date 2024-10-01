@@ -98,7 +98,8 @@ class BlockyGame:
                 self.board_domain,
                 blocky_game_config.generator_config.rows,
                 blocky_game_config.generator_config.columns,
-                blocky_game_config.generator_config.keys_count
+                blocky_game_config.generator_config.keys_count,
+                blocky_game_config.generator_config.mixing_steps
             ).generate()
 
         width = self.game_config.screen_width
