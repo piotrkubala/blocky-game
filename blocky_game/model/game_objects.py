@@ -345,7 +345,7 @@ class Entrance(GameObject):
     def prepare_doors(self):
         self.doors_container.clear_children()
 
-        for i, colour in enumerate(self.colours_dict.values()):
+        for i, colour in enumerate(self.colours):
             door = Door(f"{self.name}_{i}_door", colour)
             self.doors_container.add_child(door)
 

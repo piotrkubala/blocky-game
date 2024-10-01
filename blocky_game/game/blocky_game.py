@@ -19,6 +19,9 @@ class BlockyGame:
             match event.type:
                 case pygame.QUIT:
                     self.stopped = True
+                case pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.stopped = True
                 case pygame.MOUSEBUTTONDOWN:
                     x, y = pygame.mouse.get_pos()
                     self.__process_mouse_click(x, y)
@@ -102,9 +105,14 @@ class BlockyGame:
                 blocky_game_config.generator_config.mixing_steps
             ).generate()
 
-        width = self.game_config.screen_width
-        height = self.game_config.screen_height
-        self.display = pygame.display.set_mode((width, height))
+        infoObject = pygame.display.Info()
+
+        width = self.game_config.screen_width \
+            if not self.game_config.use_native_screen_resolution else infoObject.current_w
+        height = self.game_config.screen_height \
+            if not self.game_config.use_native_screen_resolution else infoObject.current_h
+        self.display = \
+            pygame.display.set_mode((width, height), pygame.FULLSCREEN if self.game_config.fullscreen else 0)
         self.clock = pygame.time.Clock()
         self.board_state.center_board(width, height, self.game_config.size_ratio)
 
