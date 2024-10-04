@@ -119,7 +119,7 @@ class Colour(GameObject):
         "red": (255, 0, 0),
         "green": (0, 255, 0),
         "blue": (0, 0, 255),
-        "yellow": (255, 255, 0),
+        "yellow": (200, 200, 0),
         "black": (0, 0, 0),
         "white": (200, 200, 200),
         "purple": (128, 0, 128),
@@ -578,8 +578,8 @@ class Place(GameObject):
 
 class GameBoard(GameObject):
     def center_board(self, screen_width: int, screen_height: int, size_ratio: float = 0.8):
-        real_columns_count = self.max_row_index - self.min_row_index + 1
-        real_rows_count = self.max_column_index - self.min_column_index + 1
+        real_rows_count = self.max_row_index - self.min_row_index + 1
+        real_columns_count = self.max_column_index - self.min_column_index + 1
 
         board_width = real_columns_count * self.place_width
         board_height = real_rows_count * self.place_width

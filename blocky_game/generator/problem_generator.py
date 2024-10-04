@@ -322,6 +322,22 @@ class SimpleProblemGenerator(ProblemGenerator):
         colours_set = set(colours)
         random_path = self._get_random_path(board, start_position, end_position, colours_set, avoided_coords)
 
+        def select_random_colour(index: int) -> Colour:
+            if index >= len(random_path) - 2 or len(colours) == 1:
+                return colours[-1]
+
+            colours_count = len(colours)
+            triangle_value = colours_count * (colours_count - 1) // 2
+
+            random_number = random.randint(0, triangle_value - 1)
+
+            values_sum = 0
+            for j in range(1, colours_count + 1):
+                new_sum = values_sum + j
+                if new_sum >= random_number:
+                    return colours[j - 1]
+                values_sum = new_sum
+
         for i, (previous_position, next_position) in enumerate(zip(random_path[:-1], random_path[1:])):
             previous_x, previous_y = previous_position
             next_x, next_y = next_position
@@ -339,7 +355,7 @@ class SimpleProblemGenerator(ProblemGenerator):
                     next_position, direction, colours_set):
                 continue
 
-            colour = random.choice(colours) if i < len(random_path) - 2 else colours[-1]
+            colour = select_random_colour(i)
 
             SimpleProblemGenerator.__add_doors(game_objects_container, board, previous_room,
                                                next_room, direction, colour)
@@ -380,7 +396,7 @@ class SimpleProblemGenerator(ProblemGenerator):
 
         return positions_to_rooms
 
-    def __mix_rooms(self, board: GameBoard, steps: int):
+    def __mix_rooms(self, board: GameBoard, steps: int, change_probability: float = 0.25):
         empty_position = next(np.array((x, y)) for x in range(1, self.rows + 1) for y in range(1, self.columns + 1)
                               if board[x, y].room is None)
         directions = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]
@@ -390,7 +406,10 @@ class SimpleProblemGenerator(ProblemGenerator):
             possible_directions = [direction for direction in directions
                                    if board.does_place_exist(*(empty_position + direction.to_vector()))
                                    and direction != last_direction.reverse()]
-            new_direction = random.choice(possible_directions)
+            new_direction = random.choice(possible_directions) \
+                if last_direction not in possible_directions or random.random() < change_probability \
+                else last_direction
+
             new_position = empty_position + new_direction.to_vector()
 
             empty_position_x, empty_position_y = empty_position
@@ -405,6 +424,7 @@ class SimpleProblemGenerator(ProblemGenerator):
             new_place.unset_room()
 
             empty_position = new_position
+            last_direction = new_direction
 
     def __prepare_one_key_path(self, game_objects_container: GameObjectsContainer, board: GameBoard,
                                avoided_coords: set[tuple[int, int]], terminal_position: np.ndarray):
