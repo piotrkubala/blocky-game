@@ -12,8 +12,8 @@ class PyGameConfig:
     size_ratio: float = 0.9
     actions_delay = 250.0
     animation_duration = 500.0
-    fullscreen = True
-    use_native_screen_resolution = True
+    fullscreen = False
+    use_native_screen_resolution = False
 
 
 class GeneratorConfig:
@@ -33,4 +33,4 @@ class BlockyGameConfig:
     state_serialization_path: str | None = "../problems/problem1-serialized.pddl"
     actions_list_path: str | None = None  # "../solutions/problem1-solution.actions"
     generator_config: GeneratorConfig | None = \
-        GeneratorConfig(4, 4, 2, 50, SimpleProblemGenerator)
+        GeneratorConfig(5, 5, 3, 50, SimpleProblemGenerator)

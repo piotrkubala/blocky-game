@@ -3,6 +3,7 @@ from typing import Callable
 
 import numpy as np
 import random
+from queue import Queue
 
 from blocky_game.model.board_domain import BoardDomain
 from blocky_game.model.game_objects import (
@@ -70,6 +71,20 @@ class ProblemGenerator(ABC):
 
         return len(common_colours) > 0
 
+    def _does_doors_with_colour_exist_any_direction(self, game_board: GameBoard, position: np.ndarray,
+                                                    colours: set[Colour]) -> bool:
+        directions = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]
+        x, y = position
+
+        for direction in directions:
+            new_position = np.array([x, y]) + np.array(direction.value)
+            if game_board.is_position_valid(*new_position) and self._does_door_with_colour_exist(
+                game_board, position, new_position, direction, colours
+            ):
+                return True
+
+        return False
+
     @staticmethod
     def _check_room_exists(game_board: GameBoard, position: np.ndarray) -> bool:
         x, y = position
@@ -85,9 +100,10 @@ class ProblemGenerator(ABC):
         previous_positions: dict[tuple[int, int], tuple[int, int] | None] = {(start_position_x, start_position_y): None}
         visited = {tuple(start_position)}
 
-        stack = [start_position]
-        while stack:
-            current_position = stack.pop()
+        q = Queue()
+        q.put(start_position)
+        while q:
+            current_position = q.get()
             if np.array_equal(current_position, end_position):
                 return ProblemGenerator.__restore_path(previous_positions, end_position)
 
@@ -119,7 +135,7 @@ class ProblemGenerator(ABC):
                         continue
 
                 visited.add(new_position_tuple)
-                stack.append(new_position)
+                q.put(new_position)
                 previous_positions[new_position_tuple] = current_position
 
         return []
@@ -130,13 +146,23 @@ class ProblemGenerator(ABC):
 
 
 class SimpleProblemGenerator(ProblemGenerator):
-    def __get_random_coordinates(self, is_correct: Callable[[int, int], bool]) -> tuple[int, int]:
-        while True:
+    def __get_random_coordinates(self, is_correct: Callable[[int, int], bool]) -> tuple[int, int] | None:
+        tries_limit = 16
+
+        for _ in range(tries_limit):
             x = random.randint(1, self.rows)
             y = random.randint(1, self.columns)
 
             if is_correct(x, y):
                 return x, y
+
+        possible_coordinates = [(x, y) for x in range(1, self.rows + 1) for y in range(1, self.columns + 1)
+                                if is_correct(x, y)]
+
+        if len(possible_coordinates) == 0:
+            return None
+
+        return random.choice(possible_coordinates)
 
     def __fill_with_places(self, game_objects_container: GameObjectsContainer, board: GameBoard):
         max_coordinate = max(self.rows, self.columns)
@@ -199,9 +225,13 @@ class SimpleProblemGenerator(ProblemGenerator):
         map_exit = MapExit("main_exit")
         game_objects_container.add_object(map_exit)
 
-        exit_x, exit_y = self.__get_random_coordinates(
+        exit_position_tuple = self.__get_random_coordinates(
             lambda x, y: not board[x, y].is_free()
         )
+
+        if exit_position_tuple is None:
+            raise ValueError("No place for exit")
+        exit_x, exit_y = exit_position_tuple
 
         exit_position = np.array([exit_x, exit_y])
 
@@ -217,9 +247,13 @@ class SimpleProblemGenerator(ProblemGenerator):
 
         exit_x, exit_y = exit_position
 
-        player_x, player_y = self.__get_random_coordinates(
+        player_position_tuple = self.__get_random_coordinates(
             lambda x, y: not board[x, y].is_free() and (x, y) != (exit_x, exit_y)
         )
+
+        if player_position_tuple is None:
+            raise ValueError("No place for player")
+        player_x, player_y = player_position_tuple
 
         player_position = np.array([player_x, player_y])
 
@@ -237,9 +271,14 @@ class SimpleProblemGenerator(ProblemGenerator):
         person_x, person_y = person_position
         exit_x, exit_y = exit_position
 
-        terminal_x, terminal_y = self.__get_random_coordinates(
+        terminal_position_tuple = self.__get_random_coordinates(
             lambda x, y: not board[x, y].is_free() and (x, y) != (exit_x, exit_y) and (x, y) != (person_x, person_y)
         )
+
+        if terminal_position_tuple is None:
+            raise ValueError("No place for terminal")
+
+        terminal_x, terminal_y = terminal_position_tuple
 
         terminal_room = board[terminal_x, terminal_y].room
         person_room = board[person_x, person_y].room
@@ -375,9 +414,22 @@ class SimpleProblemGenerator(ProblemGenerator):
         key.set_colour(key_colour)
         game_objects_container.add_object(key)
 
-        random_target_x, random_target_y = self.__get_random_coordinates(
-            lambda x, y: not board[x, y].is_free() and (x, y) not in avoided_coords
+        liberal_condition_predicate = lambda x, y: not board[x, y].is_free() and (x, y) not in avoided_coords
+        door_not_exists_predicate = lambda x, y: not self._does_doors_with_colour_exist_any_direction(
+            board, np.array([x, y]), self.used_colours
         )
+
+        random_position_tuple = self.__get_random_coordinates(
+            lambda x, y: liberal_condition_predicate(x, y) and door_not_exists_predicate(x, y)
+        )
+
+        if random_position_tuple is None:
+            random_position_tuple = self.__get_random_coordinates(liberal_condition_predicate)
+
+            if random_position_tuple is None:
+                raise ValueError("No place for key")
+        random_target_x, random_target_y = random_position_tuple
+
         random_target_position = np.array([random_target_x, random_target_y])
 
         random_target_room = board[random_target_x, random_target_y].room
