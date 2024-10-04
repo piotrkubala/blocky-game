@@ -12,8 +12,8 @@ class PyGameConfig:
     size_ratio: float = 0.9
     actions_delay = 250.0
     animation_duration = 500.0
-    fullscreen = False
-    use_native_screen_resolution = False
+    fullscreen = True
+    use_native_screen_resolution = True
 
 
 class GeneratorConfig:
