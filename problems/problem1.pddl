@@ -1,9 +1,9 @@
 (define (problem blocky-problem1)
     (:domain blocky-game)
     (:objects
-        place11 place21 place31 - place
-        place12 place22 place32 - place
-        place13 place23 place33 - place
+        place11 place12 place13 - place
+        place21 place22 place23 - place
+        place31 place32 place33 - place
         room1 room2 room3 room4 - room
         entrance11 entrance12 - entrance
         entrance21 entrance22 - entrance

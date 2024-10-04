@@ -121,7 +121,7 @@ class ProblemGenerator(ABC):
                 if new_position_tuple in avoided_coords:
                     continue
 
-                if new_position_tuple in visited or not game_board.is_position_valid(*new_position):
+                if new_position_tuple in visited or not game_board.does_place_exist(*new_position):
                     continue
 
                 if colours is None:
@@ -147,7 +147,7 @@ class ProblemGenerator(ABC):
 
 class SimpleProblemGenerator(ProblemGenerator):
     def __get_random_coordinates(self, is_correct: Callable[[int, int], bool]) -> tuple[int, int] | None:
-        tries_limit = 16
+        tries_limit = 4
 
         for _ in range(tries_limit):
             x = random.randint(1, self.rows)
@@ -332,7 +332,7 @@ class SimpleProblemGenerator(ProblemGenerator):
             position_difference = next_position - previous_position
 
             difference_x, difference_y = position_difference
-            direction = Direction.from_vector(difference_y, difference_x)
+            direction = Direction.from_vector(difference_x, difference_y)
 
             if ProblemGenerator._does_door_with_colour_exist(
                     board, previous_position,
@@ -340,6 +340,11 @@ class SimpleProblemGenerator(ProblemGenerator):
                 continue
 
             colour = random.choice(colours) if i < len(random_path) - 2 else colours[-1]
+
+            if previous_room is None or next_room is None:
+                print("Room is None!!!")
+                print((previous_x, previous_y), (next_x, next_y))
+                print(previous_room, next_room)
 
             SimpleProblemGenerator.__add_doors(game_objects_container, board, previous_room,
                                                next_room, direction, colour)
@@ -416,7 +421,7 @@ class SimpleProblemGenerator(ProblemGenerator):
 
         liberal_condition_predicate = lambda x, y: not board[x, y].is_free() and (x, y) not in avoided_coords
         door_not_exists_predicate = lambda x, y: not self._does_doors_with_colour_exist_any_direction(
-            board, np.array([x, y]), self.used_colours
+            board, np.array([x, y]), set(self.used_colours)
         )
 
         random_position_tuple = self.__get_random_coordinates(
@@ -424,6 +429,7 @@ class SimpleProblemGenerator(ProblemGenerator):
         )
 
         if random_position_tuple is None:
+            print("No place for key!!!")
             random_position_tuple = self.__get_random_coordinates(liberal_condition_predicate)
 
             if random_position_tuple is None:
@@ -458,6 +464,7 @@ class SimpleProblemGenerator(ProblemGenerator):
         person_position_x, person_position_y = person_position
         person_position_tuple = (person_position_x, person_position_y)
 
+        print(f"Preparing path from {terminal_position} to {exit_position}")
         self.__prepare_doors_path(
             game_objects_container, board, terminal_position,
             exit_position, {person_position_tuple}, self.used_colours

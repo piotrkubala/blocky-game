@@ -32,7 +32,6 @@ class InterfaceManager:
 
         action = action_processor.generate_action(self.animations_box, self.renderer, self.board_state)
         action_button.deactivate()
-        print(action)
 
         if action is None:
             return

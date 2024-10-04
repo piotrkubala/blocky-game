@@ -627,11 +627,11 @@ class GameBoard(GameObject):
         if value is None:
             return
 
-        self.place_name_to_coordinates[value.name] = (row, column)
+        self.place_name_to_coordinates[value.name] = (column, row)
         delta = self.place_width - 1
         value.prepare_visuals(self.place_width)
         value.graphics_component.clear_transform()
-        value.graphics_component.translate(row * delta, column * delta)
+        value.graphics_component.translate(column * delta, row * delta)
 
         self.min_row_index = min(self.min_row_index, row)
         self.min_column_index = min(self.min_column_index, column)
@@ -682,8 +682,8 @@ class GameBoard(GameObject):
         return relations_representation
 
     def are_adjacent(self, place1: Place, place2: Place) -> bool:
-        row1, column1 = self.place_name_to_coordinates[place1.name]
-        row2, column2 = self.place_name_to_coordinates[place2.name]
+        column1, row1 = self.place_name_to_coordinates[place1.name]
+        column2, row2 = self.place_name_to_coordinates[place2.name]
 
         if abs(row1 - row2) + abs(column1 - column2) != 1:
             return False
@@ -691,19 +691,19 @@ class GameBoard(GameObject):
         return row1 == row2 or column1 == column2
 
     def get_adjacency_direction(self, place1: Place, place2: Place) -> Direction | None:
-        row1, column1 = self.place_name_to_coordinates[place1.name]
-        row2, column2 = self.place_name_to_coordinates[place2.name]
+        column1, row1 = self.place_name_to_coordinates[place1.name]
+        column2, row2 = self.place_name_to_coordinates[place2.name]
 
         if row1 == row2:
             if column1 + 1 == column2:
-                return Direction.DOWN
+                return Direction.RIGHT
             if column1 - 1 == column2:
-                return Direction.UP
+                return Direction.LEFT
         if column1 == column2:
             if row1 + 1 == row2:
-                return Direction.RIGHT
+                return Direction.DOWN
             if row1 - 1 == row2:
-                return Direction.LEFT
+                return Direction.UP
 
         return None
 

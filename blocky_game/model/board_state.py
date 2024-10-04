@@ -30,8 +30,8 @@ def place_name_to_coordinates(place_name: str) -> tuple[int, int]:
 
     numbers_half_len = numbers_len // 2
 
-    row = int(numbers[:numbers_half_len])
-    column = int(numbers[numbers_half_len:])
+    column = int(numbers[:numbers_half_len])
+    row = int(numbers[numbers_half_len:])
 
     return row, column
 
