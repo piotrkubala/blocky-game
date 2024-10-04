@@ -341,11 +341,6 @@ class SimpleProblemGenerator(ProblemGenerator):
 
             colour = random.choice(colours) if i < len(random_path) - 2 else colours[-1]
 
-            if previous_room is None or next_room is None:
-                print("Room is None!!!")
-                print((previous_x, previous_y), (next_x, next_y))
-                print(previous_room, next_room)
-
             SimpleProblemGenerator.__add_doors(game_objects_container, board, previous_room,
                                                next_room, direction, colour)
 
@@ -429,7 +424,6 @@ class SimpleProblemGenerator(ProblemGenerator):
         )
 
         if random_position_tuple is None:
-            print("No place for key!!!")
             random_position_tuple = self.__get_random_coordinates(liberal_condition_predicate)
 
             if random_position_tuple is None:
@@ -452,19 +446,35 @@ class SimpleProblemGenerator(ProblemGenerator):
         self.__update_to_next_colour(board)
         avoided_coords.add((random_target_x, random_target_y))
 
+    def __find_things_positions(self, board: GameBoard) -> dict[str, np.ndarray]:
+        things_positions = {}
+        for x in range(1, self.rows + 1):
+            for y in range(1, self.columns + 1):
+                place = board[x, y]
+                if place is not None and place.room is not None:
+                    room = place.room
+                    for thing in room.things_container.children:
+                        things_positions[thing.name] = np.array([x, y])
+
+        return things_positions
+
     def __prepare_other_keys_with_paths(self, game_objects_container: GameObjectsContainer, board: GameBoard,
                                         avoided_coords: set[tuple[int, int]], terminal_position: np.ndarray,
-                                        person_position: np.ndarray, exit_position: np.ndarray, mixing_steps: int):
+                                        terminal: Terminal, person_position: np.ndarray, exit_position: np.ndarray,
+                                        map_exit: MapExit, mixing_steps: int):
         while not self.__are_all_colours_used(board):
             self.__prepare_one_key_path(
                 game_objects_container, board, avoided_coords, terminal_position
             )
             self.__mix_rooms(board, mixing_steps)
 
+            things_positions = self.__find_things_positions(board)
+            terminal_position = things_positions[terminal.name]
+            exit_position = things_positions[map_exit.name]
+
         person_position_x, person_position_y = person_position
         person_position_tuple = (person_position_x, person_position_y)
 
-        print(f"Preparing path from {terminal_position} to {exit_position}")
         self.__prepare_doors_path(
             game_objects_container, board, terminal_position,
             exit_position, {person_position_tuple}, self.used_colours
@@ -496,10 +506,10 @@ class SimpleProblemGenerator(ProblemGenerator):
 
         rooms_original_positions = self.__get_positions_to_rooms(board)
 
-        _, exit_position = self.__create_map_exit(game_objects_container, board)
+        map_exit, exit_position = self.__create_map_exit(game_objects_container, board)
         person, person_position = self.__create_player(game_objects_container, board, exit_position)
 
-        _, terminal_position = \
+        terminal, terminal_position = \
             self.__create_terminal_init_key(game_objects_container, board, person_position, exit_position)
 
         exit_position_x, exit_position_y = exit_position
@@ -514,7 +524,7 @@ class SimpleProblemGenerator(ProblemGenerator):
 
         self.__prepare_other_keys_with_paths(
             game_objects_container, board, {exit_position_tuple, person_position_tuple},
-            terminal_position, person_position, exit_position, self.mixing_steps
+            terminal_position, terminal, person_position, exit_position, map_exit, self.mixing_steps
         )
 
         SimpleProblemGenerator.__revert_rooms_positions(board, rooms_original_positions)
