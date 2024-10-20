@@ -35,52 +35,44 @@ class ProblemGenerator(ABC):
         return path
 
     @staticmethod
-    def _does_door_with_colour_exist(game_board: GameBoard,
-                                     first_position: np.ndarray, second_position: np.ndarray,
-                                     direction: Direction, colours: set[Colour]) -> bool:
-        first_position_x, first_position_y = first_position
-        second_position_x, second_position_y = second_position
+    def _does_door_with_colour_exist(game_board: GameBoard, position: np.ndarray,
+                                     direction: Direction, colours: set[Colour]):
+        x, y = position
+        place = game_board[x, y]
 
-        first_place = game_board[first_position_x, first_position_y]
-        second_place = game_board[second_position_x, second_position_y]
-
-        if first_place is None or second_place is None:
+        if place is None or place.room is None:
             return False
 
-        first_room = first_place.room
-        second_room = second_place.room
+        room = place.room
 
-        if first_room is None or second_room is None:
+        if direction not in room.entrances:
             return False
 
-        opposite_direction = direction.reverse()
+        entrance = room.entrances[direction]
 
-        if direction not in first_room.entrances or opposite_direction not in second_room.entrances:
+        if entrance is None:
             return False
 
-        first_entrance = first_room.entrances[direction]
-        second_entrance = second_room.entrances[opposite_direction]
+        return any(colour in colours for colour in entrance.colours_dict.values())
 
-        if first_entrance is None or second_entrance is None:
+    @staticmethod
+    def _does_passage_with_colour_exist(game_board: GameBoard,
+                                        first_position: np.ndarray, second_position: np.ndarray,
+                                        direction: Direction, colours: set[Colour]) -> bool:
+        if not ProblemGenerator._does_door_with_colour_exist(game_board, first_position, direction, colours):
             return False
 
-        first_colours = set(first_entrance.colours_dict.values())
-        second_colours = set(second_entrance.colours_dict.values())
+        if not ProblemGenerator._does_door_with_colour_exist(game_board, second_position, direction.reverse(), colours):
+            return False
 
-        common_colours = first_colours.intersection(second_colours).intersection(colours)
-
-        return len(common_colours) > 0
+        return True
 
     def _does_doors_with_colour_exist_any_direction(self, game_board: GameBoard, position: np.ndarray,
                                                     colours: set[Colour]) -> bool:
         directions = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]
-        x, y = position
 
         for direction in directions:
-            new_position = np.array([x, y]) + np.array(direction.value)
-            if game_board.is_position_valid(*new_position) and self._does_door_with_colour_exist(
-                game_board, position, new_position, direction, colours
-            ):
+            if self._does_door_with_colour_exist(game_board, position, direction, colours):
                 return True
 
         return False
@@ -129,7 +121,7 @@ class ProblemGenerator(ABC):
                         continue
                 else:
                     if not ProblemGenerator._check_room_exists(game_board, new_position) and \
-                            not ProblemGenerator._does_door_with_colour_exist(
+                            not ProblemGenerator._does_passage_with_colour_exist(
                                 game_board, current_position, new_position,
                                 direction, colours):
                         continue
@@ -384,7 +376,7 @@ class SimpleProblemGenerator(ProblemGenerator):
             difference_x, difference_y = position_difference
             direction = Direction.from_vector(difference_x, difference_y)
 
-            if ProblemGenerator._does_door_with_colour_exist(
+            if ProblemGenerator._does_passage_with_colour_exist(
                     board, previous_position,
                     next_position, direction, colours_set):
                 continue
@@ -474,11 +466,15 @@ class SimpleProblemGenerator(ProblemGenerator):
             board, np.array([x, y]), set(self.used_colours)
         )
 
+        terminal_position_x, terminal_position_y = terminal_position
+        terminal_position_tuple = (terminal_position_x, terminal_position_y)
+
         reachable_positions = ProblemGenerator._get_all_reachable_coords(
             board, terminal_position,
-            lambda x, y: liberal_condition_predicate(x, y)
-                         and door_not_exists_predicate(x, y)
-        )
+            lambda x, y: (liberal_condition_predicate(x, y)
+                         and door_not_exists_predicate(x, y))
+                         or (x, y) == terminal_position_tuple
+        ) - {terminal_position_tuple}
 
         random_position_tuple = self.__get_random_coordinates(
             lambda x, y: (x, y) in reachable_positions
@@ -532,10 +528,13 @@ class SimpleProblemGenerator(ProblemGenerator):
             self.__mix_rooms(board, mixing_steps)
             things_positions = self.__find_things_positions(board)
             terminal_position = things_positions[terminal.name]
+            exit_position = things_positions[map_exit.name]
 
             self.__prepare_one_key_path(
                 game_objects_container, board,
-                lambda x, y: not board[x, y].is_free() and (x, y) != tuple(person_position),
+                lambda x, y: not board[x, y].is_free()
+                             and len(board[x, y].room.people_container.children) == 0
+                             and (x, y) != tuple(exit_position),
                 terminal_position
             )
 
