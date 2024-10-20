@@ -483,14 +483,14 @@ class SimpleProblemGenerator(ProblemGenerator):
                                         terminal: Terminal, person_position: np.ndarray, exit_position: np.ndarray,
                                         map_exit: MapExit, mixing_steps: int):
         while not self.__are_all_colours_used(board):
-            self.__prepare_one_key_path(
-                game_objects_container, board, avoided_coords, terminal_position
-            )
             self.__mix_rooms(board, mixing_steps)
-
             things_positions = self.__find_things_positions(board)
             terminal_position = things_positions[terminal.name]
             exit_position = things_positions[map_exit.name]
+
+            self.__prepare_one_key_path(
+                game_objects_container, board, avoided_coords, terminal_position
+            )
 
         person_position_x, person_position_y = person_position
         person_position_tuple = (person_position_x, person_position_y)
