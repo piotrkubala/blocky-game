@@ -140,6 +140,38 @@ class ProblemGenerator(ABC):
 
         return []
 
+    @staticmethod
+    def _get_all_reachable_coords_recursive(game_board: GameBoard, start_position: np.ndarray,
+                                  avoided_coords: set[tuple[int, int]],
+                                  visited: set[tuple[int, int]]) -> set[tuple[int, int]]:
+        x, y = start_position
+
+        if (x, y) in visited or (x, y) in avoided_coords:
+            return set()
+
+        visited.add((x, y))
+
+        result = {(x, y)}
+        for direction in [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]:
+            new_position = start_position + np.array(direction.value)
+            new_x, new_y = new_position
+            if not game_board.does_place_exist(new_x, new_y):
+                continue
+
+            result |= ProblemGenerator._get_all_reachable_coords_recursive(
+                game_board, new_position, avoided_coords, visited
+            )
+
+        return result
+
+
+    @staticmethod
+    def _get_all_reachable_coords(game_board: GameBoard, start_position: np.ndarray,
+                                  avoided_coords: set[tuple[int, int]]) -> set[tuple[int, int]]:
+        visited = set()
+        return ProblemGenerator._get_all_reachable_coords_recursive(game_board, start_position, avoided_coords, visited)
+
+
     @abstractmethod
     def generate(self) -> BoardState:
         pass
@@ -434,20 +466,31 @@ class SimpleProblemGenerator(ProblemGenerator):
         key.set_colour(key_colour)
         game_objects_container.add_object(key)
 
+        reachable_positions = ProblemGenerator._get_all_reachable_coords(board, terminal_position, avoided_coords)
+
         liberal_condition_predicate = lambda x, y: not board[x, y].is_free() and (x, y) not in avoided_coords
         door_not_exists_predicate = lambda x, y: not self._does_doors_with_colour_exist_any_direction(
             board, np.array([x, y]), set(self.used_colours)
         )
 
         random_position_tuple = self.__get_random_coordinates(
-            lambda x, y: liberal_condition_predicate(x, y) and door_not_exists_predicate(x, y)
+            lambda x, y: liberal_condition_predicate(x, y)
+                         and door_not_exists_predicate(x, y)
+                         and (x, y) in reachable_positions
         )
+
+        if random_position_tuple is None:
+            random_position_tuple = self.__get_random_coordinates(
+                lambda x, y: liberal_condition_predicate(x, y)
+                             and door_not_exists_predicate(x, y)
+            )
 
         if random_position_tuple is None:
             random_position_tuple = self.__get_random_coordinates(liberal_condition_predicate)
 
-            if random_position_tuple is None:
-                raise ValueError("No place for key")
+        if random_position_tuple is None:
+            raise ValueError("No place for key")
+
         random_target_x, random_target_y = random_position_tuple
 
         random_target_position = np.array([random_target_x, random_target_y])
@@ -488,9 +531,16 @@ class SimpleProblemGenerator(ProblemGenerator):
             terminal_position = things_positions[terminal.name]
             exit_position = things_positions[map_exit.name]
 
+            # TODO: solve avoided coords updates problem
+            avoided_coords_with_exit = avoided_coords | {tuple(exit_position)}
             self.__prepare_one_key_path(
-                game_objects_container, board, avoided_coords, terminal_position
+                game_objects_container, board, avoided_coords_with_exit, terminal_position
             )
+
+        self.__mix_rooms(board, mixing_steps)
+        things_positions = self.__find_things_positions(board)
+        terminal_position = things_positions[terminal.name]
+        exit_position = things_positions[map_exit.name]
 
         person_position_x, person_position_y = person_position
         person_position_tuple = (person_position_x, person_position_y)

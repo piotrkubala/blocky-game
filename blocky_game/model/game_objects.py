@@ -125,17 +125,16 @@ class Colour(GameObject):
         "purple": (128, 0, 128),
         "cyan": (0, 255, 255),
         "magenta": (255, 0, 255),
-        "orange": (255, 165, 0),
+        "orange": (200, 165, 0),
         "pink": (255, 192, 203),
         "brown": (165, 42, 42),
         "grey": (128, 128, 128),
         "violet": (238, 130, 238),
         "gold": (255, 215, 0),
-        "lime": (0, 255, 0),
         "navy": (0, 0, 128),
         "turquoise": (64, 224, 208),
         "indigo": (75, 0, 130),
-        "beige": (245, 245, 220)
+        "beige": (225, 225, 200)
     }
 
     def __init__(self, name: str, width: int = 10):

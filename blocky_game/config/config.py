@@ -33,4 +33,4 @@ class BlockyGameConfig:
     state_serialization_path: str | None = None # "../problems/problem1-serialized.pddl"
     actions_list_path: str | None = None # "../solutions/problem1-solution.actions"
     generator_config: GeneratorConfig | None = \
-        GeneratorConfig(5, 5, 4, 150, SimpleProblemGenerator)
+        GeneratorConfig(5, 5, 5, 150, SimpleProblemGenerator)
