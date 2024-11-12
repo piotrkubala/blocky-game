@@ -29,8 +29,8 @@ class GeneratorConfig:
 @dataclass
 class BlockyGameConfig:
     domain_definition_path: str = "../domain/blocky_game.pddl"
-    problem_definition_path: str = "../problems/problem1.pddl" # "../problems/problem1.pddl"
-    state_serialization_path: str | None = None # "../problems/problem2-serialized.pddl"
-    actions_list_path: str | None = "../solutions/problem2-solution.actions"
+    problem_definition_path: str = "../problems/problem2.pddl" # "../problems/problem1.pddl"
+    state_serialization_path: str | None = None # "../problems/problem3-serialized.pddl"
+    actions_list_path: str | None = "../solutions/problem3-solution.actions"
     generator_config: GeneratorConfig | None = None #\
         #GeneratorConfig(6, 6, 6, 150, SimpleProblemGenerator)
