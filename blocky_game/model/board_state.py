@@ -30,8 +30,9 @@ def place_name_to_coordinates(place_name: str) -> tuple[int, int]:
 
     numbers_half_len = numbers_len // 2
 
-    column = int(numbers[:numbers_half_len])
-    row = int(numbers[numbers_half_len:])
+    # TODO: Check it
+    row = int(numbers[:numbers_half_len])
+    column = int(numbers[numbers_half_len:])
 
     return row, column
 
@@ -233,7 +234,7 @@ class BoardState:
         return objects_representation
 
     def __serialize_relations(self) -> list[str]:
-        relations_representation = []
+        relations_representation = self.game_board.serialize_relations()
 
         for obj in self.game_objects.values():
             object_relations_representation = obj.serialize_relations()

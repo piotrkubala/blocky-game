@@ -35,8 +35,8 @@ class Direction(Enum):
             "UP": Direction.UP,
             "RIGHT": Direction.RIGHT,
             "DOWN": Direction.DOWN,
-            "LEFT": Direction.LEFT
-        }[name]
+            "LEFT": Direction.LEFT,
+        }[name.upper()]
 
     @staticmethod
     def from_vector(vector_x, vector_y) -> 'Direction':

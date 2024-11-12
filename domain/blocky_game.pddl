@@ -57,6 +57,7 @@
             ?colour - colour
             ?key - key)
         :precondition (and
+            (reversed ?direction ?reverse_direction)
             (adjacent ?place1 ?place2 ?direction)
             (at ?room1 ?place1)
             (at ?room2 ?place2)

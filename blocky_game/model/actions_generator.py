@@ -65,7 +65,7 @@ class TextActionGenerator(ActionGenerator):
         if len(parameters) != 3:
             raise ValueError("Invalid number of parameters for 'escape' action")
 
-        person, room, map_exit = parameters
+        person, map_exit, room = parameters
 
         person_object = self.objects_container.get_people()[person]
         room_object = self.objects_container.get_rooms()[room]

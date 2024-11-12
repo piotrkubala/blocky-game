@@ -7,7 +7,6 @@
         place41 place42 place43 place44 place45 - place
         place51 place52 place53 place54 place55 - place
 
-
         room1 room2 room3 room4 room5 - room
         room6 room7 room8 room9 room10 - room
 

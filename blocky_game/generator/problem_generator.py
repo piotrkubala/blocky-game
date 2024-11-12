@@ -388,7 +388,7 @@ class SimpleProblemGenerator(ProblemGenerator):
 
     @staticmethod
     def __get_goal_representation(person: Person) -> str:
-        return f"(escaped({person.name}))"
+        return f"(escaped {person.name})"
 
     def __get_next_not_used_colour(self, board: GameBoard) -> Colour:
         return board.colours[self.not_used_colour_index]
