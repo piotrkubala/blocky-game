@@ -95,15 +95,15 @@ class TextActionGenerator(ActionGenerator):
     def __parse_action_description(self, action_description: str) -> Action:
         # should be of the form "action_name(param1, param2, ..., paramN)"
 
-        without_white_chars = re.sub(r"\s+", "", action_description)
-        expression_match = re.findall(r"^([a-z]+)\(([a-zA-Z0-9_,]+)\)$", without_white_chars)
+        without_white_chars = re.sub(r"\s+", " ", action_description)
+        expression_match = re.findall(r"^ *\(([a-z]+) +([a-zA-Z0-9_ ]+)\) *$", without_white_chars)
 
         if not expression_match or len(expression_match[0]) != 2:
             raise ValueError(f"Invalid action description: {action_description}")
 
         match_groups = expression_match[0]
-        action_name = match_groups[0]
-        parameters = match_groups[1].split(",")
+        action_name = match_groups[0].replace(" ", "")
+        parameters = match_groups[1].split(" ")
 
         match action_name:
             case "go":

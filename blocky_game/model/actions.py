@@ -38,9 +38,9 @@ class Action(ABC):
 
     def __str__(self):
         params = self.get_params_names()
-        params_str = ", ".join(params)
+        params_str = " ".join(params)
 
-        return f"{self.get_name()}({params_str})"
+        return f"({self.get_name()} {params_str})"
 
 
 class GoAction(Action):
