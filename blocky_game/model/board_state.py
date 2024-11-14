@@ -239,7 +239,7 @@ class BoardState:
             object_relations_representation = obj.serialize_relations()
             relations_representation.extend(object_relations_representation)
 
-        preprocessed_relations = [f"({relation})" for relation in relations_representation]
+        preprocessed_relations = list(set(f"({relation})" for relation in relations_representation))
         preprocessed_relations.sort()
         return preprocessed_relations
 
