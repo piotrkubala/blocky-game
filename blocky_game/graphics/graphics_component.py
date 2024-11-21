@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from copy import deepcopy
 from functools import lru_cache
 
 import pygame
@@ -238,4 +239,13 @@ class GraphicsComponent(ABC):
 
             pygame.draw.rect(screen, self.selection_colour, (rect_x, rect_y, rect_width, rect_height), 2)
 
+    def __deepcopy__(self, memodict={}) -> 'GraphicsComponent':
+        new_component = GraphicsComponent(self.selection_colour, self.selection_margin)
+        new_component.transform = deepcopy(self.transform)
+        new_component.surfaces = self.surfaces
+        new_component.hidden = self.hidden
+        new_component.clickable = self.clickable
+        new_component.selected = self.selected
+
+        return new_component
 

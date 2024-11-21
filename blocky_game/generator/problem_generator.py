@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Callable
 
+import copy
 import numpy as np
 import random
 from queue import Queue
@@ -167,7 +168,7 @@ class ProblemGenerator(ABC):
 
 
     @abstractmethod
-    def generate(self) -> BoardState:
+    def generate(self) -> tuple[BoardState, list[BoardState]]:
         pass
 
 
@@ -453,7 +454,8 @@ class SimpleProblemGenerator(ProblemGenerator):
             last_direction = new_direction
 
     def __prepare_one_key_path(self, game_objects_container: GameObjectsContainer, board: GameBoard,
-                               correct_room_predicate: Callable[[int, int], bool], terminal_position: np.ndarray):
+                               correct_room_predicate: Callable[[int, int], bool], terminal_position: np.ndarray)\
+            -> Key:
         key_colour = self.__get_next_not_used_colour(board)
         key_name = f"key_{key_colour.name}"
         key = Key(key_name)
@@ -509,28 +511,91 @@ class SimpleProblemGenerator(ProblemGenerator):
 
         self.__update_to_next_colour(board)
 
-    def __find_things_positions(self, board: GameBoard) -> dict[str, np.ndarray]:
+        return key
+
+    def __find_things_and_people_positions(self, board: GameBoard) -> dict[str, np.ndarray]:
         things_positions = {}
         for x in range(1, self.rows + 1):
             for y in range(1, self.columns + 1):
                 place = board[x, y]
                 if place is not None and place.room is not None:
                     room = place.room
-                    for thing in room.things_container.children:
+                    things = room.things_container.children
+                    people = room.people_container.children
+                    for thing in things + people:
                         things_positions[thing.name] = np.array([x, y])
 
         return things_positions
 
+    @staticmethod
+    def __move_person_to_position(person_position: np.ndarray, new_position: np.ndarray,
+                                    person: Person, board: GameBoard):
+        person_position_x, person_position_y = person_position
+        new_position_x, new_position_y = new_position
+
+        board[person_position_x, person_position_y].room.remove_person(person)
+        board[new_position_x, new_position_y].room.add_person(person)
+
+    @staticmethod
+    def __prepare_subproblem(game_objects_container: GameObjectsContainer, board: GameBoard,
+                             terminal_position: np.ndarray, new_key_position: np.ndarray,
+                             person_position: np.ndarray, person: Person):
+        SimpleProblemGenerator.__move_person_to_position(person_position, terminal_position, person, board)
+        new_exit = MapExit("new_exit")
+
+        game_objects_container.add_object(new_exit)
+        new_key_position_x, new_key_position_y = new_key_position
+        board[new_key_position_x, new_key_position_y].room.add_thing(new_exit)
+
+    @staticmethod
+    def __create_subproblem_copy(game_objects_container: GameObjectsContainer, board: GameBoard,
+                                 things_positions: dict[str, np.ndarray], terminal_position: np.ndarray,
+                                 person_position: np.ndarray, person: Person, new_key: Key)\
+            -> tuple[GameObjectsContainer, GameBoard]:
+        board_copy, game_objects_container_copy = copy.deepcopy((board, game_objects_container))
+        real_person = game_objects_container_copy.get_people()[person.name]
+
+        new_key_position = things_positions[new_key.name]
+
+        SimpleProblemGenerator.__prepare_subproblem(
+            game_objects_container_copy, board_copy,
+            terminal_position, new_key_position,
+            person_position, real_person
+        )
+
+        return game_objects_container_copy, board_copy
+
+    def __create_last_subproblem_copy(self, game_objects_container: GameObjectsContainer, board: GameBoard,
+                                      terminal_position: np.ndarray, person_position: np.ndarray, person: Person)\
+            -> tuple[GameObjectsContainer, GameBoard]:
+        board_copy, game_objects_container_copy = copy.deepcopy((board, game_objects_container))
+        real_person = game_objects_container_copy.get_people()[person.name]
+
+        SimpleProblemGenerator.__move_person_to_position(person_position, terminal_position, real_person, board_copy)
+
+        return game_objects_container_copy, board_copy
+
     def __prepare_other_keys_with_paths(self, game_objects_container: GameObjectsContainer, board: GameBoard,
-                                        terminal: Terminal, person_position: np.ndarray,
-                                        map_exit: MapExit, mixing_steps: int):
+                                        terminal: Terminal, person: Person,
+                                        map_exit: MapExit, mixing_steps: int)\
+            -> list[tuple[GameObjectsContainer, GameBoard]]:
+        subproblems_list: list[tuple[GameObjectsContainer, GameBoard]] = []
+        new_key = None
         while not self.__are_all_colours_used(board):
             self.__mix_rooms(board, mixing_steps)
-            things_positions = self.__find_things_positions(board)
+            things_positions = self.__find_things_and_people_positions(board)
             terminal_position = things_positions[terminal.name]
             exit_position = things_positions[map_exit.name]
+            person_position = things_positions[person.name]
 
-            self.__prepare_one_key_path(
+            if new_key is not None:
+                new_subproblem = SimpleProblemGenerator.__create_subproblem_copy(
+                    game_objects_container, board, things_positions,
+                    terminal_position, person_position, person, new_key
+                )
+                subproblems_list.append(new_subproblem)
+
+            new_key = self.__prepare_one_key_path(
                 game_objects_container, board,
                 lambda x, y: not board[x, y].is_free()
                              and len(board[x, y].room.people_container.children) == 0
@@ -539,9 +604,10 @@ class SimpleProblemGenerator(ProblemGenerator):
             )
 
         self.__mix_rooms(board, mixing_steps)
-        things_positions = self.__find_things_positions(board)
+        things_positions = self.__find_things_and_people_positions(board)
         terminal_position = things_positions[terminal.name]
         exit_position = things_positions[map_exit.name]
+        person_position = things_positions[person.name]
 
         person_position_x, person_position_y = person_position
         person_position_tuple = (person_position_x, person_position_y)
@@ -553,6 +619,14 @@ class SimpleProblemGenerator(ProblemGenerator):
             self.used_colours
         )
 
+        last_subproblem = self.__create_last_subproblem_copy(
+            game_objects_container, board,
+            terminal_position, person_position, person
+        )
+        subproblems_list.append(last_subproblem)
+
+        return subproblems_list
+
     @staticmethod
     def __revert_rooms_positions(board: GameBoard, positions_to_rooms: dict[tuple[int, int], Room | None]):
         for (x, y), room in positions_to_rooms.items():
@@ -562,13 +636,24 @@ class SimpleProblemGenerator(ProblemGenerator):
             else:
                 place.set_room(room)
 
+    def __generate_subproblems_board_states(self, subproblems_list: list[tuple[GameObjectsContainer, GameBoard]],
+                                            person: Person)\
+            -> list[BoardState]:
+        return [
+            BoardState(
+                self.domain, board, game_objects_container.get_all_objects(),
+                game_objects_container, self.__get_goal_representation(person)
+            )
+            for game_objects_container, board in subproblems_list
+        ]
+
     def __init__(self, domain: BoardDomain, rows: int, columns: int, keys_count: int, mixing_steps: int):
         super().__init__(domain, rows, columns, keys_count, mixing_steps)
 
         self.used_colours = []
         self.not_used_colour_index = 0
 
-    def generate(self) -> BoardState:
+    def generate(self) -> tuple[BoardState, list[BoardState]]:
         game_objects_container = GameObjectsContainer()
         board = GameBoard(self.rows + 1, self.columns + 1)
 
@@ -595,20 +680,22 @@ class SimpleProblemGenerator(ProblemGenerator):
             self.used_colours
         )
 
-        self.__prepare_other_keys_with_paths(
+        subproblems_list = self.__prepare_other_keys_with_paths(
             game_objects_container, board, terminal,
-            person_position, map_exit,
+            person, map_exit,
             self.mixing_steps
         )
 
         SimpleProblemGenerator.__revert_rooms_positions(board, rooms_original_positions)
         goal_representation = self.__get_goal_representation(person)
 
-        return BoardState(
+        full_problem_state = BoardState(
             self.domain,
             board,
             game_objects_container.get_all_objects(),
             game_objects_container,
             goal_representation
         )
+        subproblems_board_states = self.__generate_subproblems_board_states(subproblems_list, person)
 
+        return full_problem_state, subproblems_board_states

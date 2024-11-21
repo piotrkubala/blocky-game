@@ -293,3 +293,7 @@ class BoardState:
             {goals_representation})
 )
         '''
+
+    def write_serialization(self, directory_prefix: str, problem_name: str):
+        with open(f"{directory_prefix}{problem_name}.pddl", "w") as file:
+            file.write(self.serialize_state(problem_name))
