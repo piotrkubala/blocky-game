@@ -529,7 +529,7 @@ class SimpleProblemGenerator(ProblemGenerator):
 
     @staticmethod
     def __move_person_to_position(person_position: np.ndarray, new_position: np.ndarray,
-                                    person: Person, board: GameBoard):
+                                  person: Person, board: GameBoard):
         person_position_x, person_position_y = person_position
         new_position_x, new_position_y = new_position
 
@@ -537,10 +537,26 @@ class SimpleProblemGenerator(ProblemGenerator):
         board[new_position_x, new_position_y].room.add_person(person)
 
     @staticmethod
+    def __move_keys_to_position(new_position: np.ndarray, board: GameBoard, game_objects_container: GameObjectsContainer,
+                                things_positions: dict[str, np.ndarray]):
+        keys = game_objects_container.get_keys()
+
+        for key in keys.values():
+            key_position = things_positions[key.name]
+            key_position_x, key_position_y = key_position
+            new_position_x, new_position_y = new_position
+
+            board[key_position_x, key_position_y].room.remove_thing(key)
+            board[new_position_x, new_position_y].room.add_thing(key)
+
+            things_positions[key.name] = np.array([new_position_x, new_position_y])
+
+    @staticmethod
     def __prepare_subproblem(game_objects_container: GameObjectsContainer, board: GameBoard,
                              terminal_position: np.ndarray, new_key_position: np.ndarray,
-                             person_position: np.ndarray, person: Person):
+                             person_position: np.ndarray, person: Person, things_positions: dict[str, np.ndarray]):
         SimpleProblemGenerator.__move_person_to_position(person_position, terminal_position, person, board)
+        SimpleProblemGenerator.__move_keys_to_position(terminal_position, board, game_objects_container, things_positions)
         new_exit = MapExit("new_exit")
 
         game_objects_container.add_object(new_exit)
@@ -560,18 +576,22 @@ class SimpleProblemGenerator(ProblemGenerator):
         SimpleProblemGenerator.__prepare_subproblem(
             game_objects_container_copy, board_copy,
             terminal_position, new_key_position,
-            person_position, real_person
+            person_position, real_person, things_positions
         )
 
         return game_objects_container_copy, board_copy
 
     def __create_last_subproblem_copy(self, game_objects_container: GameObjectsContainer, board: GameBoard,
-                                      terminal_position: np.ndarray, person_position: np.ndarray, person: Person)\
+                                      terminal_position: np.ndarray, person_position: np.ndarray,
+                                      person: Person, things_position: dict[str, np.ndarray])\
             -> tuple[GameObjectsContainer, GameBoard]:
         board_copy, game_objects_container_copy = copy.deepcopy((board, game_objects_container))
         real_person = game_objects_container_copy.get_people()[person.name]
 
         SimpleProblemGenerator.__move_person_to_position(person_position, terminal_position, real_person, board_copy)
+        SimpleProblemGenerator.__move_keys_to_position(
+            terminal_position, board_copy, game_objects_container_copy, things_position
+        )
 
         return game_objects_container_copy, board_copy
 
@@ -609,6 +629,13 @@ class SimpleProblemGenerator(ProblemGenerator):
         exit_position = things_positions[map_exit.name]
         person_position = things_positions[person.name]
 
+        if new_key is not None:
+            new_subproblem = SimpleProblemGenerator.__create_subproblem_copy(
+                game_objects_container, board, things_positions,
+                terminal_position, person_position, person, new_key
+            )
+            subproblems_list.append(new_subproblem)
+
         person_position_x, person_position_y = person_position
         person_position_tuple = (person_position_x, person_position_y)
 
@@ -619,9 +646,11 @@ class SimpleProblemGenerator(ProblemGenerator):
             self.used_colours
         )
 
+        things_positions = self.__find_things_and_people_positions(board)
         last_subproblem = self.__create_last_subproblem_copy(
             game_objects_container, board,
-            terminal_position, person_position, person
+            terminal_position, person_position,
+            person, things_positions
         )
         subproblems_list.append(last_subproblem)
 

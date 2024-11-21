@@ -1,17 +1,14 @@
 (define (problem test-problem)
     (:domain blocky-game)
         (:objects
-            magenta - colour
+            blue - colour
+            pink - colour
             turquoise - colour
-            violet - colour
             entrance_1 - entrance
             entrance_10 - entrance
             entrance_11 - entrance
             entrance_12 - entrance
             entrance_13 - entrance
-            entrance_14 - entrance
-            entrance_15 - entrance
-            entrance_16 - entrance
             entrance_2 - entrance
             entrance_3 - entrance
             entrance_4 - entrance
@@ -21,9 +18,9 @@
             entrance_8 - entrance
             entrance_9 - entrance
             main_exit - exit
-            key_magenta - key
+            key_blue - key
+            key_pink - key
             key_turquoise - key
-            key_violet - key
             player - person
             place11 - place
             place12 - place
@@ -113,9 +110,9 @@
             (adjacent place44 place43 left)
             (at room_0 place11)
             (at room_1 place12)
-            (at room_10 place34)
-            (at room_11 place41)
-            (at room_12 place42)
+            (at room_10 place33)
+            (at room_11 place34)
+            (at room_12 place41)
             (at room_13 place43)
             (at room_14 place44)
             (at room_2 place13)
@@ -124,50 +121,44 @@
             (at room_5 place22)
             (at room_6 place23)
             (at room_7 place24)
-            (at room_8 place32)
-            (at room_9 place33)
-            (contains room_0 key_turquoise)
-            (contains room_1 key_magenta)
-            (contains room_11 key_violet)
-            (contains room_12 terminal)
-            (contains room_7 main_exit)
-            (free place31)
-            (has_door entrance_1 magenta)
-            (has_door entrance_10 magenta)
+            (at room_8 place31)
+            (at room_9 place32)
+            (contains room_1 terminal)
+            (contains room_12 main_exit)
+            (contains room_13 key_turquoise)
+            (contains room_5 key_blue)
+            (contains room_7 key_pink)
+            (free place42)
+            (has_door entrance_1 pink)
+            (has_door entrance_10 turquoise)
             (has_door entrance_11 turquoise)
-            (has_door entrance_12 turquoise)
-            (has_door entrance_13 turquoise)
-            (has_door entrance_14 turquoise)
-            (has_door entrance_15 violet)
-            (has_door entrance_16 violet)
-            (has_door entrance_2 magenta)
-            (has_door entrance_3 magenta)
-            (has_door entrance_4 magenta)
-            (has_door entrance_5 magenta)
-            (has_door entrance_6 magenta)
-            (has_door entrance_7 magenta)
-            (has_door entrance_8 magenta)
-            (has_door entrance_9 magenta)
-            (in player room_1)
-            (is key_magenta magenta)
+            (has_door entrance_12 blue)
+            (has_door entrance_13 blue)
+            (has_door entrance_2 pink)
+            (has_door entrance_3 pink)
+            (has_door entrance_4 pink)
+            (has_door entrance_5 pink)
+            (has_door entrance_6 pink)
+            (has_door entrance_7 pink)
+            (has_door entrance_8 pink)
+            (has_door entrance_9 pink)
+            (in player room_7)
+            (is key_blue blue)
+            (is key_pink pink)
             (is key_turquoise turquoise)
-            (is key_violet violet)
-            (passage room_0 entrance_11 up)
-            (passage room_0 entrance_9 right)
-            (passage room_1 entrance_1 down)
-            (passage room_11 entrance_12 down)
-            (passage room_12 entrance_10 left)
-            (passage room_12 entrance_13 right)
-            (passage room_12 entrance_6 up)
-            (passage room_2 entrance_7 down)
-            (passage room_2 entrance_8 left)
-            (passage room_4 entrance_14 left)
-            (passage room_4 entrance_15 up)
-            (passage room_5 entrance_2 up)
-            (passage room_5 entrance_3 down)
-            (passage room_7 entrance_16 down)
-            (passage room_8 entrance_4 up)
-            (passage room_8 entrance_5 down))
+            (passage room_1 entrance_12 up)
+            (passage room_1 entrance_6 right)
+            (passage room_1 entrance_8 left)
+            (passage room_12 entrance_13 down)
+            (passage room_13 entrance_7 left)
+            (passage room_2 entrance_10 up)
+            (passage room_2 entrance_4 down)
+            (passage room_2 entrance_5 left)
+            (passage room_2 entrance_9 right)
+            (passage room_5 entrance_11 down)
+            (passage room_6 entrance_2 right)
+            (passage room_6 entrance_3 up)
+            (passage room_7 entrance_1 left))
         (:goal
             (escaped player))
 )
