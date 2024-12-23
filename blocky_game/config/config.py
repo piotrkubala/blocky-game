@@ -20,8 +20,8 @@ class PyGameConfig:
 @dataclass
 class BlockyGameConfig:
     domain_definition_name: str = "blocky_game"
-    problem_definition_path: str = "test-problem.pddl"
-    state_serialization_name: str | None = None # "test-problem"
-    actions_list_name: str | None = "test-problem-solution"
-    generator_config: GeneratorConfig | None = None # \
-        #GeneratorConfig(7, 7, 8, 150, SimpleProblemGenerator)
+    problem_definition_path: str = "problem-experiment_6x6_6_60_2/problem-experiment_6x6_6_60_2-subproblem-4.pddl"
+    state_serialization_name: str | None = "problem-experiment_6x6_9_150_1"
+    actions_list_name: str | None = None # "problem2-solution"
+    generator_config: GeneratorConfig | None = \
+        GeneratorConfig(6, 6, 9, 150, SimpleProblemGenerator)

@@ -350,7 +350,7 @@ class SimpleProblemGenerator(ProblemGenerator):
         random_path = self._get_random_path(board, start_position, end_position, colours_set, correct_room_predicate)
 
         def select_random_colour(index: int) -> Colour:
-            if (index >= len(random_path) - 2 and random.randint(0, 1) == 0) or len(colours) == 1:
+            if index >= len(random_path) - 2 or len(colours) == 1:
                 return colours[-1]
 
             colours_count = len(colours)
