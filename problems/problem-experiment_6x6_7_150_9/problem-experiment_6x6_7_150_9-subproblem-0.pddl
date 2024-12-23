@@ -1,12 +1,12 @@
 (define (problem problem-experiment_6x6_7_150_9-subproblem-0)
     (:domain blocky-game)
         (:objects
-            beige - colour
+            blue - colour
             cyan - colour
             magenta - colour
+            pink - colour
             purple - colour
-            red - colour
-            violet - colour
+            turquoise - colour
             white - colour
             entrance_1 - entrance
             entrance_10 - entrance
@@ -16,22 +16,8 @@
             entrance_14 - entrance
             entrance_15 - entrance
             entrance_16 - entrance
-            entrance_17 - entrance
-            entrance_18 - entrance
-            entrance_19 - entrance
             entrance_2 - entrance
-            entrance_20 - entrance
-            entrance_21 - entrance
-            entrance_22 - entrance
-            entrance_23 - entrance
-            entrance_24 - entrance
-            entrance_25 - entrance
-            entrance_26 - entrance
-            entrance_27 - entrance
-            entrance_28 - entrance
-            entrance_29 - entrance
             entrance_3 - entrance
-            entrance_30 - entrance
             entrance_4 - entrance
             entrance_5 - entrance
             entrance_6 - entrance
@@ -40,8 +26,8 @@
             entrance_9 - entrance
             main_exit - exit
             new_exit - exit
-            key_cyan - key
-            key_magenta - key
+            key_blue - key
+            key_purple - key
             player - person
             place11 - place
             place12 - place
@@ -241,110 +227,82 @@
             (adjacent place65 place66 right)
             (adjacent place66 place56 up)
             (adjacent place66 place65 left)
-            (at room_0 place35)
-            (at room_1 place25)
-            (at room_10 place66)
-            (at room_11 place16)
-            (at room_12 place14)
-            (at room_13 place21)
-            (at room_14 place45)
-            (at room_15 place56)
-            (at room_16 place64)
-            (at room_17 place33)
-            (at room_18 place15)
-            (at room_19 place42)
-            (at room_2 place26)
-            (at room_20 place34)
-            (at room_21 place54)
-            (at room_22 place63)
-            (at room_23 place22)
-            (at room_24 place31)
-            (at room_25 place52)
-            (at room_26 place43)
-            (at room_27 place62)
-            (at room_28 place53)
-            (at room_29 place13)
-            (at room_3 place24)
-            (at room_30 place12)
-            (at room_31 place11)
-            (at room_32 place32)
-            (at room_33 place51)
-            (at room_34 place61)
-            (at room_4 place36)
-            (at room_5 place65)
-            (at room_6 place23)
-            (at room_7 place46)
-            (at room_8 place44)
-            (at room_9 place55)
-            (contains room_10 terminal)
-            (contains room_2 main_exit)
-            (contains room_30 new_exit)
-            (free place41)
-            (has_door entrance_1 magenta)
-            (has_door entrance_10 magenta)
-            (has_door entrance_11 magenta)
-            (has_door entrance_12 magenta)
-            (has_door entrance_13 magenta)
-            (has_door entrance_14 magenta)
-            (has_door entrance_15 magenta)
-            (has_door entrance_16 magenta)
-            (has_door entrance_17 magenta)
-            (has_door entrance_18 magenta)
-            (has_door entrance_19 magenta)
-            (has_door entrance_2 magenta)
-            (has_door entrance_20 magenta)
-            (has_door entrance_21 magenta)
-            (has_door entrance_22 magenta)
-            (has_door entrance_23 magenta)
-            (has_door entrance_24 magenta)
-            (has_door entrance_25 magenta)
-            (has_door entrance_26 magenta)
-            (has_door entrance_27 magenta)
-            (has_door entrance_28 magenta)
-            (has_door entrance_29 magenta)
-            (has_door entrance_3 magenta)
-            (has_door entrance_30 magenta)
-            (has_door entrance_4 magenta)
-            (has_door entrance_5 magenta)
-            (has_door entrance_6 magenta)
-            (has_door entrance_7 magenta)
-            (has_door entrance_8 magenta)
-            (has_door entrance_9 magenta)
-            (in player room_10)
-            (is key_cyan cyan)
-            (is key_magenta magenta)
-            (owned key_cyan player)
-            (owned key_magenta player)
-            (passage room_1 entrance_22 down)
-            (passage room_1 entrance_23 left)
-            (passage room_10 entrance_12 down)
-            (passage room_10 entrance_13 up)
-            (passage room_11 entrance_24 right)
-            (passage room_11 entrance_25 left)
-            (passage room_12 entrance_28 right)
-            (passage room_12 entrance_29 left)
-            (passage room_15 entrance_14 down)
-            (passage room_15 entrance_15 up)
-            (passage room_16 entrance_10 down)
-            (passage room_16 entrance_11 up)
-            (passage room_18 entrance_26 right)
-            (passage room_18 entrance_27 left)
+            (at room_0 place11)
+            (at room_1 place15)
+            (at room_10 place46)
+            (at room_11 place31)
+            (at room_12 place61)
+            (at room_13 place25)
+            (at room_14 place53)
+            (at room_15 place35)
+            (at room_16 place66)
+            (at room_17 place51)
+            (at room_18 place33)
+            (at room_19 place23)
+            (at room_2 place41)
+            (at room_20 place24)
+            (at room_21 place12)
+            (at room_22 place44)
+            (at room_23 place62)
+            (at room_24 place56)
+            (at room_25 place45)
+            (at room_26 place36)
+            (at room_27 place64)
+            (at room_28 place55)
+            (at room_29 place42)
+            (at room_3 place21)
+            (at room_30 place43)
+            (at room_31 place52)
+            (at room_32 place65)
+            (at room_33 place54)
+            (at room_34 place63)
+            (at room_4 place14)
+            (at room_5 place32)
+            (at room_6 place22)
+            (at room_7 place16)
+            (at room_8 place13)
+            (at room_9 place26)
+            (contains room_2 new_exit)
+            (contains room_25 terminal)
+            (contains room_26 main_exit)
+            (free place34)
+            (has_door entrance_1 purple)
+            (has_door entrance_10 purple)
+            (has_door entrance_11 purple)
+            (has_door entrance_12 purple)
+            (has_door entrance_13 purple)
+            (has_door entrance_14 purple)
+            (has_door entrance_15 purple)
+            (has_door entrance_16 purple)
+            (has_door entrance_2 purple)
+            (has_door entrance_3 purple)
+            (has_door entrance_4 purple)
+            (has_door entrance_5 purple)
+            (has_door entrance_6 purple)
+            (has_door entrance_7 purple)
+            (has_door entrance_8 purple)
+            (has_door entrance_9 purple)
+            (in player room_25)
+            (is key_blue blue)
+            (is key_purple purple)
+            (owned key_blue player)
+            (owned key_purple player)
+            (passage room_2 entrance_16 right)
+            (passage room_20 entrance_14 right)
+            (passage room_20 entrance_15 left)
             (passage room_22 entrance_8 down)
-            (passage room_22 entrance_9 up)
-            (passage room_26 entrance_2 down)
-            (passage room_26 entrance_3 right)
-            (passage room_27 entrance_4 left)
-            (passage room_27 entrance_5 right)
-            (passage room_28 entrance_6 left)
-            (passage room_28 entrance_7 up)
-            (passage room_30 entrance_30 right)
-            (passage room_32 entrance_1 up)
-            (passage room_4 entrance_16 down)
-            (passage room_4 entrance_17 left)
-            (passage room_5 entrance_20 down)
-            (passage room_5 entrance_21 up)
-            (passage room_9 entrance_18 right)
-            (passage room_9 entrance_19 up))
+            (passage room_22 entrance_9 left)
+            (passage room_23 entrance_2 down)
+            (passage room_23 entrance_3 right)
+            (passage room_24 entrance_4 left)
+            (passage room_24 entrance_5 right)
+            (passage room_25 entrance_6 left)
+            (passage room_25 entrance_7 up)
+            (passage room_29 entrance_1 up)
+            (passage room_3 entrance_12 down)
+            (passage room_3 entrance_13 left)
+            (passage room_8 entrance_10 right)
+            (passage room_8 entrance_11 up))
         (:goal
             (escaped player))
 )

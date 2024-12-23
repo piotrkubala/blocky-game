@@ -2,24 +2,30 @@
     (:domain blocky-game)
         (:objects
             beige - colour
-            blue - colour
-            gold - colour
-            green - colour
+            black - colour
+            cyan - colour
             indigo - colour
-            magenta - colour
+            orange - colour
             pink - colour
             red - colour
+            turquoise - colour
             yellow - colour
             entrance_1 - entrance
+            entrance_10 - entrance
+            entrance_11 - entrance
+            entrance_12 - entrance
             entrance_2 - entrance
             entrance_3 - entrance
             entrance_4 - entrance
             entrance_5 - entrance
             entrance_6 - entrance
+            entrance_7 - entrance
+            entrance_8 - entrance
+            entrance_9 - entrance
             main_exit - exit
             new_exit - exit
-            key_blue - key
-            key_yellow - key
+            key_black - key
+            key_red - key
             player - person
             place11 - place
             place12 - place
@@ -219,62 +225,74 @@
             (adjacent place65 place66 right)
             (adjacent place66 place56 up)
             (adjacent place66 place65 left)
-            (at room_0 place32)
-            (at room_1 place33)
-            (at room_10 place35)
-            (at room_11 place13)
-            (at room_12 place23)
-            (at room_13 place11)
-            (at room_14 place53)
-            (at room_15 place16)
-            (at room_16 place25)
-            (at room_17 place12)
-            (at room_18 place51)
-            (at room_19 place66)
-            (at room_2 place24)
-            (at room_20 place46)
-            (at room_21 place65)
-            (at room_22 place34)
-            (at room_23 place62)
-            (at room_24 place44)
-            (at room_25 place56)
-            (at room_26 place15)
-            (at room_27 place36)
-            (at room_28 place26)
-            (at room_29 place61)
-            (at room_3 place41)
-            (at room_30 place63)
-            (at room_31 place43)
-            (at room_32 place64)
-            (at room_33 place55)
-            (at room_34 place52)
-            (at room_4 place45)
-            (at room_5 place31)
-            (at room_6 place42)
-            (at room_7 place22)
-            (at room_8 place14)
-            (at room_9 place21)
-            (contains room_0 terminal)
-            (contains room_12 new_exit)
-            (contains room_13 main_exit)
-            (free place54)
-            (has_door entrance_1 yellow)
-            (has_door entrance_2 yellow)
-            (has_door entrance_3 yellow)
-            (has_door entrance_4 yellow)
-            (has_door entrance_5 yellow)
-            (has_door entrance_6 yellow)
-            (in player room_0)
-            (is key_blue blue)
-            (is key_yellow yellow)
-            (owned key_blue player)
-            (owned key_yellow player)
-            (passage room_0 entrance_2 down)
-            (passage room_0 entrance_3 up)
-            (passage room_12 entrance_6 left)
-            (passage room_6 entrance_1 up)
-            (passage room_7 entrance_4 down)
-            (passage room_7 entrance_5 right))
+            (at room_0 place12)
+            (at room_1 place22)
+            (at room_10 place25)
+            (at room_11 place33)
+            (at room_12 place11)
+            (at room_13 place51)
+            (at room_14 place43)
+            (at room_15 place44)
+            (at room_16 place45)
+            (at room_17 place34)
+            (at room_18 place21)
+            (at room_19 place62)
+            (at room_2 place13)
+            (at room_20 place55)
+            (at room_21 place46)
+            (at room_22 place26)
+            (at room_23 place14)
+            (at room_24 place41)
+            (at room_25 place65)
+            (at room_26 place53)
+            (at room_27 place66)
+            (at room_28 place16)
+            (at room_29 place15)
+            (at room_3 place24)
+            (at room_30 place64)
+            (at room_31 place63)
+            (at room_32 place61)
+            (at room_33 place54)
+            (at room_34 place36)
+            (at room_4 place23)
+            (at room_5 place56)
+            (at room_6 place31)
+            (at room_7 place32)
+            (at room_8 place42)
+            (at room_9 place35)
+            (contains room_18 terminal)
+            (contains room_28 main_exit)
+            (contains room_8 new_exit)
+            (free place52)
+            (has_door entrance_1 red)
+            (has_door entrance_10 red)
+            (has_door entrance_11 red)
+            (has_door entrance_12 red)
+            (has_door entrance_2 red)
+            (has_door entrance_3 red)
+            (has_door entrance_4 red)
+            (has_door entrance_5 red)
+            (has_door entrance_6 red)
+            (has_door entrance_7 red)
+            (has_door entrance_8 red)
+            (has_door entrance_9 red)
+            (in player room_18)
+            (is key_black black)
+            (is key_red red)
+            (owned key_black player)
+            (owned key_red player)
+            (passage room_1 entrance_1 down)
+            (passage room_12 entrance_6 up)
+            (passage room_12 entrance_7 down)
+            (passage room_18 entrance_8 up)
+            (passage room_18 entrance_9 right)
+            (passage room_19 entrance_10 left)
+            (passage room_19 entrance_11 up)
+            (passage room_6 entrance_4 right)
+            (passage room_6 entrance_5 down)
+            (passage room_7 entrance_2 up)
+            (passage room_7 entrance_3 left)
+            (passage room_8 entrance_12 down))
         (:goal
             (escaped player))
 )
