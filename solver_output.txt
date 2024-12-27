@@ -5,70 +5,70 @@ INFO     Running translator.
 INFO     translator stdin: None
 INFO     translator time limit: None
 INFO     translator memory limit: None
-INFO     translator command line string: /home/piotr/miniconda3/bin/python3 /home/piotr/downward/builds/release/bin/translate/translate.py domain/blocky_game.pddl problems/problem-experiment_6x6_9_150_3.pddl --sas-file output.sas
+INFO     translator command line string: /home/piotr/miniconda3/bin/python3 /home/piotr/downward/builds/release/bin/translate/translate.py domain/blocky_game.pddl problems/problem-experiment_6x6_9_150_38.pddl --sas-file output.sas
 Parsing...
-Parsing: [0.020s CPU, 0.011s wall-clock]
+Parsing: [0.020s CPU, 0.020s wall-clock]
 Normalizing task... [0.000s CPU, 0.001s wall-clock]
 Instantiating...
-Generating Datalog program... [0.000s CPU, 0.002s wall-clock]
+Generating Datalog program... [0.000s CPU, 0.004s wall-clock]
 Normalizing Datalog program...
-Normalizing Datalog program: [0.000s CPU, 0.002s wall-clock]
-Preparing model... [0.000s CPU, 0.001s wall-clock]
+Normalizing Datalog program: [0.000s CPU, 0.004s wall-clock]
+Preparing model... [0.000s CPU, 0.002s wall-clock]
 Generated 46 rules.
-Computing model... [0.180s CPU, 0.206s wall-clock]
-11782 relevant atoms
-57569 auxiliary atoms
-69351 final queue length
-81986 total queue pushes
-Completing instantiation... [0.190s CPU, 0.198s wall-clock]
-Instantiating: [0.380s CPU, 0.426s wall-clock]
+Computing model... [0.180s CPU, 0.193s wall-clock]
+12584 relevant atoms
+54857 auxiliary atoms
+67441 final queue length
+80916 total queue pushes
+Completing instantiation... [0.220s CPU, 0.236s wall-clock]
+Instantiating: [0.400s CPU, 0.457s wall-clock]
 Computing fact groups...
 Finding invariants...
 16 initial candidates
-Finding invariants: [0.010s CPU, 0.008s wall-clock]
+Finding invariants: [0.020s CPU, 0.023s wall-clock]
 Checking invariant weight... [0.000s CPU, 0.001s wall-clock]
-Instantiating groups... [0.000s CPU, 0.008s wall-clock]
-Collecting mutex groups... [0.000s CPU, 0.001s wall-clock]
+Instantiating groups... [0.010s CPU, 0.018s wall-clock]
+Collecting mutex groups... [0.000s CPU, 0.002s wall-clock]
 Choosing groups...
 3 uncovered facts
-Choosing groups: [0.000s CPU, 0.003s wall-clock]
-Building translation key... [0.000s CPU, 0.001s wall-clock]
-Computing fact groups: [0.020s CPU, 0.026s wall-clock]
-Building STRIPS to SAS dictionary... [0.000s CPU, 0.001s wall-clock]
-Building dictionary for full mutex groups... [0.000s CPU, 0.001s wall-clock]
+Choosing groups: [0.000s CPU, 0.006s wall-clock]
+Building translation key... [0.010s CPU, 0.002s wall-clock]
+Computing fact groups: [0.050s CPU, 0.061s wall-clock]
+Building STRIPS to SAS dictionary... [0.000s CPU, 0.002s wall-clock]
+Building dictionary for full mutex groups... [0.000s CPU, 0.003s wall-clock]
 Building mutex information...
-Building mutex information: [0.000s CPU, 0.001s wall-clock]
+Building mutex information: [0.000s CPU, 0.002s wall-clock]
 Translating task...
 Processing axioms...
-Simplifying axioms... [0.000s CPU, 0.001s wall-clock]
+Simplifying axioms... [0.010s CPU, 0.001s wall-clock]
 Translator axioms removed by simplifying: 0
-Processing axioms: [0.010s CPU, 0.011s wall-clock]
-Translating task: [0.170s CPU, 0.178s wall-clock]
+Processing axioms: [0.030s CPU, 0.027s wall-clock]
+Translating task: [0.190s CPU, 0.203s wall-clock]
 0 effect conditions simplified
 0 implied preconditions added
 Detecting unreachable propositions...
 0 operators removed
 0 axioms removed
 50 propositions removed
-Detecting unreachable propositions: [0.090s CPU, 0.101s wall-clock]
+Detecting unreachable propositions: [0.110s CPU, 0.126s wall-clock]
 Reordering and filtering variables...
 47 of 47 variables necessary.
 36 of 82 mutex groups necessary.
-9430 of 9430 operators necessary.
+10210 of 10210 operators necessary.
 0 of 0 axiom rules necessary.
-Reordering and filtering variables: [0.010s CPU, 0.018s wall-clock]
+Reordering and filtering variables: [0.040s CPU, 0.038s wall-clock]
 Translator variables: 47
 Translator derived variables: 0
 Translator facts: 1342
 Translator goal facts: 1
 Translator mutex groups: 36
 Translator total mutex groups size: 1296
-Translator operators: 9430
+Translator operators: 10210
 Translator axioms: 0
-Translator task size: 59245
-Translator peak memory: 72480 KB
-Writing output... [0.040s CPU, 0.066s wall-clock]
-Done! [0.740s CPU, 0.844s wall-clock]
+Translator task size: 63925
+Translator peak memory: 73532 KB
+Writing output... [0.040s CPU, 0.078s wall-clock]
+Done! [0.880s CPU, 1.020s wall-clock]
 translate exit code: 0
 
 INFO     Running search (release).
@@ -76,254 +76,718 @@ INFO     search stdin: output.sas
 INFO     search time limit: 600s
 INFO     search memory limit: None
 INFO     search command line string: /home/piotr/downward/builds/release/bin/downward --evaluator 'hff=ff()' --evaluator 'hcea=cea()' --search 'lazy_greedy([hff, hcea], preferred=[hff, hcea])' --internal-plan-file plan.out < output.sas
-[t=0.001600s, 9844 KB] reading input...
-[t=0.030937s, 15088 KB] done reading input!
-[t=0.033049s, 16316 KB] Simplifying 13630 unary operators... done! [13630 unary operators]
-[t=0.039819s, 17248 KB] time to simplify: 0.006771s
-[t=0.040404s, 17248 KB] Initializing additive heuristic...
-[t=0.040838s, 17248 KB] Initializing FF heuristic...
-[t=0.040919s, 17248 KB] Initializing context-enhanced additive heuristic...
-[t=0.041162s, 18436 KB] Building successor generator...done!
-[t=0.053393s, 20316 KB] peak memory difference for successor generator creation: 1880 KB
-[t=0.053588s, 20316 KB] time for successor generation creation: 0.000000s
-[t=0.053646s, 20316 KB] Variables: 47
-[t=0.053784s, 20316 KB] FactPairs: 1342
-[t=0.053838s, 20316 KB] Bytes per state: 32
-[t=0.053891s, 20316 KB] Conducting lazy best first search, (real) bound = 2147483647
-[t=0.058189s, 31792 KB] New best heuristic value for cea: 142
-[t=0.062382s, 31792 KB] New best heuristic value for ff: 34
-[t=0.062491s, 31792 KB] g=0, 1 evaluated, 0 expanded
-[t=0.062547s, 31792 KB] Initial heuristic value for cea: 142
-[t=0.062688s, 31792 KB] Initial heuristic value for ff: 34
-[t=0.062751s, 31792 KB] New best heuristic value for cea: 111
-[t=0.066220s, 31792 KB] New best heuristic value for ff: 33
-[t=0.066286s, 31792 KB] g=1, 2 evaluated, 1 expanded
-[t=0.066355s, 32216 KB] New best heuristic value for cea: 80
-[t=0.069286s, 32216 KB] g=2, 3 evaluated, 2 expanded
-[t=0.069381s, 32216 KB] New best heuristic value for cea: 77
-[t=0.072173s, 32216 KB] g=3, 4 evaluated, 3 expanded
-[t=0.073731s, 32348 KB] New best heuristic value for cea: 71
-[t=0.075247s, 32348 KB] g=4, 5 evaluated, 4 expanded
-[t=0.075352s, 32480 KB] New best heuristic value for cea: 62
-[t=0.078337s, 32480 KB] New best heuristic value for ff: 32
-[t=0.078461s, 32480 KB] g=5, 6 evaluated, 5 expanded
-[t=0.090923s, 33140 KB] New best heuristic value for ff: 31
-[t=0.100299s, 33140 KB] g=8, 15 evaluated, 14 expanded
-[t=0.100399s, 33140 KB] New best heuristic value for ff: 28
-[t=0.103138s, 33140 KB] g=9, 16 evaluated, 15 expanded
-[t=0.103248s, 33272 KB] New best heuristic value for cea: 55
-[t=0.106031s, 33272 KB] g=9, 17 evaluated, 16 expanded
-[t=0.107224s, 33272 KB] New best heuristic value for cea: 49
-[t=0.111918s, 33272 KB] g=10, 19 evaluated, 18 expanded
-[t=0.115612s, 33404 KB] New best heuristic value for cea: 47
-[t=0.124314s, 33404 KB] g=12, 24 evaluated, 23 expanded
-[t=0.124428s, 33536 KB] New best heuristic value for ff: 26
-[t=0.132247s, 33536 KB] g=13, 27 evaluated, 26 expanded
-[t=0.132387s, 33668 KB] New best heuristic value for cea: 44
-[t=0.135243s, 33668 KB] New best heuristic value for ff: 25
-[t=0.135355s, 33668 KB] g=13, 28 evaluated, 27 expanded
-[t=0.135488s, 33668 KB] New best heuristic value for cea: 42
-[t=0.138539s, 33668 KB] g=14, 29 evaluated, 28 expanded
-[t=0.139445s, 33668 KB] New best heuristic value for ff: 23
-[t=0.148317s, 33668 KB] g=14, 33 evaluated, 32 expanded
-[t=2.365284s, 37252 KB] New best heuristic value for ff: 21
-[t=2.372058s, 37252 KB] g=34, 1081 evaluated, 1080 expanded
-[t=2.521047s, 37384 KB] New best heuristic value for cea: 40
-[t=2.521544s, 37384 KB] g=38, 1150 evaluated, 1149 expanded
-[t=2.521651s, 37384 KB] New best heuristic value for cea: 35
-[t=2.527119s, 37384 KB] g=39, 1152 evaluated, 1151 expanded
-[t=2.556126s, 37516 KB] New best heuristic value for cea: 34
-[t=2.564857s, 37516 KB] g=43, 1168 evaluated, 1167 expanded
-[t=2.601191s, 37516 KB] New best heuristic value for ff: 20
-[t=2.603078s, 37516 KB] g=45, 1185 evaluated, 1184 expanded
-[t=2.683236s, 37648 KB] New best heuristic value for cea: 32
-[t=2.687185s, 37648 KB] g=48, 1224 evaluated, 1223 expanded
-[t=2.691473s, 37780 KB] New best heuristic value for cea: 31
-[t=2.692289s, 37780 KB] New best heuristic value for ff: 19
-[t=2.692390s, 37780 KB] g=49, 1226 evaluated, 1225 expanded
-[t=2.699658s, 37780 KB] New best heuristic value for cea: 30
-[t=2.700934s, 37780 KB] g=49, 1229 evaluated, 1228 expanded
-[t=2.744973s, 37780 KB] New best heuristic value for cea: 28
-[t=2.747330s, 37780 KB] g=51, 1250 evaluated, 1249 expanded
-[t=2.817852s, 37912 KB] New best heuristic value for cea: 26
-[t=2.821772s, 37912 KB] g=57, 1285 evaluated, 1284 expanded
-[t=2.826096s, 37912 KB] New best heuristic value for cea: 25
-[t=2.826870s, 37912 KB] g=58, 1287 evaluated, 1286 expanded
-[t=2.826971s, 37912 KB] New best heuristic value for ff: 17
-[t=2.830520s, 37912 KB] g=58, 1288 evaluated, 1287 expanded
-[t=2.916951s, 37912 KB] New best heuristic value for cea: 24
-[t=2.921949s, 37912 KB] g=59, 1330 evaluated, 1329 expanded
-[t=2.925121s, 37912 KB] New best heuristic value for cea: 21
-[t=2.929836s, 37912 KB] g=60, 1333 evaluated, 1332 expanded
-[t=2.933698s, 37912 KB] New best heuristic value for ff: 15
-[t=2.934582s, 37912 KB] g=61, 1335 evaluated, 1334 expanded
-[t=2.951618s, 38044 KB] New best heuristic value for cea: 20
-[t=2.959931s, 38044 KB] g=62, 1346 evaluated, 1345 expanded
-[t=2.960006s, 38044 KB] New best heuristic value for cea: 19
-[t=2.964676s, 38044 KB] New best heuristic value for ff: 14
-[t=2.964754s, 38044 KB] g=63, 1348 evaluated, 1347 expanded
-[t=2.995775s, 38452 KB] New best heuristic value for cea: 17
-[t=2.998030s, 38452 KB] g=69, 1364 evaluated, 1363 expanded
-[t=3.003952s, 38748 KB] New best heuristic value for ff: 13
-[t=3.004821s, 38748 KB] g=70, 1367 evaluated, 1366 expanded
-[t=3.004899s, 38748 KB] New best heuristic value for cea: 15
-[t=3.007616s, 38748 KB] New best heuristic value for ff: 11
-[t=3.007687s, 38748 KB] g=70, 1368 evaluated, 1367 expanded
-[t=3.020935s, 38748 KB] New best heuristic value for ff: 10
-[t=3.023410s, 38748 KB] g=73, 1376 evaluated, 1375 expanded
-[t=3.038553s, 38748 KB] New best heuristic value for cea: 12
-[t=3.040996s, 38748 KB] New best heuristic value for ff: 9
-[t=3.041082s, 38748 KB] g=75, 1385 evaluated, 1384 expanded
-[t=3.041144s, 38748 KB] New best heuristic value for cea: 11
-[t=3.043265s, 38748 KB] g=76, 1386 evaluated, 1385 expanded
-[t=3.043336s, 38748 KB] New best heuristic value for cea: 10
-[t=3.045143s, 38748 KB] New best heuristic value for ff: 8
-[t=3.045242s, 38748 KB] g=77, 1387 evaluated, 1386 expanded
-[t=3.045322s, 38748 KB] New best heuristic value for cea: 9
-[t=3.052999s, 38748 KB] g=78, 1392 evaluated, 1391 expanded
-[t=3.053973s, 39156 KB] New best heuristic value for ff: 7
-[t=3.061153s, 39156 KB] g=81, 1397 evaluated, 1396 expanded
-[t=3.062651s, 39156 KB] New best heuristic value for ff: 6
-[t=3.064672s, 39156 KB] g=82, 1399 evaluated, 1398 expanded
-[t=3.064779s, 39156 KB] New best heuristic value for cea: 6
-[t=3.065802s, 39156 KB] g=83, 1400 evaluated, 1399 expanded
-[t=3.144579s, 39288 KB] New best heuristic value for cea: 5
-[t=3.146552s, 39288 KB] New best heuristic value for ff: 5
-[t=3.146657s, 39288 KB] g=97, 1478 evaluated, 1477 expanded
-[t=3.216984s, 39420 KB] New best heuristic value for cea: 4
-[t=3.217575s, 39420 KB] New best heuristic value for ff: 4
-[t=3.217662s, 39420 KB] g=99, 1539 evaluated, 1538 expanded
-[t=3.217716s, 39420 KB] New best heuristic value for cea: 3
-[t=3.218666s, 39420 KB] New best heuristic value for ff: 3
-[t=3.218799s, 39420 KB] g=101, 1542 evaluated, 1541 expanded
-[t=3.218853s, 39420 KB] New best heuristic value for cea: 2
-[t=3.219099s, 39420 KB] New best heuristic value for ff: 2
-[t=3.219158s, 39420 KB] g=102, 1543 evaluated, 1542 expanded
-[t=3.219199s, 39420 KB] New best heuristic value for cea: 1
-[t=3.219333s, 39420 KB] New best heuristic value for ff: 1
-[t=3.219406s, 39420 KB] g=103, 1544 evaluated, 1543 expanded
-[t=3.219465s, 39420 KB] Solution found!
-[t=3.219667s, 39420 KB] Actual search time: 3.165674s
-take player key_indigo room_10 (1)
-go player room_10 room_11 place25 place26 entrance_1 entrance_2 right left indigo key_indigo (1)
-move room_27 place54 place64 down player room_11 terminal (1)
-move room_21 place44 place54 down player room_11 terminal (1)
-move room_15 place34 place44 down player room_11 terminal (1)
-move room_16 place35 place34 left player room_11 terminal (1)
-move room_17 place36 place35 left player room_11 terminal (1)
-move room_11 place26 place36 down player room_11 terminal (1)
-move room_10 place25 place26 right player room_11 terminal (1)
-move room_17 place35 place25 up player room_11 terminal (1)
-move room_16 place34 place35 right player room_11 terminal (1)
-move room_15 place44 place34 up player room_11 terminal (1)
-move room_22 place45 place44 left player room_11 terminal (1)
-move room_16 place35 place45 down player room_11 terminal (1)
-move room_17 place25 place35 down player room_11 terminal (1)
-move room_9 place24 place25 right player room_11 terminal (1)
-move room_8 place23 place24 right player room_11 terminal (1)
-move room_14 place33 place23 up player room_11 terminal (1)
-move room_20 place43 place33 up player room_11 terminal (1)
-move room_22 place44 place43 left player room_11 terminal (1)
-move room_15 place34 place44 down player room_11 terminal (1)
-move room_20 place33 place34 right player room_11 terminal (1)
-move room_22 place43 place33 up player room_11 terminal (1)
-move room_19 place42 place43 right player room_11 terminal (1)
-move room_25 place52 place42 up player room_11 terminal (1)
-move room_26 place53 place52 left player room_11 terminal (1)
-move room_19 place43 place53 down player room_11 terminal (1)
-move room_22 place33 place43 down player room_11 terminal (1)
-move room_20 place34 place33 left player room_11 terminal (1)
-move room_15 place44 place34 up player room_11 terminal (1)
-move room_22 place43 place44 right player room_11 terminal (1)
-move room_19 place53 place43 up player room_11 terminal (1)
-move room_21 place54 place53 left player room_11 terminal (1)
-move room_22 place44 place54 down player room_11 terminal (1)
-move room_15 place34 place44 down player room_11 terminal (1)
-move room_17 place35 place34 left player room_11 terminal (1)
-move room_11 place36 place35 left player room_11 terminal (1)
-move room_23 place46 place36 up player room_11 terminal (1)
-move room_16 place45 place46 right player room_11 terminal (1)
-move room_11 place35 place45 down player room_11 terminal (1)
-move room_17 place34 place35 right player room_11 terminal (1)
-move room_20 place33 place34 right player room_11 terminal (1)
-move room_19 place43 place33 up player room_11 terminal (1)
-move room_25 place42 place43 right player room_11 terminal (1)
-move room_26 place52 place42 up player room_11 terminal (1)
-move room_31 place62 place52 up player room_11 terminal (1)
-move room_32 place63 place62 left player room_11 terminal (1)
-move room_21 place53 place63 down player room_11 terminal (1)
-move room_31 place52 place53 right player room_11 terminal (1)
-move room_26 place42 place52 down player room_11 terminal (1)
-move room_25 place43 place42 left player room_11 terminal (1)
-move room_31 place53 place43 up player room_11 terminal (1)
-move room_21 place63 place53 up player room_11 terminal (1)
-move room_32 place62 place63 right player room_11 terminal (1)
-move room_30 place61 place62 right player room_11 terminal (1)
-move room_24 place51 place61 down player room_11 terminal (1)
-move room_26 place52 place51 left player room_11 terminal (1)
-move room_30 place62 place52 up player room_11 terminal (1)
-move room_32 place63 place62 left player room_11 terminal (1)
-move room_21 place53 place63 down player room_11 terminal (1)
-move room_30 place52 place53 right player room_11 terminal (1)
-move room_25 place42 place52 down player room_11 terminal (1)
-move room_31 place43 place42 left player room_11 terminal (1)
-move room_30 place53 place43 up player room_11 terminal (1)
-go player room_11 room_15 place45 place44 entrance_2 entrance_3 left right indigo key_indigo (1)
-go player room_15 room_30 place44 place43 entrance_4 entrance_9 left right indigo key_indigo (1)
-take player key_green room_30 (1)
-go player room_30 room_15 place43 place44 entrance_9 entrance_4 right left indigo key_indigo (1)
-go player room_15 room_22 place44 place54 entrance_28 entrance_43 down up green key_green (1)
-take player key_pink room_22 (1)
-go player room_22 room_15 place54 place44 entrance_43 entrance_28 up down green key_green (1)
-go player room_15 room_11 place44 place45 entrance_3 entrance_2 right left indigo key_indigo (1)
-move room_22 place54 place53 left player room_11 terminal (1)
-move room_15 place44 place54 down player room_11 terminal (1)
-move room_20 place34 place44 down player room_11 terminal (1)
-move room_17 place35 place34 left player room_11 terminal (1)
-move room_11 place45 place35 up player room_11 terminal (1)
-move room_20 place44 place45 right player room_11 terminal (1)
-move room_15 place54 place44 up player room_11 terminal (1)
-move room_28 place55 place54 left player room_11 terminal (1)
-move room_20 place45 place55 down player room_11 terminal (1)
-move room_11 place35 place45 down player room_11 terminal (1)
-move room_17 place34 place35 right player room_11 terminal (1)
-move room_15 place44 place34 up player room_11 terminal (1)
-move room_30 place43 place44 right player room_11 terminal (1)
-move room_19 place33 place43 down player room_11 terminal (1)
-move room_15 place34 place33 left player room_11 terminal (1)
-move room_17 place35 place34 left player room_11 terminal (1)
-move room_11 place45 place35 up player room_11 terminal (1)
-go player room_11 room_17 place35 place34 entrance_2 entrance_41 left right pink key_pink (1)
-take player key_brown room_17 (1)
-go player room_17 room_11 place34 place35 entrance_41 entrance_2 right left pink key_pink (1)
-move room_30 place44 place45 right player room_11 terminal (1)
-move room_17 place34 place44 down player room_11 terminal (1)
-move room_15 place33 place34 right player room_11 terminal (1)
-move room_13 place32 place33 right player room_11 terminal (1)
-move room_31 place42 place32 up player room_11 terminal (1)
-move room_19 place43 place42 left player room_11 terminal (1)
-move room_13 place33 place43 down player room_11 terminal (1)
-move room_15 place34 place33 left player room_11 terminal (1)
-move room_11 place35 place34 left player room_11 terminal (1)
-go player room_11 room_15 place34 place33 entrance_2 entrance_3 left right indigo key_indigo (1)
-go player room_15 room_31 place33 place32 entrance_4 entrance_51 left right brown key_brown (1)
-escape player main_exit room_31 (1)
-[t=3.219720s, 39420 KB] Plan length: 104 step(s).
-[t=3.219720s, 39420 KB] Plan cost: 104
-[t=3.219720s, 39420 KB] Expanded 1544 state(s).
-[t=3.219720s, 39420 KB] Reopened 0 state(s).
-[t=3.219720s, 39420 KB] Evaluated 1545 state(s).
-[t=3.219720s, 39420 KB] Evaluations: 3090
-[t=3.219720s, 39420 KB] Generated 5554 state(s).
-[t=3.219720s, 39420 KB] Dead ends: 0 state(s).
-[t=3.219720s, 39420 KB] Number of registered states: 1545
-[t=3.219720s, 39420 KB] Int hash set load factor: 1545/2048 = 0.754395
-[t=3.219720s, 39420 KB] Int hash set resizes: 11
-[t=3.219720s, 39420 KB] Search time: 3.165828s
-[t=3.219720s, 39420 KB] Total time: 3.219720s
+[t=0.000981s, 9844 KB] reading input...
+[t=0.041564s, 15424 KB] done reading input!
+[t=0.041663s, 16612 KB] Simplifying 14410 unary operators... done! [14410 unary operators]
+[t=0.051001s, 17668 KB] time to simplify: 0.009338s
+[t=0.051599s, 17668 KB] Initializing additive heuristic...
+[t=0.052578s, 17668 KB] Initializing FF heuristic...
+[t=0.052682s, 17668 KB] Initializing context-enhanced additive heuristic...
+[t=0.055892s, 18988 KB] Building successor generator...done!
+[t=0.066952s, 21156 KB] peak memory difference for successor generator creation: 2168 KB
+[t=0.067183s, 21156 KB] time for successor generation creation: 0.001299s
+[t=0.067242s, 21156 KB] Variables: 47
+[t=0.067529s, 21156 KB] FactPairs: 1342
+[t=0.067643s, 21156 KB] Bytes per state: 32
+[t=0.067737s, 21156 KB] Conducting lazy best first search, (real) bound = 2147483647
+[t=0.072546s, 32524 KB] New best heuristic value for cea: 1296
+[t=0.076825s, 32524 KB] New best heuristic value for ff: 90
+[t=0.076939s, 32524 KB] g=0, 1 evaluated, 0 expanded
+[t=0.077045s, 32524 KB] Initial heuristic value for cea: 1296
+[t=0.077193s, 32524 KB] Initial heuristic value for ff: 90
+[t=0.080610s, 32524 KB] New best heuristic value for cea: 1157
+[t=0.083327s, 32524 KB] New best heuristic value for ff: 88
+[t=0.083439s, 32524 KB] g=1, 2 evaluated, 1 expanded
+[t=0.089069s, 32940 KB] New best heuristic value for cea: 1018
+[t=0.090105s, 32940 KB] New best heuristic value for ff: 87
+[t=0.090209s, 32940 KB] g=2, 3 evaluated, 2 expanded
+[t=0.090311s, 33228 KB] New best heuristic value for cea: 879
+[t=0.094167s, 33228 KB] New best heuristic value for ff: 86
+[t=0.094274s, 33228 KB] g=3, 4 evaluated, 3 expanded
+[t=0.096957s, 33640 KB] New best heuristic value for cea: 740
+[t=0.097838s, 33640 KB] g=4, 5 evaluated, 4 expanded
+[t=0.097914s, 33916 KB] New best heuristic value for cea: 609
+[t=0.101379s, 33916 KB] New best heuristic value for ff: 85
+[t=0.101483s, 33916 KB] g=5, 6 evaluated, 5 expanded
+[t=0.104682s, 34332 KB] New best heuristic value for cea: 496
+[t=0.108862s, 34332 KB] New best heuristic value for ff: 82
+[t=0.108969s, 34332 KB] g=6, 7 evaluated, 6 expanded
+[t=0.113066s, 34744 KB] New best heuristic value for cea: 357
+[t=0.116016s, 34744 KB] New best heuristic value for ff: 81
+[t=0.116146s, 34744 KB] g=7, 8 evaluated, 7 expanded
+[t=0.121130s, 34876 KB] New best heuristic value for cea: 339
+[t=0.122414s, 34876 KB] New best heuristic value for ff: 79
+[t=0.122577s, 34876 KB] g=8, 10 evaluated, 9 expanded
+[t=0.122665s, 35008 KB] New best heuristic value for ff: 75
+[t=0.125812s, 35008 KB] g=9, 11 evaluated, 10 expanded
+[t=0.125898s, 35008 KB] New best heuristic value for ff: 74
+[t=0.129107s, 35008 KB] g=10, 12 evaluated, 11 expanded
+[t=0.129191s, 35272 KB] New best heuristic value for cea: 321
+[t=0.135554s, 35272 KB] g=9, 14 evaluated, 13 expanded
+[t=0.155654s, 35536 KB] New best heuristic value for cea: 313
+[t=0.157814s, 35536 KB] g=10, 19 evaluated, 18 expanded
+[t=0.157916s, 35536 KB] New best heuristic value for ff: 71
+[t=0.161003s, 35536 KB] g=11, 20 evaluated, 19 expanded
+[t=0.163103s, 35668 KB] New best heuristic value for cea: 296
+[t=0.169875s, 35668 KB] g=11, 23 evaluated, 22 expanded
+[t=0.171492s, 35800 KB] New best heuristic value for ff: 70
+[t=0.180096s, 35800 KB] g=12, 25 evaluated, 24 expanded
+[t=0.180267s, 35800 KB] New best heuristic value for cea: 290
+[t=0.183432s, 35800 KB] g=13, 26 evaluated, 25 expanded
+[t=0.188081s, 35800 KB] New best heuristic value for cea: 269
+[t=0.192348s, 35800 KB] g=14, 29 evaluated, 28 expanded
+[t=0.192464s, 35932 KB] New best heuristic value for cea: 267
+[t=0.195666s, 35932 KB] g=15, 30 evaluated, 29 expanded
+[t=0.205095s, 36232 KB] New best heuristic value for ff: 69
+[t=0.209655s, 36232 KB] g=16, 33 evaluated, 32 expanded
+[t=0.213486s, 36364 KB] New best heuristic value for cea: 253
+[t=0.221142s, 36364 KB] g=16, 37 evaluated, 36 expanded
+[t=0.231334s, 36496 KB] New best heuristic value for cea: 237
+[t=0.232383s, 36496 KB] New best heuristic value for ff: 68
+[t=0.232527s, 36496 KB] g=17, 41 evaluated, 40 expanded
+[t=0.232596s, 36628 KB] New best heuristic value for ff: 66
+[t=0.235989s, 36628 KB] g=18, 42 evaluated, 41 expanded
+[t=0.247754s, 37060 KB] New best heuristic value for ff: 63
+[t=0.250412s, 37060 KB] g=18, 44 evaluated, 43 expanded
+[t=0.274628s, 37324 KB] New best heuristic value for cea: 232
+[t=0.275504s, 37324 KB] g=19, 53 evaluated, 52 expanded
+[t=0.283247s, 37456 KB] New best heuristic value for cea: 226
+[t=0.289860s, 37456 KB] g=20, 55 evaluated, 54 expanded
+[t=0.300597s, 37588 KB] New best heuristic value for ff: 62
+[t=0.301148s, 37588 KB] g=20, 59 evaluated, 58 expanded
+[t=0.336544s, 37720 KB] New best heuristic value for cea: 224
+[t=0.341716s, 37720 KB] New best heuristic value for ff: 61
+[t=0.341933s, 37720 KB] g=24, 71 evaluated, 70 expanded
+[t=0.353700s, 37720 KB] New best heuristic value for cea: 199
+[t=0.356087s, 37720 KB] g=25, 73 evaluated, 72 expanded
+[t=0.408039s, 37852 KB] New best heuristic value for cea: 192
+[t=0.412069s, 37852 KB] g=29, 86 evaluated, 85 expanded
+[t=0.499081s, 37984 KB] New best heuristic value for ff: 59
+[t=0.503483s, 37984 KB] g=29, 120 evaluated, 119 expanded
+[t=0.562554s, 38116 KB] New best heuristic value for ff: 56
+[t=0.569527s, 38116 KB] g=35, 144 evaluated, 143 expanded
+[t=0.589336s, 38248 KB] New best heuristic value for cea: 180
+[t=0.598432s, 38248 KB] g=37, 156 evaluated, 155 expanded
+[t=0.598632s, 38248 KB] New best heuristic value for ff: 53
+[t=0.605265s, 38248 KB] g=38, 157 evaluated, 156 expanded
+[t=0.623594s, 38248 KB] New best heuristic value for cea: 178
+[t=0.630338s, 38248 KB] g=39, 161 evaluated, 160 expanded
+[t=0.650331s, 38248 KB] New best heuristic value for cea: 171
+[t=0.650927s, 38248 KB] g=40, 164 evaluated, 163 expanded
+[t=0.796556s, 38644 KB] New best heuristic value for cea: 169
+[t=0.796914s, 38644 KB] g=43, 224 evaluated, 223 expanded
+[t=0.952345s, 39044 KB] New best heuristic value for cea: 167
+[t=0.956832s, 39044 KB] g=44, 289 evaluated, 288 expanded
+[t=1.015785s, 39176 KB] New best heuristic value for ff: 51
+[t=1.019081s, 39176 KB] g=46, 313 evaluated, 312 expanded
+[t=1.033117s, 39176 KB] New best heuristic value for cea: 165
+[t=1.039324s, 39176 KB] g=44, 321 evaluated, 320 expanded
+[t=1.050505s, 39176 KB] New best heuristic value for cea: 156
+[t=1.055395s, 39176 KB] g=45, 324 evaluated, 323 expanded
+[t=1.067699s, 39176 KB] New best heuristic value for ff: 50
+[t=1.069188s, 39176 KB] g=47, 329 evaluated, 328 expanded
+[t=1.131198s, 39308 KB] New best heuristic value for ff: 48
+[t=1.132984s, 39308 KB] g=50, 353 evaluated, 352 expanded
+[t=1.268453s, 39704 KB] New best heuristic value for cea: 155
+[t=1.270847s, 39704 KB] g=60, 404 evaluated, 403 expanded
+[t=1.313123s, 39704 KB] New best heuristic value for ff: 47
+[t=1.316312s, 39704 KB] g=63, 419 evaluated, 418 expanded
+[t=1.413491s, 39968 KB] New best heuristic value for ff: 46
+[t=1.418663s, 39968 KB] g=67, 463 evaluated, 462 expanded
+[t=1.467772s, 40104 KB] New best heuristic value for ff: 43
+[t=1.475813s, 40104 KB] g=66, 486 evaluated, 485 expanded
+[t=1.485433s, 40104 KB] New best heuristic value for ff: 42
+[t=1.488825s, 40104 KB] g=68, 491 evaluated, 490 expanded
+[t=1.502829s, 40104 KB] New best heuristic value for cea: 140
+[t=1.508485s, 40104 KB] g=68, 494 evaluated, 493 expanded
+[t=1.640274s, 40500 KB] New best heuristic value for ff: 41
+[t=1.647905s, 40500 KB] g=71, 552 evaluated, 551 expanded
+[t=1.676240s, 40500 KB] New best heuristic value for cea: 138
+[t=1.678547s, 40500 KB] g=72, 564 evaluated, 563 expanded
+[t=1.839444s, 40764 KB] New best heuristic value for cea: 136
+[t=1.842111s, 40764 KB] g=74, 629 evaluated, 628 expanded
+[t=2.105919s, 41596 KB] New best heuristic value for ff: 40
+[t=2.112004s, 41596 KB] g=78, 744 evaluated, 743 expanded
+[t=2.326211s, 42008 KB] New best heuristic value for cea: 133
+[t=2.327228s, 42008 KB] g=85, 828 evaluated, 827 expanded
+[t=2.352124s, 42008 KB] New best heuristic value for cea: 132
+[t=2.356612s, 42008 KB] g=86, 833 evaluated, 832 expanded
+[t=2.462040s, 42140 KB] New best heuristic value for cea: 129
+[t=2.467082s, 42140 KB] g=84, 873 evaluated, 872 expanded
+[t=2.580973s, 42272 KB] New best heuristic value for cea: 117
+[t=2.590011s, 42272 KB] g=93, 926 evaluated, 925 expanded
+[t=2.607663s, 42272 KB] New best heuristic value for cea: 115
+[t=2.608701s, 42272 KB] g=94, 929 evaluated, 928 expanded
+[t=2.689505s, 42272 KB] New best heuristic value for ff: 38
+[t=2.696138s, 42272 KB] g=98, 958 evaluated, 957 expanded
+[t=2.836035s, 42580 KB] New best heuristic value for ff: 35
+[t=2.836609s, 42580 KB] g=103, 1007 evaluated, 1006 expanded
+[t=2.836733s, 42580 KB] New best heuristic value for cea: 100
+[t=2.842356s, 42580 KB] g=104, 1009 evaluated, 1008 expanded
+[t=2.898879s, 42580 KB] New best heuristic value for cea: 99
+[t=2.900675s, 42580 KB] g=109, 1029 evaluated, 1028 expanded
+[t=2.925388s, 42712 KB] New best heuristic value for cea: 97
+[t=2.932303s, 42712 KB] g=109, 1041 evaluated, 1040 expanded
+[t=3.173629s, 43144 KB] New best heuristic value for cea: 95
+[t=3.179873s, 43144 KB] g=116, 1146 evaluated, 1145 expanded
+[t=3.255468s, 43144 KB] New best heuristic value for ff: 34
+[t=3.264792s, 43144 KB] g=106, 1182 evaluated, 1181 expanded
+[t=3.264875s, 43144 KB] New best heuristic value for cea: 94
+[t=3.271123s, 43144 KB] g=119, 1183 evaluated, 1182 expanded
+[t=3.447006s, 43712 KB] New best heuristic value for ff: 33
+[t=3.447322s, 43712 KB] g=115, 1258 evaluated, 1257 expanded
+[t=3.491929s, 43712 KB] New best heuristic value for ff: 32
+[t=3.496128s, 43712 KB] g=118, 1270 evaluated, 1269 expanded
+[t=3.629541s, 43712 KB] New best heuristic value for cea: 92
+[t=3.633386s, 43712 KB] g=122, 1329 evaluated, 1328 expanded
+[t=4.375988s, 44240 KB] New best heuristic value for cea: 91
+[t=4.384135s, 44240 KB] g=139, 1647 evaluated, 1646 expanded
+[t=4.503866s, 44240 KB] New best heuristic value for cea: 89
+[t=4.507118s, 44240 KB] g=116, 1695 evaluated, 1694 expanded
+[t=4.705072s, 44240 KB] New best heuristic value for cea: 87
+[t=4.713012s, 44240 KB] g=136, 1782 evaluated, 1781 expanded
+[t=4.731692s, 44372 KB] New best heuristic value for cea: 85
+[t=4.734848s, 44372 KB] g=139, 1791 evaluated, 1790 expanded
+[t=4.748697s, 44372 KB] New best heuristic value for cea: 81
+[t=4.753483s, 44372 KB] g=140, 1794 evaluated, 1793 expanded
+[t=4.931989s, 44372 KB] New best heuristic value for cea: 80
+[t=4.935475s, 44372 KB] g=146, 1861 evaluated, 1860 expanded
+[t=5.078354s, 44504 KB] New best heuristic value for cea: 76
+[t=5.087390s, 44504 KB] New best heuristic value for ff: 31
+[t=5.087606s, 44504 KB] g=152, 1918 evaluated, 1917 expanded
+[t=5.141063s, 44504 KB] New best heuristic value for cea: 68
+[t=5.142098s, 44504 KB] g=156, 1933 evaluated, 1932 expanded
+[t=5.142211s, 44504 KB] New best heuristic value for cea: 65
+[t=5.148789s, 44504 KB] g=157, 1934 evaluated, 1933 expanded
+[t=5.148881s, 44504 KB] New best heuristic value for ff: 30
+[t=5.152604s, 44504 KB] g=158, 1935 evaluated, 1934 expanded
+[t=5.240015s, 44636 KB] New best heuristic value for cea: 63
+[t=5.243543s, 44636 KB] g=161, 1972 evaluated, 1971 expanded
+[t=5.386522s, 44772 KB] New best heuristic value for ff: 29
+[t=5.389055s, 44772 KB] g=165, 2031 evaluated, 2030 expanded
+[t=5.394630s, 44772 KB] New best heuristic value for cea: 60
+[t=5.395032s, 44772 KB] g=166, 2033 evaluated, 2032 expanded
+[t=5.430375s, 44772 KB] New best heuristic value for cea: 58
+[t=5.435183s, 44772 KB] g=170, 2045 evaluated, 2044 expanded
+[t=5.435288s, 44772 KB] New best heuristic value for ff: 28
+[t=5.438400s, 44772 KB] g=171, 2046 evaluated, 2045 expanded
+[t=5.438506s, 44772 KB] New best heuristic value for ff: 27
+[t=5.442424s, 44772 KB] g=172, 2047 evaluated, 2046 expanded
+[t=6.119786s, 45036 KB] New best heuristic value for cea: 55
+[t=6.120991s, 45036 KB] g=189, 2334 evaluated, 2333 expanded
+[t=6.182749s, 45036 KB] New best heuristic value for ff: 26
+[t=6.189111s, 45036 KB] g=194, 2353 evaluated, 2352 expanded
+[t=6.587718s, 45168 KB] New best heuristic value for ff: 25
+[t=6.589611s, 45168 KB] g=199, 2519 evaluated, 2518 expanded
+[t=6.678979s, 45168 KB] New best heuristic value for cea: 52
+[t=6.685167s, 45168 KB] g=203, 2554 evaluated, 2553 expanded
+[t=7.443657s, 45300 KB] New best heuristic value for cea: 49
+[t=7.445387s, 45300 KB] g=214, 2883 evaluated, 2882 expanded
+[t=7.460684s, 45300 KB] New best heuristic value for ff: 24
+[t=7.469373s, 45300 KB] g=216, 2887 evaluated, 2886 expanded
+[t=14.096151s, 46668 KB] New best heuristic value for cea: 48
+[t=14.096988s, 46668 KB] g=243, 5576 evaluated, 5575 expanded
+[t=15.350082s, 46932 KB] New best heuristic value for ff: 23
+[t=15.354127s, 46932 KB] g=264, 6100 evaluated, 6099 expanded
+[t=15.560921s, 46932 KB] New best heuristic value for cea: 47
+[t=15.565559s, 46932 KB] g=272, 6184 evaluated, 6183 expanded
+[t=15.578130s, 46932 KB] New best heuristic value for cea: 45
+[t=15.580921s, 46932 KB] g=274, 6190 evaluated, 6189 expanded
+[t=15.595476s, 47064 KB] New best heuristic value for cea: 43
+[t=15.601852s, 47064 KB] g=278, 6198 evaluated, 6197 expanded
+[t=17.338860s, 47196 KB] New best heuristic value for cea: 42
+[t=17.345967s, 47196 KB] g=311, 6918 evaluated, 6917 expanded
+[t=17.678773s, 47744 KB] New best heuristic value for cea: 39
+[t=17.684961s, 47744 KB] New best heuristic value for ff: 22
+[t=17.685223s, 47744 KB] g=331, 7063 evaluated, 7062 expanded
+[t=17.704759s, 47744 KB] New best heuristic value for cea: 36
+[t=17.710315s, 47744 KB] g=332, 7067 evaluated, 7066 expanded
+[t=17.740382s, 48168 KB] New best heuristic value for cea: 33
+[t=17.744140s, 48168 KB] g=333, 7072 evaluated, 7071 expanded
+[t=17.766916s, 48168 KB] New best heuristic value for ff: 20
+[t=17.770860s, 48168 KB] g=334, 7076 evaluated, 7075 expanded
+[t=17.811606s, 48168 KB] New best heuristic value for ff: 19
+[t=17.816121s, 48168 KB] g=337, 7086 evaluated, 7085 expanded
+[t=17.828713s, 48168 KB] New best heuristic value for ff: 18
+[t=17.829891s, 48168 KB] g=338, 7088 evaluated, 7087 expanded
+[t=17.836978s, 48168 KB] New best heuristic value for cea: 32
+[t=17.838820s, 48168 KB] New best heuristic value for ff: 17
+[t=17.838969s, 48168 KB] g=339, 7090 evaluated, 7089 expanded
+[t=17.844916s, 48168 KB] New best heuristic value for cea: 31
+[t=17.845332s, 48168 KB] g=340, 7091 evaluated, 7090 expanded
+[t=17.845435s, 48168 KB] New best heuristic value for cea: 25
+[t=17.852543s, 48168 KB] g=340, 7092 evaluated, 7091 expanded
+[t=17.871025s, 48168 KB] New best heuristic value for cea: 24
+[t=17.873647s, 48168 KB] g=343, 7098 evaluated, 7097 expanded
+[t=17.879174s, 48168 KB] New best heuristic value for cea: 23
+[t=17.880869s, 48168 KB] g=344, 7099 evaluated, 7098 expanded
+[t=17.924404s, 48588 KB] New best heuristic value for ff: 16
+[t=17.930035s, 48588 KB] g=349, 7117 evaluated, 7116 expanded
+[t=17.932689s, 48588 KB] New best heuristic value for cea: 19
+[t=17.933352s, 48588 KB] New best heuristic value for ff: 15
+[t=17.933451s, 48588 KB] g=350, 7118 evaluated, 7117 expanded
+[t=17.933517s, 48588 KB] New best heuristic value for cea: 15
+[t=17.939394s, 48588 KB] g=351, 7119 evaluated, 7118 expanded
+[t=17.948615s, 48860 KB] New best heuristic value for cea: 14
+[t=17.953504s, 48860 KB] New best heuristic value for ff: 13
+[t=17.953699s, 48860 KB] g=352, 7123 evaluated, 7122 expanded
+[t=17.956940s, 48860 KB] New best heuristic value for cea: 13
+[t=17.959142s, 48860 KB] g=353, 7125 evaluated, 7124 expanded
+[t=18.279388s, 49688 KB] New best heuristic value for ff: 12
+[t=18.288664s, 49688 KB] g=381, 7275 evaluated, 7274 expanded
+[t=18.324461s, 49820 KB] New best heuristic value for ff: 11
+[t=18.328697s, 49820 KB] g=382, 7295 evaluated, 7294 expanded
+[t=18.328942s, 49820 KB] New best heuristic value for cea: 12
+[t=18.331379s, 49820 KB] g=383, 7296 evaluated, 7295 expanded
+[t=18.331461s, 49820 KB] New best heuristic value for ff: 10
+[t=18.336708s, 49820 KB] g=384, 7297 evaluated, 7296 expanded
+[t=18.339384s, 49820 KB] New best heuristic value for ff: 9
+[t=18.342423s, 49820 KB] g=385, 7298 evaluated, 7297 expanded
+[t=18.347839s, 49820 KB] New best heuristic value for cea: 10
+[t=18.356822s, 49820 KB] g=387, 7301 evaluated, 7300 expanded
+[t=18.383704s, 49820 KB] New best heuristic value for cea: 9
+[t=18.388922s, 49820 KB] g=391, 7309 evaluated, 7308 expanded
+[t=18.410303s, 49820 KB] New best heuristic value for cea: 8
+[t=18.419013s, 49820 KB] New best heuristic value for ff: 8
+[t=18.419124s, 49820 KB] g=393, 7317 evaluated, 7316 expanded
+[t=18.419314s, 49820 KB] New best heuristic value for cea: 7
+[t=18.421972s, 49820 KB] New best heuristic value for ff: 7
+[t=18.422258s, 49820 KB] g=394, 7319 evaluated, 7318 expanded
+[t=18.422326s, 49820 KB] New best heuristic value for cea: 5
+[t=18.423317s, 49820 KB] New best heuristic value for ff: 5
+[t=18.423488s, 49820 KB] g=395, 7320 evaluated, 7319 expanded
+[t=18.424995s, 50116 KB] New best heuristic value for cea: 4
+[t=18.425142s, 50116 KB] New best heuristic value for ff: 4
+[t=18.425220s, 50116 KB] g=398, 7323 evaluated, 7322 expanded
+[t=18.425371s, 50116 KB] New best heuristic value for cea: 3
+[t=18.425911s, 50116 KB] New best heuristic value for ff: 3
+[t=18.426038s, 50116 KB] g=399, 7324 evaluated, 7323 expanded
+[t=18.426097s, 50116 KB] New best heuristic value for cea: 2
+[t=18.426369s, 50116 KB] New best heuristic value for ff: 2
+[t=18.426509s, 50116 KB] g=400, 7325 evaluated, 7324 expanded
+[t=18.426670s, 50116 KB] New best heuristic value for cea: 1
+[t=18.426867s, 50116 KB] New best heuristic value for ff: 1
+[t=18.426993s, 50116 KB] g=401, 7326 evaluated, 7325 expanded
+[t=18.427092s, 50116 KB] Solution found!
+[t=18.427219s, 50116 KB] Actual search time: 18.359344s
+take player key_navy room_17 (1)
+go player room_17 room_18 place41 place42 entrance_1 entrance_2 right left navy key_navy (1)
+go player room_18 room_19 place42 place43 entrance_3 entrance_4 right left navy key_navy (1)
+go player room_19 room_20 place43 place44 entrance_5 entrance_6 right left navy key_navy (1)
+go player room_20 room_21 place44 place45 entrance_7 entrance_8 right left navy key_navy (1)
+go player room_21 room_15 place45 place35 entrance_9 entrance_10 up down navy key_navy (1)
+go player room_15 room_16 place35 place36 entrance_11 entrance_12 right left navy key_navy (1)
+move room_15 place35 place25 up player room_16 terminal (1)
+move room_16 place36 place35 left player room_16 terminal (1)
+move room_22 place46 place36 up player room_16 terminal (1)
+move room_21 place45 place46 right player room_16 terminal (1)
+move room_16 place35 place45 down player room_16 terminal (1)
+move room_14 place34 place35 right player room_16 terminal (1)
+move room_20 place44 place34 up player room_16 terminal (1)
+move room_16 place45 place44 left player room_16 terminal (1)
+move room_27 place55 place45 up player room_16 terminal (1)
+move room_26 place54 place55 right player room_16 terminal (1)
+move room_25 place53 place54 right player room_16 terminal (1)
+move room_24 place52 place53 right player room_16 terminal (1)
+move room_30 place62 place52 up player room_16 terminal (1)
+move room_29 place61 place62 right player room_16 terminal (1)
+move room_23 place51 place61 down player room_16 terminal (1)
+move room_30 place52 place51 left player room_16 terminal (1)
+move room_24 place53 place52 left player room_16 terminal (1)
+move room_25 place54 place53 left player room_16 terminal (1)
+move room_32 place64 place54 up player room_16 terminal (1)
+move room_31 place63 place64 right player room_16 terminal (1)
+move room_29 place62 place63 right player room_16 terminal (1)
+move room_24 place52 place62 down player room_16 terminal (1)
+move room_25 place53 place52 left player room_16 terminal (1)
+move room_32 place54 place53 left player room_16 terminal (1)
+move room_31 place64 place54 up player room_16 terminal (1)
+move room_29 place63 place64 right player room_16 terminal (1)
+move room_32 place53 place63 down player room_16 terminal (1)
+move room_25 place52 place53 right player room_16 terminal (1)
+move room_24 place62 place52 up player room_16 terminal (1)
+move room_32 place63 place62 left player room_16 terminal (1)
+move room_25 place53 place63 down player room_16 terminal (1)
+move room_31 place54 place53 left player room_16 terminal (1)
+move room_26 place55 place54 left player room_16 terminal (1)
+move room_28 place56 place55 left player room_16 terminal (1)
+move room_34 place66 place56 up player room_16 terminal (1)
+move room_33 place65 place66 right player room_16 terminal (1)
+move room_29 place64 place65 right player room_16 terminal (1)
+move room_26 place54 place64 down player room_16 terminal (1)
+move room_16 place44 place54 down player room_16 terminal (1)
+move room_27 place45 place44 left player room_16 terminal (1)
+move room_28 place55 place45 up player room_16 terminal (1)
+move room_16 place54 place55 right player room_16 terminal (1)
+move room_31 place53 place54 right player room_16 terminal (1)
+move room_24 place52 place53 right player room_16 terminal (1)
+move room_30 place51 place52 right player room_16 terminal (1)
+move room_17 place41 place51 down player room_16 terminal (1)
+move room_18 place42 place41 left player room_16 terminal (1)
+move room_30 place52 place42 up player room_16 terminal (1)
+move room_24 place53 place52 left player room_16 terminal (1)
+move room_31 place54 place53 left player room_16 terminal (1)
+move room_16 place55 place54 left player room_16 terminal (1)
+move room_28 place45 place55 down player room_16 terminal (1)
+move room_27 place44 place45 right player room_16 terminal (1)
+move room_19 place43 place44 right player room_16 terminal (1)
+move room_30 place42 place43 right player room_16 terminal (1)
+move room_12 place32 place42 down player room_16 terminal (1)
+move room_13 place33 place32 left player room_16 terminal (1)
+move room_8 place23 place33 down player room_16 terminal (1)
+move room_9 place24 place23 left player room_16 terminal (1)
+move room_20 place34 place24 up player room_16 terminal (1)
+move room_14 place35 place34 left player room_16 terminal (1)
+move room_22 place36 place35 left player room_16 terminal (1)
+move room_21 place46 place36 up player room_16 terminal (1)
+move room_27 place45 place46 right player room_16 terminal (1)
+move room_22 place35 place45 down player room_16 terminal (1)
+move room_14 place34 place35 right player room_16 terminal (1)
+move room_19 place44 place34 up player room_16 terminal (1)
+move room_22 place45 place44 left player room_16 terminal (1)
+move room_27 place46 place45 left player room_16 terminal (1)
+move room_21 place36 place46 down player room_16 terminal (1)
+move room_14 place35 place36 right player room_16 terminal (1)
+move room_27 place45 place35 up player room_16 terminal (1)
+move room_22 place44 place45 right player room_16 terminal (1)
+move room_30 place43 place44 right player room_16 terminal (1)
+move room_8 place33 place43 down player room_16 terminal (1)
+move room_19 place34 place33 left player room_16 terminal (1)
+move room_30 place44 place34 up player room_16 terminal (1)
+move room_8 place43 place44 right player room_16 terminal (1)
+move room_31 place53 place43 up player room_16 terminal (1)
+move room_24 place52 place53 right player room_16 terminal (1)
+go player room_16 room_8 place54 place44 entrance_26 entrance_19 up down navy key_navy (1)
+take player key_indigo room_8 (1)
+go player room_8 room_16 place44 place54 entrance_19 entrance_26 down up navy key_navy (1)
+move room_24 place53 place52 left player room_16 terminal (1)
+move room_31 place43 place53 down player room_16 terminal (1)
+move room_8 place44 place43 left player room_16 terminal (1)
+move room_30 place34 place44 down player room_16 terminal (1)
+move room_19 place33 place34 right player room_16 terminal (1)
+move room_8 place43 place33 up player room_16 terminal (1)
+move room_30 place44 place43 left player room_16 terminal (1)
+go player room_16 room_26 place54 place64 entrance_20 entrance_21 down up navy key_navy (1)
+go player room_26 room_25 place64 place63 entrance_22 entrance_23 left right navy key_navy (1)
+go player room_25 room_32 place63 place62 entrance_24 entrance_25 left right indigo key_indigo (1)
+take player key_black room_32 (1)
+go player room_32 room_25 place62 place63 entrance_25 entrance_24 right left indigo key_indigo (1)
+go player room_25 room_26 place63 place64 entrance_23 entrance_22 right left navy key_navy (1)
+go player room_26 room_16 place64 place54 entrance_21 entrance_20 up down navy key_navy (1)
+move room_16 place54 place44 up player room_16 terminal (1)
+move room_26 place64 place54 up player room_16 terminal (1)
+move room_25 place63 place64 right player room_16 terminal (1)
+move room_31 place53 place63 down player room_16 terminal (1)
+move room_26 place54 place53 left player room_16 terminal (1)
+move room_25 place64 place54 up player room_16 terminal (1)
+move room_29 place65 place64 left player room_16 terminal (1)
+move room_28 place55 place65 down player room_16 terminal (1)
+move room_25 place54 place55 right player room_16 terminal (1)
+move room_29 place64 place54 up player room_16 terminal (1)
+move room_28 place65 place64 left player room_16 terminal (1)
+move room_25 place55 place65 down player room_16 terminal (1)
+move room_34 place56 place55 left player room_16 terminal (1)
+move room_21 place46 place56 down player room_16 terminal (1)
+move room_22 place45 place46 right player room_16 terminal (1)
+move room_27 place35 place45 down player room_16 terminal (1)
+move room_19 place34 place35 right player room_16 terminal (1)
+move room_16 place44 place34 up player room_16 terminal (1)
+move room_27 place45 place44 left player room_16 terminal (1)
+move room_34 place55 place45 up player room_16 terminal (1)
+move room_29 place54 place55 right player room_16 terminal (1)
+move room_28 place64 place54 up player room_16 terminal (1)
+move room_31 place63 place64 right player room_16 terminal (1)
+move room_26 place53 place63 down player room_16 terminal (1)
+move room_28 place54 place53 left player room_16 terminal (1)
+move room_29 place55 place54 left player room_16 terminal (1)
+move room_34 place45 place55 down player room_16 terminal (1)
+move room_27 place44 place45 right player room_16 terminal (1)
+move room_30 place43 place44 right player room_16 terminal (1)
+move room_28 place53 place43 up player room_16 terminal (1)
+move room_29 place54 place53 left player room_16 terminal (1)
+move room_30 place44 place54 down player room_16 terminal (1)
+move room_16 place34 place44 down player room_16 terminal (1)
+move room_19 place35 place34 left player room_16 terminal (1)
+move room_27 place45 place35 up player room_16 terminal (1)
+move room_34 place55 place45 up player room_16 terminal (1)
+move room_30 place54 place55 right player room_16 terminal (1)
+move room_29 place53 place54 right player room_16 terminal (1)
+move room_28 place43 place53 down player room_16 terminal (1)
+move room_8 place33 place43 down player room_16 terminal (1)
+move room_19 place34 place33 left player room_16 terminal (1)
+move room_16 place44 place34 up player room_16 terminal (1)
+move room_34 place45 place44 left player room_16 terminal (1)
+move room_30 place55 place45 up player room_16 terminal (1)
+move room_29 place54 place55 right player room_16 terminal (1)
+move room_28 place53 place54 right player room_16 terminal (1)
+move room_8 place43 place53 down player room_16 terminal (1)
+move room_34 place44 place43 left player room_16 terminal (1)
+move room_28 place54 place44 up player room_16 terminal (1)
+move room_29 place55 place54 left player room_16 terminal (1)
+move room_30 place45 place55 down player room_16 terminal (1)
+move room_28 place44 place45 right player room_16 terminal (1)
+move room_16 place34 place44 down player room_16 terminal (1)
+move room_19 place33 place34 right player room_16 terminal (1)
+move room_13 place32 place33 right player room_16 terminal (1)
+move room_12 place42 place32 up player room_16 terminal (1)
+move room_34 place43 place42 left player room_16 terminal (1)
+move room_13 place33 place43 down player room_16 terminal (1)
+move room_12 place32 place33 right player room_16 terminal (1)
+move room_34 place42 place32 up player room_16 terminal (1)
+move room_13 place43 place42 left player room_16 terminal (1)
+move room_16 place44 place43 left player room_16 terminal (1)
+move room_28 place45 place44 left player room_16 terminal (1)
+move room_27 place35 place45 down player room_16 terminal (1)
+move room_19 place34 place35 right player room_16 terminal (1)
+move room_28 place44 place34 up player room_16 terminal (1)
+move room_16 place43 place44 right player room_16 terminal (1)
+move room_8 place53 place43 up player room_16 terminal (1)
+move room_24 place52 place53 right player room_16 terminal (1)
+move room_13 place42 place52 down player room_16 terminal (1)
+move room_8 place43 place42 left player room_16 terminal (1)
+move room_24 place53 place43 up player room_16 terminal (1)
+move room_13 place52 place53 right player room_16 terminal (1)
+move room_8 place42 place52 down player room_16 terminal (1)
+move room_24 place43 place42 left player room_16 terminal (1)
+move room_13 place53 place43 up player room_16 terminal (1)
+move room_29 place54 place53 left player room_16 terminal (1)
+move room_30 place55 place54 left player room_16 terminal (1)
+move room_27 place45 place55 down player room_16 terminal (1)
+move room_22 place46 place45 left player room_16 terminal (1)
+move room_21 place56 place46 up player room_16 terminal (1)
+move room_33 place66 place56 up player room_16 terminal (1)
+move room_25 place65 place66 right player room_16 terminal (1)
+move room_31 place64 place65 right player room_16 terminal (1)
+move room_30 place54 place64 down player room_16 terminal (1)
+move room_29 place53 place54 right player room_16 terminal (1)
+move room_26 place63 place53 up player room_16 terminal (1)
+move room_30 place64 place63 left player room_16 terminal (1)
+move room_31 place65 place64 left player room_16 terminal (1)
+move room_27 place55 place65 down player room_16 terminal (1)
+move room_29 place54 place55 right player room_16 terminal (1)
+move room_26 place53 place54 right player room_16 terminal (1)
+move room_30 place63 place53 up player room_16 terminal (1)
+move room_31 place64 place63 left player room_16 terminal (1)
+move room_26 place54 place64 down player room_16 terminal (1)
+move room_29 place55 place54 left player room_16 terminal (1)
+move room_33 place56 place55 left player room_16 terminal (1)
+move room_21 place46 place56 down player room_16 terminal (1)
+move room_22 place45 place46 right player room_16 terminal (1)
+move room_16 place44 place45 right player room_16 terminal (1)
+move room_13 place43 place44 right player room_16 terminal (1)
+move room_12 place33 place43 down player room_16 terminal (1)
+move room_34 place32 place33 right player room_16 terminal (1)
+move room_24 place42 place32 up player room_16 terminal (1)
+move room_12 place43 place42 left player room_16 terminal (1)
+move room_13 place44 place43 left player room_16 terminal (1)
+move room_28 place34 place44 down player room_16 terminal (1)
+move room_34 place33 place34 right player room_16 terminal (1)
+move room_24 place32 place33 right player room_16 terminal (1)
+move room_12 place42 place32 up player room_16 terminal (1)
+move room_13 place43 place42 left player room_16 terminal (1)
+move room_24 place33 place43 down player room_16 terminal (1)
+move room_34 place34 place33 left player room_16 terminal (1)
+move room_28 place44 place34 up player room_16 terminal (1)
+move room_24 place43 place44 right player room_16 terminal (1)
+move room_34 place33 place43 down player room_16 terminal (1)
+move room_28 place34 place33 left player room_16 terminal (1)
+move room_24 place44 place34 up player room_16 terminal (1)
+move room_16 place45 place44 left player room_16 terminal (1)
+move room_19 place35 place45 down player room_16 terminal (1)
+move room_24 place34 place35 right player room_16 terminal (1)
+move room_28 place33 place34 right player room_16 terminal (1)
+move room_12 place32 place33 right player room_16 terminal (1)
+move room_13 place42 place32 up player room_16 terminal (1)
+move room_34 place43 place42 left player room_16 terminal (1)
+move room_16 place44 place43 left player room_16 terminal (1)
+move room_19 place45 place44 left player room_16 terminal (1)
+move room_24 place35 place45 down player room_16 terminal (1)
+move room_28 place34 place35 right player room_16 terminal (1)
+move room_19 place44 place34 up player room_16 terminal (1)
+move room_16 place43 place44 right player room_16 terminal (1)
+move room_12 place33 place43 down player room_16 terminal (1)
+move room_13 place32 place33 right player room_16 terminal (1)
+move room_34 place42 place32 up player room_16 terminal (1)
+move room_12 place43 place42 left player room_16 terminal (1)
+move room_13 place33 place43 down player room_16 terminal (1)
+move room_19 place34 place33 left player room_16 terminal (1)
+move room_28 place35 place34 left player room_16 terminal (1)
+move room_24 place45 place35 up player room_16 terminal (1)
+move room_33 place55 place45 up player room_16 terminal (1)
+move room_27 place65 place55 up player room_16 terminal (1)
+move room_26 place64 place65 right player room_16 terminal (1)
+move room_29 place54 place64 down player room_16 terminal (1)
+move room_27 place55 place54 left player room_16 terminal (1)
+move room_33 place45 place55 down player room_16 terminal (1)
+move room_16 place44 place45 right player room_16 terminal (1)
+move room_27 place54 place44 up player room_16 terminal (1)
+move room_29 place64 place54 up player room_16 terminal (1)
+move room_31 place63 place64 right player room_16 terminal (1)
+move room_30 place53 place63 down player room_16 terminal (1)
+move room_8 place52 place53 right player room_16 terminal (1)
+move room_12 place42 place52 down player room_16 terminal (1)
+move room_13 place43 place42 left player room_16 terminal (1)
+move room_27 place44 place43 left player room_16 terminal (1)
+move room_29 place54 place44 up player room_16 terminal (1)
+move room_8 place53 place54 right player room_16 terminal (1)
+move room_30 place63 place53 up player room_16 terminal (1)
+move room_31 place64 place63 left player room_16 terminal (1)
+move room_8 place54 place64 down player room_16 terminal (1)
+move room_29 place44 place54 down player room_16 terminal (1)
+move room_27 place43 place44 right player room_16 terminal (1)
+move room_19 place33 place43 down player room_16 terminal (1)
+move room_28 place34 place33 left player room_16 terminal (1)
+move room_27 place44 place34 up player room_16 terminal (1)
+move room_16 place45 place44 left player room_16 terminal (1)
+move room_24 place35 place45 down player room_16 terminal (1)
+move room_27 place34 place35 right player room_16 terminal (1)
+move room_28 place33 place34 right player room_16 terminal (1)
+move room_19 place43 place33 up player room_16 terminal (1)
+move room_16 place44 place43 left player room_16 terminal (1)
+move room_24 place45 place44 left player room_16 terminal (1)
+move room_27 place35 place45 down player room_16 terminal (1)
+move room_28 place34 place35 right player room_16 terminal (1)
+move room_24 place44 place34 up player room_16 terminal (1)
+move room_16 place43 place44 right player room_16 terminal (1)
+move room_19 place33 place43 down player room_16 terminal (1)
+move room_24 place34 place33 left player room_16 terminal (1)
+move room_28 place35 place34 left player room_16 terminal (1)
+move room_27 place45 place35 up player room_16 terminal (1)
+move room_16 place44 place45 right player room_16 terminal (1)
+move room_28 place34 place44 down player room_16 terminal (1)
+move room_24 place33 place34 right player room_16 terminal (1)
+move room_19 place43 place33 up player room_16 terminal (1)
+move room_28 place44 place43 left player room_16 terminal (1)
+move room_16 place45 place44 left player room_16 terminal (1)
+move room_27 place35 place45 down player room_16 terminal (1)
+move room_24 place34 place35 right player room_16 terminal (1)
+move room_16 place44 place34 up player room_16 terminal (1)
+move room_28 place43 place44 right player room_16 terminal (1)
+move room_19 place33 place43 down player room_16 terminal (1)
+move room_16 place34 place33 left player room_16 terminal (1)
+move room_28 place44 place34 up player room_16 terminal (1)
+move room_19 place43 place44 right player room_16 terminal (1)
+move room_16 place33 place43 down player room_16 terminal (1)
+move room_28 place34 place33 left player room_16 terminal (1)
+move room_24 place35 place34 left player room_16 terminal (1)
+move room_27 place45 place35 up player room_16 terminal (1)
+move room_19 place44 place45 right player room_16 terminal (1)
+move room_24 place34 place44 down player room_16 terminal (1)
+move room_27 place35 place34 left player room_16 terminal (1)
+move room_19 place45 place35 up player room_16 terminal (1)
+move room_24 place44 place45 right player room_16 terminal (1)
+move room_27 place34 place44 down player room_16 terminal (1)
+move room_28 place33 place34 right player room_16 terminal (1)
+move room_9 place23 place33 down player room_16 terminal (1)
+move room_20 place24 place23 left player room_16 terminal (1)
+move room_28 place34 place24 up player room_16 terminal (1)
+move room_19 place35 place34 left player room_16 terminal (1)
+move room_24 place45 place35 up player room_16 terminal (1)
+move room_27 place44 place45 right player room_16 terminal (1)
+move room_16 place43 place44 right player room_16 terminal (1)
+move room_9 place33 place43 down player room_16 terminal (1)
+move room_19 place34 place33 left player room_16 terminal (1)
+move room_24 place35 place34 left player room_16 terminal (1)
+move room_27 place45 place35 up player room_16 terminal (1)
+move room_16 place44 place45 right player room_16 terminal (1)
+move room_9 place43 place44 right player room_16 terminal (1)
+move room_19 place33 place43 down player room_16 terminal (1)
+move room_24 place34 place33 left player room_16 terminal (1)
+move room_9 place44 place34 up player room_16 terminal (1)
+move room_16 place45 place44 left player room_16 terminal (1)
+move room_27 place35 place45 down player room_16 terminal (1)
+go player room_16 room_9 place44 place34 entrance_26 entrance_31 up down navy key_navy (1)
+go player room_9 room_28 place34 place24 entrance_32 entrance_33 up down black key_black (1)
+take player key_blue room_28 (1)
+go player room_28 room_9 place24 place34 entrance_33 entrance_32 down up black key_black (1)
+go player room_9 room_16 place34 place44 entrance_31 entrance_26 down up navy key_navy (1)
+move room_9 place34 place35 right player room_16 terminal (1)
+move room_24 place33 place34 right player room_16 terminal (1)
+move room_19 place43 place33 up player room_16 terminal (1)
+go player room_16 room_29 place44 place54 entrance_20 entrance_34 down up black key_black (1)
+go player room_29 room_33 place54 place55 entrance_35 entrance_36 right left blue key_blue (1)
+take player key_magenta room_33 (1)
+go player room_33 room_29 place55 place54 entrance_36 entrance_35 left right blue key_blue (1)
+go player room_29 room_16 place54 place44 entrance_34 entrance_20 up down black key_black (1)
+move room_16 place44 place43 left player room_16 terminal (1)
+move room_27 place45 place44 left player room_16 terminal (1)
+move room_9 place35 place45 down player room_16 terminal (1)
+move room_24 place34 place35 right player room_16 terminal (1)
+move room_19 place33 place34 right player room_16 terminal (1)
+move room_16 place43 place33 up player room_16 terminal (1)
+go player room_16 room_34 place33 place32 entrance_12 entrance_13 left right navy key_navy (1)
+go player room_34 room_11 place32 place31 entrance_37 entrance_38 left right magenta key_magenta (1)
+take player key_cyan room_11 (1)
+go player room_11 room_34 place31 place32 entrance_38 entrance_37 right left magenta key_magenta (1)
+go player room_34 room_16 place32 place33 entrance_13 entrance_12 right left navy key_navy (1)
+move room_30 place53 place43 up player room_16 terminal (1)
+move room_29 place54 place53 left player room_16 terminal (1)
+move room_27 place44 place54 down player room_16 terminal (1)
+move room_30 place43 place44 right player room_16 terminal (1)
+move room_16 place33 place43 down player room_16 terminal (1)
+move room_19 place34 place33 left player room_16 terminal (1)
+move room_30 place44 place34 up player room_16 terminal (1)
+move room_27 place54 place44 up player room_16 terminal (1)
+move room_33 place55 place54 left player room_16 terminal (1)
+move room_9 place45 place55 down player room_16 terminal (1)
+move room_27 place44 place45 right player room_16 terminal (1)
+move room_16 place43 place44 right player room_16 terminal (1)
+move room_29 place53 place43 up player room_16 terminal (1)
+move room_33 place54 place53 left player room_16 terminal (1)
+move room_8 place64 place54 up player room_16 terminal (1)
+move room_31 place63 place64 right player room_16 terminal (1)
+move room_33 place53 place63 down player room_16 terminal (1)
+move room_8 place54 place53 left player room_16 terminal (1)
+move room_9 place55 place54 left player room_16 terminal (1)
+move room_27 place45 place55 down player room_16 terminal (1)
+move room_16 place44 place45 right player room_16 terminal (1)
+go player room_16 room_22 place45 place46 entrance_39 entrance_40 right left cyan key_cyan (1)
+take player key_red room_22 (1)
+go player room_22 room_16 place46 place45 entrance_40 entrance_39 left right cyan key_cyan (1)
+move room_16 place45 place44 left player room_16 terminal (1)
+move room_27 place55 place45 up player room_16 terminal (1)
+move room_9 place54 place55 right player room_16 terminal (1)
+go player room_16 room_27 place44 place45 entrance_39 entrance_41 right left red key_red (1)
+take player key_orange room_27 (1)
+go player room_27 room_16 place45 place44 entrance_41 entrance_39 left right red key_red (1)
+move room_8 place53 place54 right player room_16 terminal (1)
+move room_29 place43 place53 down player room_16 terminal (1)
+move room_16 place44 place43 left player room_16 terminal (1)
+move room_30 place34 place44 down player room_16 terminal (1)
+move room_19 place33 place34 right player room_16 terminal (1)
+move room_16 place43 place33 up player room_16 terminal (1)
+move room_30 place44 place43 left player room_16 terminal (1)
+move room_8 place54 place44 up player room_16 terminal (1)
+move room_29 place53 place54 right player room_16 terminal (1)
+move room_33 place63 place53 up player room_16 terminal (1)
+move room_31 place64 place63 left player room_16 terminal (1)
+move room_29 place54 place64 down player room_16 terminal (1)
+move room_33 place53 place54 right player room_16 terminal (1)
+move room_30 place43 place53 down player room_16 terminal (1)
+move room_16 place33 place43 down player room_16 terminal (1)
+go player room_16 room_30 place43 place53 entrance_20 entrance_42 down up cyan key_cyan (1)
+go player room_30 room_31 place53 place63 entrance_43 entrance_44 down up orange key_orange (1)
+take player key_violet room_31 (1)
+go player room_31 room_30 place63 place53 entrance_44 entrance_43 up down orange key_orange (1)
+go player room_30 room_16 place53 place43 entrance_42 entrance_20 up down cyan key_cyan (1)
+go player room_16 room_13 place43 place42 entrance_12 entrance_45 left right violet key_violet (1)
+escape player main_exit room_13 (1)
+[t=18.427393s, 50116 KB] Plan length: 402 step(s).
+[t=18.427393s, 50116 KB] Plan cost: 402
+[t=18.427393s, 50116 KB] Expanded 7326 state(s).
+[t=18.427393s, 50116 KB] Reopened 0 state(s).
+[t=18.427393s, 50116 KB] Evaluated 7327 state(s).
+[t=18.427393s, 50116 KB] Evaluations: 14654
+[t=18.427393s, 50116 KB] Generated 28491 state(s).
+[t=18.427393s, 50116 KB] Dead ends: 0 state(s).
+[t=18.427393s, 50116 KB] Number of registered states: 7327
+[t=18.427393s, 50116 KB] Int hash set load factor: 7327/8192 = 0.894409
+[t=18.427393s, 50116 KB] Int hash set resizes: 13
+[t=18.427393s, 50116 KB] Search time: 18.359656s
+[t=18.427393s, 50116 KB] Total time: 18.427393s
 Solution found.
-Peak memory: 39420 KB
+Peak memory: 50116 KB
 Remove intermediate file output.sas
 search exit code: 0
 
-INFO     Planner time: 4.08s
+INFO     Planner time: 19.51s
