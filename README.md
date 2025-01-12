@@ -7,7 +7,7 @@ umożliwiającego interakcję z systemem opartym o autorskie rozwinięcie
 gry logicznej N-Puzzle. Dodatkowo, możliwe jest przeprowadzenie
 procesu generowania nowych instancji problemów w oparciu o zdefiniowane
 przez użytkownika parametry, import i eksport instancji problemów oraz 
-przeprowadzenie procesu rozwiązywania instancji problemów za pomocą
+przeprowadzenie procesu ich rozwiązywania za pomocą
 gotowych narzędzi planistycznych, takich jak [Fast Downward](https://www.fast-downward.org/HomePage).
 
 ## Proces przygotowania środowiska
@@ -38,7 +38,7 @@ instancji problemu.
 
 Wszystkie parametry związane z generowaniem, importem i eksportem
 instancji problemów i ustawieniami graficznymi można znaleźć i skonfigurować
-w pliku `blocky_game/config/config.py`. W pliku tym znajdują się
+w `blocky_game/config/config.py`. W pliku tym znajdują się
 dwie klasy: `PyGameConfig` oraz `BlockyGameConfig`. Pierwsza z nich
 zawiera parametry związane z ustawieniami graficznymi, takimi jak
 rozmiar okna, oczekiwana liczba klatek na sekundę,
