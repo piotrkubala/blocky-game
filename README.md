@@ -26,7 +26,7 @@ pip install -r requirements.txt
 W celu uruchomienia programu należy wykonać poniższe polecenie:
 
 ```bash
-python blocky_game/main.py
+python main.py
 ```
 
 Na ekranie powinno pojawić się okno programu, w którym dostępne są
