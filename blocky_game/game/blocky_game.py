@@ -66,7 +66,7 @@ class BlockyGame:
             file_name = serialization_path.split("/")[-1]
             problem_name = file_name.split(".")[0]
 
-            directory_prefix = '../problems/'
+            directory_prefix = 'problems/'
             directory_subproblems_prefix = f'{directory_prefix}{problem_name}/'
 
             self.board_state.write_serialization(directory_prefix, problem_name)
@@ -102,10 +102,10 @@ class BlockyGame:
 
         self.__init_pygame()
 
-        domain_definition_path = f'../domain/{blocky_game_config.domain_definition_name}.pddl'
+        domain_definition_path = f'domain/{blocky_game_config.domain_definition_name}.pddl'
         self.board_domain = BoardDomain(domain_definition_path)
 
-        problem_definition_full_path = f'../problems/{blocky_game_config.problem_definition_path}'
+        problem_definition_full_path = f'problems/{blocky_game_config.problem_definition_path}'
 
         board_state, subproblems_states = \
             (BoardState.from_pddl(self.board_domain, problem_definition_full_path), []) \
@@ -144,7 +144,7 @@ class BlockyGame:
             width, height
         )
 
-        action_path_name = f'../solutions/{blocky_game_config.actions_list_name}.actions' \
+        action_path_name = f'solutions/{blocky_game_config.actions_list_name}.actions' \
             if blocky_game_config.actions_list_name is not None else None
         self.actions_list = ActionsList(
             action_path_name,

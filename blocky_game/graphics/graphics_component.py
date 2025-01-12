@@ -19,7 +19,7 @@ def load_texture_with_max_size(texture_path: str, max_size: int) -> pygame.Surfa
 
 @lru_cache(maxsize=64)
 def get_font(family_name: str, file_name: str, size: int) -> pygame.font.Font:
-    path = f"../fonts/{family_name}/{file_name}"
+    path = f"fonts/{family_name}/{file_name}"
     return pygame.font.Font(path, size)
 
 

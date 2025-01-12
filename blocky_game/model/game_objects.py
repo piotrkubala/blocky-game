@@ -180,7 +180,7 @@ class Key(TakeableThing):
     def prepare_visuals(self, max_size: int, colour_rgb: tuple[int, int, int] = (0, 0, 0)):
         self.graphics_component.clear_surfaces()
 
-        sprite_surface = load_texture_with_max_size("../images/key.png", max_size).copy()
+        sprite_surface = load_texture_with_max_size("images/key.png", max_size).copy()
 
         sprite_image = pygame.surfarray.pixels3d(sprite_surface)
 
@@ -223,7 +223,7 @@ class Terminal(Thing):
     def prepare_visuals(self, max_size: int):
         self.graphics_component.clear_surfaces()
 
-        sprite_surface = load_texture_with_max_size("../images/terminal.png", max_size)
+        sprite_surface = load_texture_with_max_size("images/terminal.png", max_size)
 
         self.graphics_component.add_surface(sprite_surface)
 
@@ -243,7 +243,7 @@ class MapExit(Thing):
     def prepare_visuals(self, max_size: int):
         self.graphics_component.clear_surfaces()
 
-        sprite_surface = load_texture_with_max_size("../images/exit.png", max_size)
+        sprite_surface = load_texture_with_max_size("images/exit.png", max_size)
 
         self.graphics_component.add_surface(sprite_surface)
 
@@ -263,7 +263,7 @@ class Person(GameObject):
     def prepare_visuals(self, max_size: int):
         self.graphics_component.clear_surfaces()
 
-        sprite_surface = load_texture_with_max_size("../images/person.png", max_size)
+        sprite_surface = load_texture_with_max_size("images/person.png", max_size)
 
         self.graphics_component.add_surface(sprite_surface)
 
